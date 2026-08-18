@@ -1,4 +1,4 @@
-﻿
+
 const ENCODED_DISCORD_WEBHOOK = 'aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTUzOTQwNTE0NjAwNDUyOTE5My82UENXVFlsaUJ3M29oSkE1R0NBU01faTNGdTBldU00bjluVS1NcWM3VllxOEdELTh5Nk5ZYll3U3lHQ00zNDJoNHY4RQ==';
 
 const XMR_RATE_USD = 168.51;
@@ -300,7 +300,7 @@ function initCyberMatrixBackground() {
       this.pulseSpeed = Math.random() * 0.03 + 0.01;
       this.pulseOffset = Math.random() * Math.PI * 2;
       this.type = Math.random() > 0.6 ? 'diamond' : 'circle';
-      
+
       const hues = [
         '59, 130, 246',   
         '6, 182, 212',    
@@ -404,7 +404,7 @@ function initCyberMatrixBackground() {
 
     ctx.save();
     ctx.lineWidth = 0.8;
-    
+
     for (let i = -gridLines; i <= gridLines; i++) {
       const bottomX = width * 0.5 + (i * width * 0.075);
       const gradLine = ctx.createLinearGradient(vanishX, horizonY, bottomX, height);
@@ -536,7 +536,7 @@ function initBillingToggle() {
 
 function animatePriceChange() {
   const priceElements = document.querySelectorAll('.price-val');
-  
+
   priceElements.forEach(el => {
     el.classList.add('price-animating');
   });
@@ -575,7 +575,7 @@ function initPricingCards() {
 
 function initCustomSelects() {
   const wrappers = document.querySelectorAll('.custom-select-wrapper');
-  
+
   wrappers.forEach(wrapper => {
     const trigger = wrapper.querySelector('.custom-select-trigger');
     const options = wrapper.querySelectorAll('.custom-select-option');
@@ -693,14 +693,14 @@ function initSpecsModal() {
 
   if (!modal) return;
 
-  window.openSpecsModal = function(productId = 'ambrosia-ow-pro') {
+  window.openSpecsModal = function (productId = 'ambrosia-ow-pro') {
     selectedSpecsProduct = productId;
     renderSpecsDetails();
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
   };
 
-  window.closeSpecsModal = function() {
+  window.closeSpecsModal = function () {
     modal.classList.remove('active');
     document.body.style.overflow = '';
   };
@@ -717,7 +717,7 @@ function initSpecsModal() {
 
 function renderSpecsDetails() {
   const product = PRODUCTS[selectedSpecsProduct] || PRODUCTS['ambrosia-ow-pro'];
-  
+
   const titleEl = document.getElementById('specs-product-title');
   const tagEl = document.getElementById('specs-product-tag');
   const osEl = document.getElementById('specs-product-os');
@@ -754,7 +754,7 @@ function renderSpecsDetails() {
       const items = product.fullCategories[categoryName];
       const categoryCard = document.createElement('div');
       categoryCard.className = 'p-3.5 rounded-xl bg-black/40 border border-white/5';
-      
+
       let itemsListHtml = items.map(item => `
         <li class="flex items-start gap-2 text-xs text-slate-300">
           <i data-lucide="check" class="w-3.5 h-3.5 text-blue-400 mt-0.5 shrink-0"></i>
@@ -781,12 +781,12 @@ function initRulesModal() {
 
   if (!modal) return;
 
-  window.openRulesModal = function() {
+  window.openRulesModal = function () {
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
   };
 
-  window.closeRulesModal = function() {
+  window.closeRulesModal = function () {
     modal.classList.remove('active');
     document.body.style.overflow = '';
   };
@@ -811,7 +811,7 @@ function initCheckoutModal() {
 
   if (!modal) return;
 
-  window.openCheckoutModal = function(productId = 'ambrosia-ow-pro', cycle = 'monthly') {
+  window.openCheckoutModal = function (productId = 'ambrosia-ow-pro', cycle = 'monthly') {
     const product = PRODUCTS[productId];
     if (product && !product.available) {
       showToast(`${product.name} is currently unavailable for purchase.`, 'error');
@@ -843,7 +843,7 @@ function initCheckoutModal() {
     document.body.style.overflow = 'hidden';
   };
 
-  window.closeCheckoutModal = function() {
+  window.closeCheckoutModal = function () {
     modal.classList.remove('active');
     document.body.style.overflow = '';
   };
@@ -908,7 +908,7 @@ function initCheckoutModal() {
 
 function renderCheckoutDetails() {
   const product = PRODUCTS[selectedCheckoutProduct] || PRODUCTS['ambrosia-ow-pro'];
-  
+
   if (!product.available) {
     showToast('This product is currently unavailable.', 'error');
     closeCheckoutModal();
@@ -933,7 +933,7 @@ function renderCheckoutDetails() {
   if (qrContainer) {
     qrContainer.innerHTML = '';
     const moneroUri = `monero:${address}?tx_amount=${xmrAmount}&recipient_name=Ambrosia_Reseller`;
-    
+
     if (window.QRCode) {
       new QRCode(qrContainer, {
         text: moneroUri,
@@ -958,7 +958,7 @@ function renderCheckoutDetails() {
 async function handleOrderSubmission() {
   const discordInput = document.getElementById('modal-discord-input');
   const txInput = document.getElementById('modal-txid-input');
-  const discordTag = discordInput ? discordInput.value.trim() : '';
+  let discordTag = discordInput ? discordInput.value.trim() : '';
   const txHash = txInput ? txInput.value.trim() : 'Payment in Discord Ticket';
 
   if (!discordTag) {
@@ -1033,12 +1033,11 @@ function showToast(message, type = 'success') {
 
   const toast = document.createElement('div');
   const isSuccess = type === 'success';
-  toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border ${
-    isSuccess 
-      ? 'bg-slate-900/95 border-emerald-500/30 text-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.2)]' 
-      : 'bg-slate-900/95 border-rose-500/30 text-rose-300 shadow-[0_0_20px_rgba(244,63,94,0.2)]'
-  } backdrop-blur-md text-sm font-medium transform transition-all duration-300 translate-y-4 opacity-0`;
-  
+  toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border ${isSuccess
+    ? 'bg-slate-900/95 border-emerald-500/30 text-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.2)]'
+    : 'bg-slate-900/95 border-rose-500/30 text-rose-300 shadow-[0_0_20px_rgba(244,63,94,0.2)]'
+    } backdrop-blur-md text-sm font-medium transform transition-all duration-300 translate-y-4 opacity-0`;
+
   toast.innerHTML = `
     <i data-lucide="${isSuccess ? 'check-circle' : 'alert-circle'}" class="w-4 h-4 shrink-0"></i>
     <span>${message}</span>
