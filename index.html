@@ -1,0 +1,1552 @@
+﻿<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ambrosia.ovh | Undetected Gaming Clients and Web Radar</title>
+  <meta name="description"
+    content="Official reseller for Ambrosia clients: FN, OW Lite, OW Pro, and CS2 Web Radar. Clean performance, streamproof visuals, and config sharing.">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              900: '#1e3a8a',
+            },
+            dark: {
+              950: '#07080a',
+              900: '#0c0d12',
+              850: '#13151b',
+              800: '#1a1d26',
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body
+  class="bg-[#07080a] text-slate-100 antialiased selection:bg-blue-600/30 selection:text-white relative min-h-screen">
+
+  <div data-aifx="noise-shimmer" data-aifx-colors="#0078ff,#4d4d4d,#82d7ff" data-aifx-scale="3"
+    data-aifx-intensity="0.5" data-aifx-contrast="0.3" data-aifx-speed="0.61"
+    class="absolute inset-0 -z-10 pointer-events-none" aria-hidden="true"></div>
+
+  <canvas id="cyber-canvas"></canvas>
+
+  <div class="ambient-glow-layer"></div>
+  <div class="light-cone-right"></div>
+  <div class="light-cone-left"></div>
+
+  <header class="fixed top-5 inset-x-0 z-40 flex justify-center px-4">
+    <nav id="main-navbar"
+      class="w-full max-w-5xl glass-pill rounded-full px-5 py-2.5 flex items-center justify-between transition-all duration-300 border border-white/10">
+
+      <a href="#" class="flex items-center gap-2.5 group">
+        <div
+          class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.5)] group-hover:scale-105 transition-transform">
+          <i data-lucide="shield-check" class="w-4 h-4 text-white"></i>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold tracking-tight text-white text-base">ambrosia<span
+              class="text-blue-400">.ovh</span></span>
+          <span
+            class="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20">
+            Official Reseller
+          </span>
+        </div>
+      </a>
+
+      <div class="hidden md:flex items-center gap-7 text-xs font-medium text-slate-300">
+        <a href="#products" class="hover:text-white transition-colors">Products</a>
+        <a href="#explorer" class="hover:text-white transition-colors">Overview</a>
+        <a href="#features" class="hover:text-white transition-colors">Features</a>
+        <a href="#pricing" class="hover:text-white transition-colors">Pricing</a>
+        <a href="#rules" class="hover:text-white transition-colors">Rules and TOS</a>
+        <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
+      </div>
+
+      <div class="flex items-center gap-2.5">
+        <a href="https://discord.gg/bT9dpnerP4" target="_blank"
+          class="hidden sm:flex items-center gap-1.5 text-xs font-medium text-indigo-300 hover:text-white px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 hover:bg-indigo-500/20 transition-all">
+          <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+          Discord
+        </a>
+        <button onclick="openCheckoutModal('ambrosia-ow-pro', 'monthly')"
+          class="btn-glow-primary text-xs font-semibold text-white px-4 py-2 rounded-full flex items-center gap-1.5">
+          <span>Get Access</span>
+          <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <section class="relative isolate pt-36 pb-20 md:pt-44 md:pb-24 px-4 overflow-hidden motion-reveal">
+    <div class="max-w-5xl mx-auto flex flex-col items-center text-center">
+
+      <div
+        class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/10 text-xs font-medium text-slate-300 mb-8 backdrop-blur-md">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-dot"></span>
+        <span class="text-white font-semibold">Ambrosia Product Suite</span>
+        <span class="text-slate-500">â€¢</span>
+        <span class="text-blue-400">Undetected and Online</span>
+        <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-300"></i>
+      </div>
+
+      <h1
+        class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white leading-[1.1] max-w-4xl mb-6">
+        Precision Gaming Clients and <span class="text-gradient-cyan">Tactical Web Radar</span>
+      </h1>
+
+      <p class="text-base sm:text-lg text-slate-300 max-w-2xl leading-relaxed mb-9 font-normal">
+        Undetected, virtualized client software for <strong class="text-slate-200">Overwatch 2</strong>, <strong
+          class="text-slate-200">Counter Strike 2</strong>, and <strong class="text-slate-200">Fortnite</strong>.
+        Featuring customizable aimbot, streamproof visuals, recoil control, and mobile web radar.
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-3.5 mb-14">
+        <button onclick="openCheckoutModal('ambrosia-ow-pro', 'monthly')"
+          class="btn-glow-primary text-sm font-semibold text-white px-6 py-3.5 rounded-full flex items-center gap-2 group">
+          <i data-lucide="zap" class="w-4 h-4 text-blue-300"></i>
+          <span>Instant Monero (XMR) Access</span>
+          <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-0.5 transition-transform"></i>
+        </button>
+        <a href="#products"
+          class="btn-glow-secondary text-sm font-medium text-slate-300 hover:text-white px-6 py-3.5 rounded-full flex items-center gap-2">
+          <i data-lucide="layers" class="w-4 h-4 text-blue-400"></i>
+          <span>View 5 Product Lineups</span>
+        </a>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-3xl mb-16">
+        <div class="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 flex flex-col items-center">
+          <span class="text-xl font-bold font-mono text-white">Streamproof</span>
+          <span class="text-[11px] text-slate-300 uppercase tracking-wider">Record Safe</span>
+        </div>
+        <div class="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 flex flex-col items-center">
+          <span class="text-xl font-bold font-mono text-emerald-400">10 Configs</span>
+          <span class="text-[11px] text-slate-300 uppercase tracking-wider">Sharing and Keybinds</span>
+        </div>
+        <div class="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 flex flex-col items-center">
+          <span class="text-xl font-bold font-mono text-cyan-400">Intel / AMD</span>
+          <span class="text-[11px] text-slate-300 uppercase tracking-wider">Hardware Ready</span>
+        </div>
+        <div class="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 flex flex-col items-center">
+          <span class="text-xl font-bold font-mono text-blue-400">Web Radar</span>
+          <span class="text-[11px] text-slate-300 uppercase tracking-wider">Phone and 2nd Screen</span>
+        </div>
+      </div>
+
+      <div id="explorer"
+        class="w-full max-w-5xl rounded-2xl p-1 bg-gradient-to-b from-white/15 via-white/5 to-transparent shadow-[0_0_50px_rgba(59,130,246,0.15)] relative">
+        <div
+          class="bg-[#090b11]/90 backdrop-blur-xl rounded-xl overflow-hidden border border-white/10 relative p-6 sm:p-8 text-left">
+
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-white/10">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                <span id="playground-badge" class="text-xs font-mono uppercase tracking-wider text-blue-400">Overwatch
+                  Pro Full Suite</span>
+              </div>
+              <h3 id="playground-title" class="text-2xl font-bold text-white">Ambrosia OW Pro</h3>
+            </div>
+
+            <div
+              class="flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-black/50 border border-white/10 text-xs font-medium">
+              <button data-product="ambrosia-ow-pro"
+                class="playground-tab px-3 py-1.5 rounded-lg bg-blue-600/25 border border-blue-500/50 text-white transition-all">OW
+                Pro</button>
+              <button data-product="ambrosia-ow-lite"
+                class="playground-tab px-3 py-1.5 rounded-lg bg-transparent border border-white/5 text-slate-300 hover:text-white transition-all">OW
+                Lite</button>
+              <button data-product="ambrosia-cs2-web"
+                class="playground-tab px-3 py-1.5 rounded-lg bg-transparent border border-white/5 text-slate-300 hover:text-white transition-all">CS2
+                Web</button>
+              <button data-product="ambrosia-fn"
+                class="playground-tab px-3 py-1.5 rounded-lg bg-transparent border border-white/5 text-slate-300 hover:text-white transition-all">Fortnite</button>
+              <button data-product="ambrosia-ow-rbx"
+                class="playground-tab px-3 py-1.5 rounded-lg bg-transparent border border-white/5 text-slate-300 hover:text-white transition-all">OW
+                RBX</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
+
+            <div class="md:col-span-2 space-y-3">
+              <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Verified Feature Highlights</h4>
+              <div id="playground-features-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-900/60 border border-white/10 flex flex-col justify-between space-y-4">
+              <div>
+                <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3">System Details</h4>
+                <div class="space-y-2 text-xs">
+                  <div class="flex justify-between py-1 border-b border-white/5">
+                    <span class="text-slate-300">OS Support:</span>
+                    <span id="playground-os" class="text-white font-mono">Windows 10 and 11</span>
+                  </div>
+                  <div class="flex justify-between py-1 border-b border-white/5">
+                    <span class="text-slate-300">Processor:</span>
+                    <span id="playground-cpu" class="text-white font-mono">INTEL / AMD</span>
+                  </div>
+                  <div class="flex justify-between py-1">
+                    <span class="text-slate-300">Delivery:</span>
+                    <span class="text-emerald-400 font-mono">Instant Discord Key</span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <button id="playground-cta-btn"
+                  class="w-full btn-glow-primary py-2.5 rounded-xl text-xs font-semibold text-white flex items-center justify-center gap-2">
+                  <span>Purchase Access</span>
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <div
+            class="mt-6 pt-4 border-t border-white/5 flex flex-wrap items-center justify-between text-xs text-slate-300 gap-3">
+            <div class="flex items-center gap-3">
+              <span class="flex items-center gap-1 text-emerald-400">
+                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+                <span>Monero Native Checkout</span>
+              </span>
+              <span class="flex items-center gap-1 text-blue-400">
+                <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+                <span>Streamproof and Record Safe</span>
+              </span>
+            </div>
+            <a href="https://discord.gg/bT9dpnerP4" target="_blank"
+              class="text-indigo-400 hover:text-white flex items-center gap-1 transition-colors">
+              <span>Join Discord for Setup Assistance</span>
+              <i data-lucide="external-link" class="w-3 h-3"></i>
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <div data-aifx="aurora-flow" data-aifx-speed="2" data-aifx-ribbons="5" data-aifx-angle="-14"
+      data-aifx-amplitude="0.25" data-aifx-scale="4" data-aifx-contrast="0.3"
+      class="absolute inset-0 -z-10 pointer-events-none" aria-hidden="true"></div>
+  </section>
+
+  <div class="section-glow glow-cyan"></div>
+
+  <section id="products" class="py-24 px-4 relative motion-reveal">
+    <div class="max-w-5xl mx-auto">
+
+      <div class="flex flex-col items-center text-center mb-14">
+        <div
+          class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-mono text-blue-400 mb-3">
+          <i data-lucide="boxes" class="w-3.5 h-3.5"></i>
+          <span>Official Catalog</span>
+        </div>
+        <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-3">
+          The Ambrosia <span class="text-gradient-cyan">Product Lineup</span>
+        </h2>
+        <p class="text-slate-300 max-w-xl text-sm sm:text-base">
+          Explore all 5 client suites. Click any product to view its comprehensive list of official features.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+        <div class="spotlight-card p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span
+                class="text-xs font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold">ambrosia
+                fn</span>
+              <span class="text-[10px] text-slate-300 font-mono">Win 11 â€¢ Intel/AMD</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">Ambrosia FN</h3>
+            <p class="text-xs text-slate-300 mb-4">Aimbot with prediction, full visual ESP, loot distance, on screen
+              radar, and 10 config slots.</p>
+            <ul class="space-y-1.5 text-xs text-slate-300 mb-5">
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-cyan-400 shrink-0"></i>
+                <span>Aimbot (Prediction, Visible Check, FOV)</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-cyan-400 shrink-0"></i>
+                <span>Box, Skeleton, China Hat, Rank and Distance ESP</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-cyan-400 shrink-0"></i>
+                <span>World Loot ESP with Rarity customisation</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-cyan-400 shrink-0"></i>
+                <span>On Screen Radar (Circle or Square styles)</span></li>
+            </ul>
+          </div>
+          <div class="flex items-center gap-2 pt-3 border-t border-white/5">
+            <button onclick="openSpecsModal('ambrosia-fn')"
+              class="w-1/2 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-300 hover:text-white transition-all text-center">
+              All Specs
+            </button>
+            <button onclick="openCheckoutModal('ambrosia-fn', 'monthly')"
+              class="w-1/2 btn-glow-primary py-2 rounded-lg text-xs font-semibold text-white flex items-center justify-center gap-1">
+              <span>$45/mo</span>
+              <i data-lucide="arrow-right" class="w-3 h-3"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="spotlight-card p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span
+                class="text-xs font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold">ambrosia
+                ow lite</span>
+              <span class="text-[10px] text-slate-300 font-mono">Win 10 and 11 â€¢ Intel/AMD</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">Ambrosia OW Lite</h3>
+            <p class="text-xs text-slate-300 mb-4">Streamproof assistive aim, triggerbot, flickbot, auto bunnyhop,
+              SnapTap null binding, and loot ESP.</p>
+            <ul class="space-y-1.5 text-xs text-slate-300 mb-5">
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-blue-400 shrink-0"></i>
+                <span>Aimbot, Triggerbot and Flickbot with Prediction</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-blue-400 shrink-0"></i>
+                <span>Auto Bunnyhop and Null Binding (SnapTap)</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-blue-400 shrink-0"></i>
+                <span>Streamproof and Record proof mode</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-blue-400 shrink-0"></i>
+                <span>Team Invert (F10) and Visuals Hard Reset</span></li>
+            </ul>
+          </div>
+          <div class="flex items-center gap-2 pt-3 border-t border-white/5">
+            <button onclick="openSpecsModal('ambrosia-ow-lite')"
+              class="w-1/2 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-300 hover:text-white transition-all text-center">
+              All Specs
+            </button>
+            <button onclick="openCheckoutModal('ambrosia-ow-lite', 'monthly')"
+              class="w-1/2 btn-glow-primary py-2 rounded-lg text-xs font-semibold text-white flex items-center justify-center gap-1">
+              <span>$10/mo</span>
+              <i data-lucide="arrow-right" class="w-3 h-3"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="spotlight-card p-6 flex flex-col justify-between pricing-card-featured">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <span
+                  class="text-xs font-mono px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-bold">ambrosia
+                  ow pro</span>
+                <span class="featured-pill-badge">ADVANCED</span>
+              </div>
+              <span class="text-[10px] text-slate-300 font-mono">Win 10 and 11 â€¢ Intel/AMD</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">Ambrosia OW Pro</h3>
+            <p class="text-xs text-slate-300 mb-4">Complete combat package with dual aim and trigger slots, hero action
+              scripting, and Ult Shower HUD panel.</p>
+            <ul class="space-y-1.5 text-xs text-slate-300 mb-5">
+              <li class="flex items-center gap-2"><i data-lucide="check"
+                  class="w-3.5 h-3.5 text-indigo-400 shrink-0"></i> <span>Secondary Aim and Trigger slots
+                  (independent)</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check"
+                  class="w-3.5 h-3.5 text-indigo-400 shrink-0"></i> <span>Hero Action Scripting (up to 10
+                  scripts)</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check"
+                  class="w-3.5 h-3.5 text-indigo-400 shrink-0"></i> <span>Ult Shower HUD (Ult charge and
+                  cooldowns)</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check"
+                  class="w-3.5 h-3.5 text-indigo-400 shrink-0"></i> <span>Player Outline ESP and Off Screen
+                  Arrows</span></li>
+            </ul>
+          </div>
+          <div class="flex items-center gap-2 pt-3 border-t border-white/5">
+            <button onclick="openSpecsModal('ambrosia-ow-pro')"
+              class="w-1/2 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-300 hover:text-white transition-all text-center">
+              All Specs
+            </button>
+            <button onclick="openCheckoutModal('ambrosia-ow-pro', 'monthly')"
+              class="w-1/2 btn-glow-primary py-2 rounded-lg text-xs font-semibold text-white flex items-center justify-center gap-1">
+              <span>$45/mo</span>
+              <i data-lucide="arrow-right" class="w-3 h-3"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="spotlight-card p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span
+                class="text-xs font-mono px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20 font-bold">ambrosia
+                cs2 web</span>
+              <span class="text-[10px] text-slate-300 font-mono">Win + Mobile Web</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">Ambrosia CS2 Web Radar</h3>
+            <p class="text-xs text-slate-300 mb-4">Triggerbot, RCS weapon recoil control, and shareable 2D tactical web
+              radar for mobile and secondary screens.</p>
+            <ul class="space-y-1.5 text-xs text-slate-300 mb-5">
+              <li class="flex items-center gap-2"><i data-lucide="check"
+                  class="w-3.5 h-3.5 text-purple-400 shrink-0"></i> <span>Triggerbot with Custom Delay and Key</span>
+              </li>
+              <li class="flex items-center gap-2"><i data-lucide="check"
+                  class="w-3.5 h-3.5 text-purple-400 shrink-0"></i> <span>RCS Recoil Control with Weapon Profiles</span>
+              </li>
+              <li class="flex items-center gap-2"><i data-lucide="check"
+                  class="w-3.5 h-3.5 text-purple-400 shrink-0"></i> <span>2D Tactical Web Radar</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check"
+                  class="w-3.5 h-3.5 text-purple-400 shrink-0"></i> <span>Shows Bomb Carrier, Defuse and Grenades</span>
+              </li>
+            </ul>
+          </div>
+          <div class="flex items-center gap-2 pt-3 border-t border-white/5">
+            <button onclick="openSpecsModal('ambrosia-cs2-web')"
+              class="w-1/2 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-300 hover:text-white transition-all text-center">
+              All Specs
+            </button>
+            <button onclick="openCheckoutModal('ambrosia-cs2-web', 'monthly')"
+              class="w-1/2 btn-glow-primary py-2 rounded-lg text-xs font-semibold text-white flex items-center justify-center gap-1">
+              <span>$15/mo</span>
+              <i data-lucide="arrow-right" class="w-3 h-3"></i>
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="spotlight-card p-6 flex flex-col justify-between opacity-75 border-dashed border-white/15 bg-black/40">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span
+                class="text-xs font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-white/10 font-bold">ambrosia
+                ow rbx</span>
+              <span class="text-[10px] text-amber-400 font-mono">â— Maintenance</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">Ambrosia OW RBX</h3>
+            <p class="text-xs text-slate-300 mb-4">Product is not available at the moment. Information and release date
+              will be published by the developer.</p>
+            <div class="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300 mb-4">
+              <span>Currently unpurchasable. Details will be announced in our Discord server once released.</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 pt-3 border-t border-white/5">
+            <button onclick="openSpecsModal('ambrosia-ow-rbx')"
+              class="w-full py-2 rounded-lg bg-white/5 border border-white/10 text-xs font-semibold text-slate-300 hover:text-white transition-all text-center">
+              Status Info
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <div class="section-glow glow-indigo"></div>
+
+  <section id="features" class="py-24 px-4 relative motion-reveal">
+    <div class="max-w-5xl mx-auto">
+
+      <div class="flex flex-col items-center text-center mb-16">
+        <div
+          class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-mono text-blue-400 mb-3">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          <span>Feature Highlights</span>
+        </div>
+        <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-4">
+          Engineered For <span class="text-gradient-cyan">Customization and Privacy</span>
+        </h2>
+        <p class="text-slate-300 max-w-xl text-sm sm:text-base">
+          Every client offers custom keybinds, full ESP styling, smoothing curves, and cloud config sharing.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+        <div class="spotlight-card md:col-span-2 p-6 sm:p-8 flex flex-col justify-between">
+          <div class="mb-6">
+            <div
+              class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-4 text-blue-400">
+              <i data-lucide="crosshair" class="w-5 h-5"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">Advanced Prediction and Smoothing Engine</h3>
+            <p class="text-slate-300 text-sm leading-relaxed">
+              Auto and manual projectile prediction calculations with gravity compensation. Features independent primary
+              and secondary aim and trigger slots, humanized smoothing curves, and distance based targeting.
+            </p>
+          </div>
+
+          <div
+            class="p-4 rounded-xl bg-black/50 border border-white/5 font-mono text-xs text-slate-300 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="flex items-center gap-2">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-blue-400"></i>
+              <span>Dual Aim Key Slots</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-blue-400"></i>
+              <span>Projectile Gravity Prediction</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-blue-400"></i>
+              <span>Humanized Curve Bounciness</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-blue-400"></i>
+              <span>Flickbot and Legit Timing Mode</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="spotlight-card p-6 sm:p-8 flex flex-col justify-between">
+          <div>
+            <div
+              class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-4 text-indigo-400">
+              <i data-lucide="eye-off" class="w-5 h-5"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">Streamproof Mode</h3>
+            <p class="text-slate-300 text-sm leading-relaxed mb-4">
+              All visual overlays and ESP elements are designed to be clean and bypass capture hooks in OBS and
+              recording software.
+            </p>
+          </div>
+          <div class="p-3 rounded-lg bg-indigo-950/30 border border-indigo-500/20 flex items-center gap-3">
+            <span class="w-2 h-2 rounded-full bg-indigo-400 pulse-dot"></span>
+            <span class="text-xs font-mono text-indigo-200">OBS and Record Proof Active</span>
+          </div>
+        </div>
+
+        <div class="spotlight-card p-6 sm:p-8 flex flex-col justify-between">
+          <div>
+            <div
+              class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-4 text-cyan-400">
+              <i data-lucide="share-2" class="w-5 h-5"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">Config Sharing and Keybinds</h3>
+            <p class="text-slate-300 text-sm leading-relaxed mb-4">
+              Save up to 10 unique configurations per client. Switch configs instantly with keybinds or share them
+              directly with friends.
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span
+              class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-[11px] font-mono text-slate-300">10
+              Config Slots</span>
+            <span
+              class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-[11px] font-mono text-slate-300">Remote
+              Share System</span>
+          </div>
+        </div>
+
+        <div class="spotlight-card md:col-span-2 p-6 sm:p-8 flex flex-col justify-between">
+          <div class="mb-6">
+            <div
+              class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-4 text-purple-400">
+              <i data-lucide="radar" class="w-5 h-5"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">CS2 Web Radar Multi Device Streaming</h3>
+            <p class="text-slate-300 text-sm leading-relaxed">
+              Open the tactical 2D radar on any web browser (iPhone, Android, tablet, secondary screen, or Linux).
+              Tracks player positions, team economy, health bars, defusing status, and active grenades (smoke and fire).
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-black/50 border border-white/5 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="flex items-center gap-2.5 p-2 rounded-lg bg-white/[0.02]">
+              <i data-lucide="smartphone" class="w-4 h-4 text-purple-400"></i>
+              <div>
+                <div class="text-[11px] text-slate-300">Web Radar</div>
+                <div class="text-xs font-semibold text-white">iOS and Android Ready</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2.5 p-2 rounded-lg bg-white/[0.02]">
+              <i data-lucide="shield-alert" class="w-4 h-4 text-amber-400"></i>
+              <div>
+                <div class="text-[11px] text-slate-300">Bomb and Defuse</div>
+                <div class="text-xs font-semibold text-white">Carrier and Defusing</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2.5 p-2 rounded-lg bg-white/[0.02]">
+              <i data-lucide="sliders" class="w-4 h-4 text-emerald-400"></i>
+              <div>
+                <div class="text-[11px] text-slate-300">Map Customization</div>
+                <div class="text-xs font-semibold text-white">Themes, Zoom and Grid</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <div class="section-glow glow-purple"></div>
+
+  <section id="pricing" class="py-24 px-4 relative motion-reveal">
+    <div class="max-w-5xl mx-auto">
+
+      <div class="flex flex-col items-center text-center mb-12">
+        <div
+          class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-mono text-emerald-400 mb-3">
+          <i data-lucide="tag" class="w-3.5 h-3.5"></i>
+          <span>Official Pricing Matrix</span>
+        </div>
+        <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-4">
+          Product Access and <span class="text-gradient-cyan">Pricing</span>
+        </h2>
+        <p class="text-slate-300 max-w-xl text-sm sm:text-base mb-8">
+          Direct checkout via Monero (XMR). Select your billing cycle below.
+        </p>
+
+        <div
+          class="relative p-1 rounded-full bg-slate-900/90 border border-white/10 flex items-center w-64 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+          <div id="billing-pill-slider"
+            class="absolute top-1 left-1 w-[calc(50%-4px)] h-[calc(100%-8px)] rounded-full bg-blue-600 transition-transform duration-300 ease-out shadow-[0_0_15px_rgba(59,130,246,0.6)]">
+          </div>
+          <button id="billing-weekly-btn"
+            class="relative z-10 w-1/2 py-1.5 text-xs font-semibold text-white transition-colors">
+            Weekly
+          </button>
+          <button id="billing-monthly-btn"
+            class="relative z-10 w-1/2 py-1.5 text-xs font-semibold text-slate-300 transition-colors flex items-center justify-center gap-1">
+            <span>Monthly</span>
+            <span class="px-1.5 py-0.2 rounded text-[9px] bg-emerald-500/20 text-emerald-300 font-mono">SAVE</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pricing-grid">
+
+        <div class="spotlight-card p-6 pricing-card">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span
+                class="text-xs font-mono px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold">OW
+                Lite</span>
+              <span class="text-[10px] text-slate-300 uppercase font-mono">Overwatch 2</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">Ambrosia OW Lite</h3>
+            <p class="text-xs text-slate-300 mb-4">Assistive aim, triggerbot, movement and visuals.</p>
+
+            <div class="mb-6">
+              <span id="price-ambrosia-ow-lite" class="price-val text-3xl font-extrabold text-white font-mono">$5</span>
+              <span id="cycle-ambrosia-ow-lite" class="text-xs text-slate-300 font-mono">/ week</span>
+            </div>
+
+            <ul class="space-y-2.5 text-xs text-slate-300 mb-6">
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-blue-400 shrink-0"></i>
+                <span>Aimbot, Triggerbot and Flickbot</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-blue-400 shrink-0"></i>
+                <span>Auto Bunnyhop and SnapTap</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-blue-400 shrink-0"></i>
+                <span>Streamproof and Record proof</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-blue-400 shrink-0"></i>
+                <span>10 Configs and Share System</span></li>
+            </ul>
+          </div>
+
+          <div class="space-y-2 pt-2 border-t border-white/5">
+            <button onclick="openCheckoutModal('ambrosia-ow-lite', currentBillingCycle)"
+              class="w-full btn-glow-secondary text-xs font-semibold text-white py-2.5 rounded-lg flex items-center justify-center gap-1.5 hover:border-blue-500/40">
+              <span>Purchase via XMR</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+            <button onclick="openSpecsModal('ambrosia-ow-lite')"
+              class="w-full py-1.5 rounded-lg text-slate-300 hover:text-white text-[11px] text-center hover:bg-white/5">
+              View Full Specs
+            </button>
+          </div>
+        </div>
+
+        <div class="spotlight-card p-6 pricing-card pricing-card-featured">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <span
+                  class="text-xs font-mono px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-bold">OW
+                  Pro</span>
+                <span class="featured-pill-badge">ADVANCED</span>
+              </div>
+              <span class="text-[10px] text-indigo-400 font-mono">Full Suite</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">Ambrosia OW Pro</h3>
+            <p class="text-xs text-slate-300 mb-4">Dual slots, action scripting and Ult Shower HUD.</p>
+
+            <div class="mb-6">
+              <span id="price-ambrosia-ow-pro" class="price-val text-3xl font-extrabold text-white font-mono">$20</span>
+              <span id="cycle-ambrosia-ow-pro" class="text-xs text-slate-300 font-mono">/ week</span>
+            </div>
+
+            <ul class="space-y-2.5 text-xs text-slate-300 mb-6">
+              <li class="flex items-center gap-2"><i data-lucide="check"
+                  class="w-3.5 h-3.5 text-indigo-400 shrink-0"></i> <span>Secondary Aim and Trigger Slots</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check"
+                  class="w-3.5 h-3.5 text-indigo-400 shrink-0"></i> <span>Hero Action Scripting (10 scripts)</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check"
+                  class="w-3.5 h-3.5 text-indigo-400 shrink-0"></i> <span>Ult Shower HUD and Cooldowns</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check"
+                  class="w-3.5 h-3.5 text-indigo-400 shrink-0"></i> <span>Player Outline and Skeleton ESP</span></li>
+            </ul>
+          </div>
+
+          <div class="space-y-2 pt-2 border-t border-white/5">
+            <button onclick="openCheckoutModal('ambrosia-ow-pro', currentBillingCycle)"
+              class="w-full btn-glow-primary text-xs font-semibold text-white py-2.5 rounded-lg flex items-center justify-center gap-1.5">
+              <span>Purchase via XMR</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+            <button onclick="openSpecsModal('ambrosia-ow-pro')"
+              class="w-full py-1.5 rounded-lg text-slate-300 hover:text-white text-[11px] text-center hover:bg-white/5">
+              View Full Specs
+            </button>
+          </div>
+        </div>
+
+        <div class="spotlight-card p-6 pricing-card">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span
+                class="text-xs font-mono px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20 font-bold">CS2
+                Radar</span>
+              <span class="text-[10px] text-slate-300 uppercase font-mono">Counter Strike 2</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">CS2 Web Radar</h3>
+            <p class="text-xs text-slate-300 mb-4">Triggerbot, RCS and browser based 2D radar.</p>
+
+            <div class="mb-6">
+              <span id="price-ambrosia-cs2-web" class="price-val text-3xl font-extrabold text-white font-mono">$5</span>
+              <span id="cycle-ambrosia-cs2-web" class="text-xs text-slate-300 font-mono">/ week</span>
+            </div>
+
+            <ul class="space-y-2.5 text-xs text-slate-300 mb-6">
+              <li class="flex items-center gap-2"><i data-lucide="check"
+                  class="w-3.5 h-3.5 text-purple-400 shrink-0"></i> <span>Custom Triggerbot and Key</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check"
+                  class="w-3.5 h-3.5 text-purple-400 shrink-0"></i> <span>RCS Recoil Control Profiles</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check"
+                  class="w-3.5 h-3.5 text-purple-400 shrink-0"></i> <span>2D Tactical Web Radar</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check"
+                  class="w-3.5 h-3.5 text-purple-400 shrink-0"></i> <span>Bomb Carrier, Defuse and Grenades</span></li>
+            </ul>
+          </div>
+
+          <div class="space-y-2 pt-2 border-t border-white/5">
+            <button onclick="openCheckoutModal('ambrosia-cs2-web', currentBillingCycle)"
+              class="w-full btn-glow-secondary text-xs font-semibold text-white py-2.5 rounded-lg flex items-center justify-center gap-1.5 hover:border-purple-500/40">
+              <span>Purchase via XMR</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+            <button onclick="openSpecsModal('ambrosia-cs2-web')"
+              class="w-full py-1.5 rounded-lg text-slate-300 hover:text-white text-[11px] text-center hover:bg-white/5">
+              View Full Specs
+            </button>
+          </div>
+        </div>
+
+        <div class="spotlight-card p-6 pricing-card">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span
+                class="text-xs font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold">FN
+                Client</span>
+              <span class="text-[10px] text-slate-300 uppercase font-mono">Fortnite</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-1">Ambrosia FN</h3>
+            <p class="text-xs text-slate-300 mb-4">Aimbot, visual ESP, loot distance and radar.</p>
+
+            <div class="mb-6">
+              <span id="price-ambrosia-fn" class="price-val text-3xl font-extrabold text-white font-mono">$20</span>
+              <span id="cycle-ambrosia-fn" class="text-xs text-slate-300 font-mono">/ week</span>
+            </div>
+
+            <ul class="space-y-2.5 text-xs text-slate-300 mb-6">
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-cyan-400 shrink-0"></i>
+                <span>Aimbot with Visible Check and FOV</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-cyan-400 shrink-0"></i>
+                <span>Box, Skeleton, China Hat and Rank ESP</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-cyan-400 shrink-0"></i>
+                <span>Loot ESP with Rarity and Distance</span></li>
+              <li class="flex items-center gap-2"><i data-lucide="check" class="w-3.5 h-3.5 text-cyan-400 shrink-0"></i>
+                <span>On Screen Customizable Radar</span></li>
+            </ul>
+          </div>
+
+          <div class="space-y-2 pt-2 border-t border-white/5">
+            <button onclick="openCheckoutModal('ambrosia-fn', currentBillingCycle)"
+              class="w-full btn-glow-secondary text-xs font-semibold text-white py-2.5 rounded-lg flex items-center justify-center gap-1.5 hover:border-cyan-500/40">
+              <span>Purchase via XMR</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+            <button onclick="openSpecsModal('ambrosia-fn')"
+              class="w-full py-1.5 rounded-lg text-slate-300 hover:text-white text-[11px] text-center hover:bg-white/5">
+              View Full Specs
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="mt-6 text-center text-xs text-slate-500 font-mono">
+        <span>* Lifetime access is <strong class="text-amber-400">[ Unavailable ]</strong> across all products.</span>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="section-glow glow-cyan"></div>
+
+  <section class="py-16 px-4 relative motion-reveal">
+    <div class="max-w-5xl mx-auto">
+      <div class="p-6 rounded-2xl bg-amber-950/20 border border-amber-500/30 backdrop-blur-md">
+        <div class="flex items-start gap-4">
+          <div
+            class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 text-amber-400">
+            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+          </div>
+          <div class="space-y-2 text-xs sm:text-sm text-slate-300">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              Performance and Temp Spoofer Notice
+            </h3>
+            <p class="leading-relaxed text-slate-300">
+              Using a temp spoofer and our products might or will lead to performance issues. Our products are heavily
+              virtualized and some temp spoofers can interfere with the performance.
+            </p>
+            <p class="leading-relaxed text-slate-300 text-xs">
+              Multiple tests on multiple computers revealed good performances even on bad ones. If you have performance
+              issues and you have a temp spoofer on, it is probably that.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-glow glow-rose"></div>
+
+  <section id="rules" class="py-24 px-4 relative motion-reveal">
+    <div class="max-w-5xl mx-auto">
+
+      <div class="flex flex-col items-center text-center mb-14">
+        <div
+          class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-xs font-mono text-rose-400 mb-3">
+          <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
+          <span>Community and Legal Standards</span>
+        </div>
+        <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-3">
+          Server Rules and <span class="text-gradient-cyan">Terms of Service</span>
+        </h2>
+        <p class="text-slate-300 max-w-2xl text-sm sm:text-base leading-relaxed">
+          Please note: Rules regarding behavior, drama, screenshots, and community conduct are strictly enforced on our
+          official Discord server. All purchasers must review and follow these terms.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+
+        <div class="spotlight-card p-5">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span
+              class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">Discord
+              Community Rule</span>
+          </div>
+          <div class="flex items-center gap-2 mb-2">
+            <i data-lucide="camera-off" class="w-4 h-4 text-rose-400 shrink-0"></i>
+            <h3 class="text-sm font-bold text-white">Security and Screenshots</h3>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed mb-3">
+            Do not take screenshots or record videos of yourself cheating on protected games. Exposing the software puts
+            everyone at risk.
+          </p>
+          <span
+            class="inline-block px-2 py-0.5 rounded text-[10px] font-mono bg-rose-500/10 text-rose-400 border border-rose-500/20">
+            Sanction: Permanent Ban + No Refund
+          </span>
+        </div>
+
+        <div class="spotlight-card p-5">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span
+              class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/15 text-blue-300 border border-blue-500/30">Product
+              Policy</span>
+          </div>
+          <div class="flex items-center gap-2 mb-2">
+            <i data-lucide="binary" class="w-4 h-4 text-rose-400 shrink-0"></i>
+            <h3 class="text-sm font-bold text-white">Reverse Engineering</h3>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed mb-3">
+            Any attempt to reverse engineer, crack, or decompile our software without explicit permission from the owner
+            is strictly forbidden. If you want to pentest, you must ask for permission first.
+          </p>
+          <span
+            class="inline-block px-2 py-0.5 rounded text-[10px] font-mono bg-rose-500/10 text-rose-400 border border-rose-500/20">
+            Sanction: Permanent Ban
+          </span>
+        </div>
+
+        <div class="spotlight-card p-5">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span
+              class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">Sales
+              Policy</span>
+          </div>
+          <div class="flex items-center gap-2 mb-2">
+            <i data-lucide="dollar-sign" class="w-4 h-4 text-amber-400 shrink-0"></i>
+            <h3 class="text-sm font-bold text-white">Sales and Refunds</h3>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed mb-3">
+            All sales are final. No refunds will be issued under any circumstances (game bans, server bans, or user
+            error).
+          </p>
+          <span
+            class="inline-block px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20">
+            Policy: All Sales Final
+          </span>
+        </div>
+
+        <div class="spotlight-card p-5">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span
+              class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">Discord
+              Community Rule</span>
+          </div>
+          <div class="flex items-center gap-2 mb-2">
+            <i data-lucide="message-square-off" class="w-4 h-4 text-slate-300 shrink-0"></i>
+            <h3 class="text-sm font-bold text-white">Conflicts and Drama</h3>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed mb-3">
+            Any mention of people or groups that the owner or staff have beef with is strictly prohibited on our Discord
+            server. We are not here to discuss drama.
+          </p>
+          <span
+            class="inline-block px-2 py-0.5 rounded text-[10px] font-mono bg-rose-500/10 text-rose-400 border border-rose-500/20">
+            Sanction: Permanent Ban + No Refund
+          </span>
+        </div>
+
+        <div class="spotlight-card p-5">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span
+              class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">Discord
+              Community Rule</span>
+          </div>
+          <div class="flex items-center gap-2 mb-2">
+            <i data-lucide="user-x" class="w-4 h-4 text-rose-400 shrink-0"></i>
+            <h3 class="text-sm font-bold text-white">Impersonation</h3>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed mb-3">
+            Impersonating anyone on Discord, especially Admins, Staff, or Owners, is strictly forbidden. Any attempt to
+            use similar nicknames, profile pictures, or fake accounts will result in an immediate permanent ban.</p>
+        </div>
+
+        <div class="spotlight-card p-5">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span
+              class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">Discord
+              Community Rule</span>
+          </div>
+          <div class="flex items-center gap-2 mb-2">
+            <i data-lucide="ban" class="w-4 h-4 text-rose-400 shrink-0"></i>
+            <h3 class="text-sm font-bold text-white">Zero Tolerance Toxicity</h3>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed mb-3">
+            We have zero tolerance for hate speech in our Discord. This includes racism, homophobia, sexism, xenophobia,
+            toxicity, harassment, death threats, and discussing politics or religion.</p>
+        </div>
+
+      </div>
+
+      <div class="text-center">
+        <button onclick="openRulesModal()"
+          class="btn-glow-secondary text-xs font-semibold text-slate-300 hover:text-white px-5 py-2.5 rounded-full inline-flex items-center gap-2">
+          <i data-lucide="file-text" class="w-3.5 h-3.5 text-blue-400"></i>
+          <span>View Complete Server Rules and Legal TOS</span>
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="section-glow glow-purple"></div>
+
+  <section id="faq" class="py-24 px-4 relative motion-reveal">
+    <div class="max-w-3xl mx-auto">
+
+      <div class="flex flex-col items-center text-center mb-12">
+        <div
+          class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-xs font-mono text-indigo-400 mb-3">
+          <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+          <span>Frequently Asked Questions</span>
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3">
+          Help and <span class="text-gradient-cyan">Reseller Guide</span>
+        </h2>
+        <p class="text-slate-300 text-sm">
+          Clear answers regarding keys, Monero payments, and product usage.
+        </p>
+      </div>
+
+      <div class="space-y-3">
+
+        <div class="faq-item spotlight-card rounded-xl border border-white/10 overflow-hidden">
+          <button
+            class="faq-trigger w-full px-6 py-4.5 text-left flex items-center justify-between text-sm font-semibold text-white hover:text-blue-400 transition-colors">
+            <span>How do I purchase and receive my key after paying with Monero (XMR)?</span>
+            <i data-lucide="chevron-down"
+              class="faq-icon w-4 h-4 text-slate-300 transition-transform duration-300 shrink-0"></i>
+          </button>
+          <div class="faq-content max-h-0 overflow-hidden transition-all duration-300 ease-out px-6">
+            <p class="text-xs sm:text-sm text-slate-300 pb-5 leading-relaxed border-t border-white/5 pt-3">
+              Including your Discord username is mandatory. You must send the XMR inside the private Discord ticket
+              channel when talking to staff, or submit your Transaction ID (TXID) in the checkout modal so we can verify
+              the payment and deliver your key.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item spotlight-card rounded-xl border border-white/10 overflow-hidden">
+          <button
+            class="faq-trigger w-full px-6 py-4.5 text-left flex items-center justify-between text-sm font-semibold text-white hover:text-blue-400 transition-colors">
+            <span>What operating systems and CPUs are supported?</span>
+            <i data-lucide="chevron-down"
+              class="faq-icon w-4 h-4 text-slate-300 transition-transform duration-300 shrink-0"></i>
+          </button>
+          <div class="faq-content max-h-0 overflow-hidden transition-all duration-300 ease-out px-6">
+            <p class="text-xs sm:text-sm text-slate-300 pb-5 leading-relaxed border-t border-white/5 pt-3">
+              Both Intel and AMD processors are supported across all products. Windows 10 and Windows 11 are supported
+              for OW Lite, OW Pro, and CS2 Web Radar. For Ambrosia FN, Windows 11 is recommended (it might work on some
+              Windows 10 systems although we do not recommend it). The CS2 Web Radar interface can be viewed on any
+              device (iOS, Android, Linux, secondary PC).
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item spotlight-card rounded-xl border border-white/10 overflow-hidden">
+          <button
+            class="faq-trigger w-full px-6 py-4.5 text-left flex items-center justify-between text-sm font-semibold text-white hover:text-blue-400 transition-colors">
+            <span>Can I use a temp spoofer with these products?</span>
+            <i data-lucide="chevron-down"
+              class="faq-icon w-4 h-4 text-slate-300 transition-transform duration-300 shrink-0"></i>
+          </button>
+          <div class="faq-content max-h-0 overflow-hidden transition-all duration-300 ease-out px-6">
+            <p class="text-xs sm:text-sm text-slate-300 pb-5 leading-relaxed border-t border-white/5 pt-3">
+              Using a temp spoofer with our products might or will lead to performance issues. The products are heavily
+              virtualized, and some temp spoofers interfere directly with performance. Multiple tests on computers
+              revealed good performances even on bad ones. If you have performance issues and you have a temp spoofer
+              on, it is probably that.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item spotlight-card rounded-xl border border-white/10 overflow-hidden">
+          <button
+            class="faq-trigger w-full px-6 py-4.5 text-left flex items-center justify-between text-sm font-semibold text-white hover:text-blue-400 transition-colors">
+            <span>What do I do if ESP disappears or is on the wrong team in OW Lite?</span>
+            <i data-lucide="chevron-down"
+              class="faq-icon w-4 h-4 text-slate-300 transition-transform duration-300 shrink-0"></i>
+          </button>
+          <div class="faq-content max-h-0 overflow-hidden transition-all duration-300 ease-out px-6">
+            <p class="text-xs sm:text-sm text-slate-300 pb-5 leading-relaxed border-t border-white/5 pt-3">
+              <strong>If ESP is on the wrong team:</strong> The entity retrieval method does not allow automatic
+              sorting. Press <code class="px-1.5 py-0.5 rounded bg-black/40 text-blue-300">F10</code> or navigate to
+              Visuals and press <em>Team Invert</em>.<br><br>
+              <strong>If you do not see ESP anymore:</strong> To prevent in game lag this is not automated. Navigate to
+              the <em>Misc</em> tab and press <em>Hard Reset ESP and Visuals</em>.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item spotlight-card rounded-xl border border-white/10 overflow-hidden">
+          <button
+            class="faq-trigger w-full px-6 py-4.5 text-left flex items-center justify-between text-sm font-semibold text-white hover:text-blue-400 transition-colors">
+            <span>How does the Config Sharing system work?</span>
+            <i data-lucide="chevron-down"
+              class="faq-icon w-4 h-4 text-slate-300 transition-transform duration-300 shrink-0"></i>
+          </button>
+          <div class="faq-content max-h-0 overflow-hidden transition-all duration-300 ease-out px-6">
+            <p class="text-xs sm:text-sm text-slate-300 pb-5 leading-relaxed border-t border-white/5 pt-3">
+              Each product supports saving up to 10 distinct configurations. You can assign keybinds to swap between
+              configs on the fly, or use the Config Sharing system to export and share your full setup with friends.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item spotlight-card rounded-xl border border-white/10 overflow-hidden">
+          <button
+            class="faq-trigger w-full px-6 py-4.5 text-left flex items-center justify-between text-sm font-semibold text-white hover:text-blue-400 transition-colors">
+            <span>Is Ambrosia OW RBX currently available for purchase?</span>
+            <i data-lucide="chevron-down"
+              class="faq-icon w-4 h-4 text-slate-300 transition-transform duration-300 shrink-0"></i>
+          </button>
+          <div class="faq-content max-h-0 overflow-hidden transition-all duration-300 ease-out px-6">
+            <p class="text-xs sm:text-sm text-slate-300 pb-5 leading-relaxed border-t border-white/5 pt-3">
+              No, Ambrosia OW RBX is not available at the moment. As a reseller, we will enable purchases and publish
+              complete details once the developer releases the build. Join our Discord for announcements.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <div class="section-glow glow-cyan"></div>
+
+  <section class="relative py-28 px-4 overflow-hidden motion-reveal">
+    <div class="light-cone-bottom"></div>
+    <div class="max-w-4xl mx-auto text-center relative z-10">
+      <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-5 leading-tight">
+        Get Access To <br><span class="text-gradient-cyan">Ambrosia Software Today</span>
+      </h2>
+      <p class="text-slate-300 text-sm sm:text-base max-w-xl mx-auto mb-9">
+        Purchase keys directly via Monero (XMR) or join our Discord community for support and order verification.
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <button onclick="openCheckoutModal('ambrosia-ow-pro', 'monthly')"
+          class="btn-glow-primary text-sm font-semibold text-white px-7 py-3.5 rounded-full flex items-center gap-2">
+          <span>Get Instant Access</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+        <a href="https://discord.gg/bT9dpnerP4" target="_blank"
+          class="btn-glow-discord text-sm font-medium text-white px-7 py-3.5 rounded-full flex items-center gap-2">
+          <i data-lucide="message-square" class="w-4 h-4"></i>
+          <span>Join Community Discord</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="border-t border-white/10 bg-[#050608] py-14 px-4 relative z-10 text-xs text-slate-300">
+    <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-8 mb-12">
+
+      <div class="md:col-span-2 space-y-4">
+        <div class="flex items-center gap-2.5">
+          <div
+            class="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-[0_0_10px_rgba(59,130,246,0.5)]">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-white"></i>
+          </div>
+          <span class="font-bold tracking-tight text-white text-base">ambrosia<span
+              class="text-blue-400">.ovh</span></span>
+        </div>
+        <p class="text-xs text-slate-300 max-w-sm leading-relaxed">
+          Official reseller website for Ambrosia gaming software: FN, OW Lite, OW Pro, and CS2 Web Radar.
+        </p>
+        <div class="flex items-center gap-2 text-[11px] font-mono text-emerald-400">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 pulse-dot"></span>
+          <span>Reseller Portal Active</span>
+        </div>
+      </div>
+
+      <div class="space-y-2.5">
+        <h4 class="text-xs font-semibold text-white uppercase tracking-wider">Products</h4>
+        <ul class="space-y-2 text-slate-300">
+          <li><button onclick="openSpecsModal('ambrosia-fn')" class="hover:text-white transition-colors">Ambrosia
+              FN</button></li>
+          <li><button onclick="openSpecsModal('ambrosia-ow-lite')" class="hover:text-white transition-colors">Ambrosia
+              OW Lite</button></li>
+          <li><button onclick="openSpecsModal('ambrosia-ow-pro')" class="hover:text-white transition-colors">Ambrosia OW
+              Pro</button></li>
+          <li><button onclick="openSpecsModal('ambrosia-cs2-web')" class="hover:text-white transition-colors">CS2 Web
+              Radar</button></li>
+          <li><button onclick="openSpecsModal('ambrosia-ow-rbx')"
+              class="text-slate-500 hover:text-slate-300 transition-colors">OW RBX (Unavailable)</button></li>
+        </ul>
+      </div>
+
+      <div class="space-y-2.5">
+        <h4 class="text-xs font-semibold text-white uppercase tracking-wider">Resources</h4>
+        <ul class="space-y-2 text-slate-300">
+          <li><a href="https://ambrosia.ovh" target="_blank" class="hover:text-white transition-colors">Dashboard
+              (ambrosia.ovh)</a></li>
+          <li><a href="#explorer" class="hover:text-white transition-colors">Product Overview</a></li>
+          <li><a href="#rules" class="hover:text-white transition-colors">Server Rules</a></li>
+          <li><a href="#faq" class="hover:text-white transition-colors">Reseller FAQ</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-2.5">
+        <h4 class="text-xs font-semibold text-white uppercase tracking-wider">Community</h4>
+        <ul class="space-y-2 text-slate-300">
+          <li><a href="https://discord.gg/bT9dpnerP4" target="_blank" class="hover:text-white transition-colors">Discord
+              Server</a></li>
+          <li><a href="https://t.me/AmbrosiaTG" target="_blank" class="hover:text-white transition-colors">Telegram
+              Channel</a></li>
+          <li><button onclick="openRulesModal()" class="hover:text-white transition-colors">Terms of Service</button>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div
+      class="max-w-5xl mx-auto pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500 font-mono">
+      <div>
+        Â© 2026 Ambrosia.ovh. All rights reserved.
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="https://ambrosia.ovh" class="text-slate-300 hover:text-white">ambrosia.ovh</a>
+        <span>â€¢</span>
+        <span class="text-blue-400">Monero (XMR) Native</span>
+      </div>
+    </div>
+  </footer>
+
+  <div id="specs-modal" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="specs-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-md"></div>
+    <div
+      class="modal-content relative w-full max-w-2xl rounded-2xl bg-[#0d0e14] border border-white/15 p-6 sm:p-7 shadow-[0_0_50px_rgba(59,130,246,0.25)] z-10 overflow-hidden max-h-[88vh] flex flex-col">
+
+      <button id="close-specs-btn"
+        class="absolute top-5 right-5 p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-colors">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="mb-4 pr-8">
+        <div class="flex items-center gap-2 mb-1">
+          <span id="specs-product-tag"
+            class="px-2.5 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-[11px] font-mono text-blue-400"></span>
+        </div>
+        <h3 id="specs-product-title" class="text-2xl font-bold text-white"></h3>
+      </div>
+
+      <div
+        class="p-3 rounded-xl bg-slate-900/80 border border-white/10 mb-4 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+        <div><span class="text-slate-300">OS Support:</span> <strong id="specs-product-os"
+            class="text-slate-200"></strong></div>
+        <div><span class="text-slate-300">Processor:</span> <strong id="specs-product-cpu"
+            class="text-slate-200"></strong></div>
+        <div class="sm:col-span-2 text-[11px] text-amber-400/90" id="specs-product-notes"></div>
+      </div>
+
+      <div id="specs-categories-container" class="space-y-3 overflow-y-auto pr-1 flex-1 mb-5"></div>
+
+      <div class="pt-2 border-t border-white/10">
+        <button id="specs-buy-btn"
+          class="w-full btn-glow-primary py-2.5 rounded-xl text-xs font-semibold text-white flex items-center justify-center gap-1.5">
+          <span>Purchase with Monero (XMR)</span>
+          <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="rules-modal" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="rules-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-md"></div>
+    <div
+      class="modal-content relative w-full max-w-2xl rounded-2xl bg-[#0d0e14] border border-white/15 p-6 sm:p-7 shadow-[0_0_50px_rgba(59,130,246,0.25)] z-10 overflow-hidden max-h-[88vh] flex flex-col">
+
+      <button id="close-rules-btn"
+        class="absolute top-5 right-5 p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-colors">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="mb-4 pr-8">
+        <div
+          class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-[11px] font-mono text-rose-400 mb-1">
+          <i data-lucide="shield" class="w-3.5 h-3.5"></i>
+          <span>Official Guidelines</span>
+        </div>
+        <h3 class="text-2xl font-bold text-white">Server Rules and Terms of Service</h3>
+        <p class="text-xs text-slate-300 mt-1">Specific guidelines below are actively enforced across our official
+          Discord community.</p>
+      </div>
+
+      <div class="space-y-4 overflow-y-auto pr-1 flex-1 text-xs text-slate-300 leading-relaxed mb-4">
+
+        <div class="p-3.5 rounded-xl bg-black/40 border border-white/5">
+          <div class="flex items-center justify-between mb-1.5">
+            <h4 class="font-bold text-white text-sm text-rose-300">1. SECURITY AND SCREENSHOTS</h4>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">Discord Community
+              Rule</span>
+          </div>
+          <p class="text-slate-300 mb-2">Do not take screenshots or record videos of yourself cheating on protected
+            games. Exposing the software puts everyone at risk.</p>
+          <span class="text-rose-400 font-mono font-semibold">Sanction: Permanent Ban + No Refund.</span>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-black/40 border border-white/5">
+          <div class="flex items-center justify-between mb-1.5">
+            <h4 class="font-bold text-white text-sm text-rose-300">2. REVERSE ENGINEERING</h4>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/20 text-blue-300">Product Policy</span>
+          </div>
+          <p class="text-slate-300 mb-2">Any attempt to reverse engineer, crack, or decompile our software without
+            explicit permission from the owner is strictly forbidden. If you want to pentest or reverse our software,
+            you must ask for permission first. Rewards and payments are only given to those with prior authorization.
+          </p>
+          <span class="text-rose-400 font-mono font-semibold">Doing this without permission results in an immediate
+            permanent ban. No unbans for this reason, ever.</span>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-black/40 border border-white/5">
+          <div class="flex items-center justify-between mb-1.5">
+            <h4 class="font-bold text-white text-sm text-slate-200">3. CONFLICTS AND DRAMA</h4>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">Discord Community
+              Rule</span>
+          </div>
+          <p class="text-slate-300 mb-2">Any mention of people or groups that the owner or staff have beef with is
+            strictly prohibited on our Discord server. We are not here to discuss drama.</p>
+          <span class="text-rose-400 font-mono font-semibold">Sanction: Permanent Ban + No Refund.</span>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-black/40 border border-white/5">
+          <div class="flex items-center justify-between mb-1.5">
+            <h4 class="font-bold text-white text-sm text-slate-200">4. IMPERSONATION</h4>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">Discord Community
+              Rule</span>
+          </div>
+          <p class="text-slate-300 mb-2">Impersonating anyone on Discord, especially Admins, Staff, or Owners, is
+            strictly forbidden. Any attempt to use similar nicknames, profile pictures, or fake accounts will result in
+            an immediate permanent ban.</p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-black/40 border border-white/5">
+          <div class="flex items-center justify-between mb-1.5">
+            <h4 class="font-bold text-white text-sm text-slate-200">5. DISCRIMINATION AND TOXICITY</h4>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">Discord Community
+              Rule</span>
+          </div>
+          <p class="text-slate-300 mb-2">We have zero tolerance for hate speech in our Discord. This includes racism,
+            homophobia, sexism, xenophobia, toxicity, harassment, death threats, and discussing politics or religion.
+          </p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-black/40 border border-white/5">
+          <div class="flex items-center justify-between mb-1.5">
+            <h4 class="font-bold text-white text-sm text-slate-200">6. STAFF DISCRETIONARY RIGHTS</h4>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-300">Server
+              Administration</span>
+          </div>
+          <p class="text-slate-300">The Owner and Admins reserve the right to ban any user at any time, for any reason,
+            even if the rules above have been followed. We maintain the right to choose who stays in our community.</p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-black/40 border border-white/5">
+          <div class="flex items-center justify-between mb-1.5">
+            <h4 class="font-bold text-white text-sm text-slate-200">7. BEHAVIOR AND RESPECT</h4>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">Discord Community
+              Rule</span>
+          </div>
+          <p class="text-slate-300">Respect towards the staff is mandatory. Any insults or toxic behavior toward the
+            team will result in an immediate ban.</p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-black/40 border border-white/5">
+          <div class="flex items-center justify-between mb-1.5">
+            <h4 class="font-bold text-white text-sm text-amber-300">8. SALES AND REFUNDS</h4>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">Sales Policy</span>
+          </div>
+          <p class="text-slate-300">All sales are final. No refunds will be issued under any circumstances (game bans,
+            server bans, or user error).</p>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-black/40 border border-white/5">
+          <div class="flex items-center justify-between mb-1.5">
+            <h4 class="font-bold text-white text-sm text-slate-200">9. ADVERTISING AND RESELLING</h4>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">Discord Community
+              Rule</span>
+          </div>
+          <p class="text-slate-300">Promoting other services, Discord links, or attempting to resell our products
+            without authorization is strictly forbidden.</p>
+        </div>
+
+      </div>
+
+      <div class="pt-2 border-t border-white/10">
+        <a href="https://discord.gg/bT9dpnerP4" target="_blank"
+          class="w-full btn-glow-discord py-2.5 rounded-xl text-xs font-semibold text-white flex items-center justify-center gap-2">
+          <i data-lucide="message-square" class="w-4 h-4"></i>
+          <span>Join Community Discord (discord.gg/bT9dpnerP4)</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="checkout-modal" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div id="modal-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-md"></div>
+
+    <div
+      class="modal-content relative w-full max-w-lg rounded-2xl bg-[#0d0e14] border border-white/15 p-6 sm:p-7 shadow-[0_0_50px_rgba(59,130,246,0.25)] z-10 overflow-hidden">
+
+      <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-72 h-36 bg-blue-500/20 blur-3xl pointer-events-none">
+      </div>
+
+      <button id="close-modal-btn"
+        class="absolute top-5 right-5 p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-colors">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="mb-5">
+        <div
+          class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-[11px] font-mono text-blue-400 mb-2">
+          <i data-lucide="wallet" class="w-3 h-3"></i>
+          <span>Direct Monero (XMR) Checkout</span>
+        </div>
+        <h3 id="modal-title" class="text-xl font-bold text-white">Purchase Client Access</h3>
+        <p class="text-xs text-slate-300">Zero KYC cryptocurrency payment with instant key delivery inside your private
+          Discord ticket.</p>
+      </div>
+
+      <div
+        class="grid grid-cols-3 gap-2 p-2 rounded-xl bg-black/50 border border-white/5 mb-5 text-center text-[10.5px]">
+        <div class="p-1 rounded bg-blue-600/20 border border-blue-500/30 text-blue-300 font-semibold">1. Select Tier
+        </div>
+        <div class="p-1 rounded bg-white/5 text-slate-300">2. Open Ticket</div>
+        <div class="p-1 rounded bg-white/5 text-slate-300">3. Receive Key</div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Select
+            Client</label>
+
+          <div class="custom-select-wrapper" id="modal-product-custom-select">
+            <div class="custom-select-trigger">
+              <span class="custom-select-label">Ambrosia OW Pro ($20/wk or $45/mo)</span>
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-300"></i>
+            </div>
+            <div class="custom-select-options">
+              <div class="custom-select-option" data-value="ambrosia-ow-lite"
+                data-label="Ambrosia OW Lite ($5/wk or $10/mo)">
+                <span>Ambrosia OW Lite</span>
+                <span class="font-mono text-[10px] text-blue-400">$5 / $10</span>
+              </div>
+              <div class="custom-select-option selected" data-value="ambrosia-ow-pro"
+                data-label="Ambrosia OW Pro ($20/wk or $45/mo)">
+                <span>Ambrosia OW Pro</span>
+                <span class="font-mono text-[10px] text-indigo-400">$20 / $45</span>
+              </div>
+              <div class="custom-select-option" data-value="ambrosia-cs2-web"
+                data-label="Ambrosia CS2 Web Radar ($5/wk or $15/mo)">
+                <span>Ambrosia CS2 Web Radar</span>
+                <span class="font-mono text-[10px] text-purple-400">$5 / $15</span>
+              </div>
+              <div class="custom-select-option" data-value="ambrosia-fn" data-label="Ambrosia FN ($20/wk or $45/mo)">
+                <span>Ambrosia FN</span>
+                <span class="font-mono text-[10px] text-cyan-400">$20 / $45</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Duration</label>
+          <div class="grid grid-cols-2 gap-1.5 p-1 rounded-lg bg-slate-900 border border-white/10 text-xs">
+            <label class="flex items-center justify-center gap-1.5 py-1.5 rounded cursor-pointer hover:bg-white/5">
+              <input type="radio" name="modal-cycle" value="weekly" class="accent-blue-500">
+              <span class="text-slate-300">Weekly</span>
+            </label>
+            <label class="flex items-center justify-center gap-1.5 py-1.5 rounded cursor-pointer hover:bg-white/5">
+              <input type="radio" name="modal-cycle" value="monthly" checked class="accent-blue-500">
+              <span class="text-slate-300">Monthly</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-3.5 rounded-xl bg-black/50 border border-white/10 flex items-center justify-between mb-4">
+        <div>
+          <div class="text-[11px] text-slate-300">Total Price</div>
+          <div id="modal-usd-price" class="price-val text-xl font-bold font-mono text-white">$45.00 USD</div>
+        </div>
+        <div class="text-right">
+          <div class="text-[11px] text-slate-300">Est. Monero Amount</div>
+          <div id="modal-xmr-amount" class="text-base font-bold font-mono text-cyan-400">~ 0.26706 XMR</div>
+        </div>
+      </div>
+
+      <div
+        class="flex flex-col sm:flex-row items-center gap-4 p-4 rounded-xl bg-slate-900/60 border border-white/10 mb-4">
+        <div class="w-[140px] h-[140px] shrink-0 bg-white rounded-lg p-1.5 flex items-center justify-center shadow-md"
+          id="modal-qr-code"></div>
+
+        <div class="flex-1 w-full overflow-hidden">
+          <div class="text-[11px] text-slate-300 mb-1 flex items-center justify-between">
+            <span>Send XMR to Verified Address:</span>
+            <span class="text-[10px] font-mono text-emerald-400">Official Wallet</span>
+          </div>
+          <div id="modal-xmr-address"
+            class="p-2 rounded bg-black/80 border border-white/5 font-mono text-[10.5px] text-slate-300 break-all leading-tight mb-2 select-all max-h-20 overflow-y-auto">
+            4BE8WBPizoyfveG6Sbtd66V184WktCEoq8EQ2d3ayxKLQxhRiFB4shQDHSVU8f188diVst9thbTtWh4KmrGKZXwwRm6fvyL
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="copy-xmr-btn"
+              class="w-1/2 py-1.5 px-3 rounded-lg bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 hover:text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-all">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+              <span>Copy XMR</span>
+            </button>
+            <button id="copy-ticket-info-btn"
+              class="w-1/2 py-1.5 px-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-all">
+              <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+              <span>Copy Ticket</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-2 mb-5">
+        <div class="flex items-center justify-between">
+          <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider">
+            Discord Username <span class="text-rose-400">* MANDATORY</span>
+          </label>
+          <span class="text-[10px] text-slate-500 font-mono" title="The @ will be added automatically">e.g.
+            username</span>
+        </div>
+        <small class="text-[9px] text-slate-400 block mt-1">Discord must be in @username format (e.g. @User#1234). We do NOT accept user#0000 format. Type only the username part without @ - the @ will be added automatically.</small>
+        <input type="text" id="modal-discord-input" required placeholder="Username#1234"
+          class="w-full bg-slate-900 border border-blue-500/40 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.15)]"
+          oninput="this.value=this.value.replace(/@/g,'')">
+
+        <input type="text" id="modal-txid-input" placeholder="Transaction ID (TXID) or type 'Paying in ticket'"
+          class="w-full bg-slate-900 border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500">
+
+        <p class="text-[10.5px] text-amber-400/90 leading-tight">
+          * You must send your XMR when you are in the private Discord ticket channel with staff.
+        </p>
+      </div>
+
+      <button id="submit-tx-btn"
+        class="w-full btn-glow-primary py-3 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-2">
+        <i data-lucide="message-square" class="w-4 h-4"></i>
+        <span>Create Discord Ticket and Complete Purchase</span>
+      </button>
+
+    </div>
+  </div>
+
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <script src="app.js"></script>
+
+  <script src="aidesigner-runtime.js" defer></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const sheet = document.createElement('style')
+      sheet.textContent = 'a[href*="aidesigner.ai"][target="_blank"] { display: none !important }'
+      document.head.appendChild(sheet)
+    })
+  </script>
+</body>
+
+</html>
