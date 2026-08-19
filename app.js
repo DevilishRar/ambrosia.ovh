@@ -1,4 +1,4 @@
-
+﻿
 const ENCODED_DISCORD_WEBHOOK = 'aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTUzOTQwNTE0NjAwNDUyOTE5My82UENXVFlsaUJ3M29oSkE1R0NBU01faTNGdTBldU00bjluVS1NcWM3VllxOEdELTh5Nk5ZYll3U3lHQ00zNDJoNHY4RQ==';
 
 const XMR_RATE_USD = 168.51;
@@ -902,7 +902,58 @@ function initCheckoutModal() {
 
   const submitTxBtn = document.getElementById('submit-tx-btn');
   if (submitTxBtn) {
-    submitTxBtn.addEventListener('click', handleOrderSubmission);
+    submitTxBtn.addEventListener('click', () => {
+      const discordInput = document.getElementById('modal-discord-input');
+      const discordTag = discordInput ? discordInput.value.trim() : '';
+      if (!discordTag) {
+        showToast('Including your Discord username is MANDATORY!', 'error');
+        if (discordInput) discordInput.focus();
+        return;
+      }
+
+      const product = PRODUCTS[selectedCheckoutProduct] || PRODUCTS['ambrosia-ow-pro'];
+      const price = selectedCheckoutCycle === 'weekly' ? product.weeklyPrice : product.monthlyPrice;
+      const xmrAmount = (price / XMR_RATE_USD).toFixed(5);
+      const discordIdInput = document.getElementById('modal-discord-id-input');
+      const discordUserId = discordIdInput ? discordIdInput.value.trim() : '';
+
+      document.getElementById('confirm-product').textContent = product.name;
+      document.getElementById('confirm-duration').textContent = selectedCheckoutCycle.toUpperCase();
+      document.getElementById('confirm-price').textContent = `$${price} USD (~${xmrAmount} XMR)`;
+      document.getElementById('confirm-discord').textContent = discordTag.startsWith('@') ? discordTag : '@' + discordTag;
+
+      const idRow = document.getElementById('confirm-id-row');
+      if (discordUserId) {
+        idRow.style.display = 'flex';
+        document.getElementById('confirm-discord-id').textContent = discordUserId;
+      } else {
+        idRow.style.display = 'none';
+      }
+
+      document.getElementById('confirm-modal').style.display = 'flex';
+    });
+  }
+
+  const confirmSubmitBtn = document.getElementById('confirm-submit-btn');
+  if (confirmSubmitBtn) {
+    confirmSubmitBtn.addEventListener('click', () => {
+      document.getElementById('confirm-modal').style.display = 'none';
+      handleOrderSubmission();
+    });
+  }
+
+  const confirmCancelBtn = document.getElementById('confirm-cancel-btn');
+  if (confirmCancelBtn) {
+    confirmCancelBtn.addEventListener('click', () => {
+      document.getElementById('confirm-modal').style.display = 'none';
+    });
+  }
+
+  const confirmBackdrop = document.getElementById('confirm-modal-backdrop');
+  if (confirmBackdrop) {
+    confirmBackdrop.addEventListener('click', () => {
+      document.getElementById('confirm-modal').style.display = 'none';
+    });
   }
 }
 
@@ -957,8 +1008,10 @@ function renderCheckoutDetails() {
 
 async function handleOrderSubmission() {
   const discordInput = document.getElementById('modal-discord-input');
+  const discordIdInput = document.getElementById('modal-discord-id-input');
   const txInput = document.getElementById('modal-txid-input');
   let discordTag = discordInput ? discordInput.value.trim() : '';
+  const discordUserId = discordIdInput ? discordIdInput.value.trim() : '';
   const txHash = txInput ? txInput.value.trim() : 'Payment in Discord Ticket';
 
   if (!discordTag) {
@@ -977,27 +1030,125 @@ async function handleOrderSubmission() {
     discordTag = '@' + discordTag;
   }
 
+  const now = new Date();
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const localTime = now.toLocaleString('en-US', {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: timezone
+  });
+
+  const mentionText = discordUserId ? ('<@' + discordUserId + '>') : ('**' + discordTag + '**');
+
+  const customerField = discordUserId
+    ? ('<@' + discordUserId + '>\n(' + discordTag + ')')
+    : (discordTag + '\nNo User ID provided - ping unavailable');
+
+  const DIVIDER = '\u200b';
+  const LINE = '-----------------------------';
+
   const webhookPayload = {
-    username: "Ambrosia Order Bot",
-    avatar_url: "https://ambrosia.ovh/favicon.ico",
-    content: `🔔 **New Purchase Intent / Ticket Created** for ${discordTag}!`,
+    username: 'Ambrosia Order Bot',
+    avatar_url: 'https://ambrosia.ovh/favicon.ico',
+    content: mentionText + ' - **New Order Ticket Created!**',
     embeds: [
       {
-        title: `🎫 Order Ticket #${ticketRef}`,
-        color: 0x3b82f6,
-        description: `Customer is ready to purchase in ticket or has submitted payment.`,
+        title: 'NEW ORDER - #' + ticketRef,
+        color: 0x2563eb,
+        description: '> A new customer is ready to purchase. Review the details below and **create a private ticket channel**.\n\n' + LINE,
         fields: [
-          { name: "Customer Discord", value: `\`${discordTag}\``, inline: true },
-          { name: "Product", value: `**${product.name}**`, inline: true },
-          { name: "Duration", value: `${selectedCheckoutCycle.toUpperCase()}`, inline: true },
-          { name: "Price", value: `$${price} USD (~${xmrAmount} XMR)`, inline: true },
-          { name: "TXID / Status", value: `\`${txHash}\``, inline: false },
-          { name: "Payment Address", value: `\`${address}\``, inline: false }
+          {
+            name: 'Customer',
+            value: customerField,
+            inline: true
+          },
+          {
+            name: 'Product',
+            value: '**' + product.name + '**',
+            inline: true
+          },
+          {
+            name: 'Duration',
+            value: selectedCheckoutCycle.toUpperCase(),
+            inline: true
+          },
+          {
+            name: DIVIDER,
+            value: LINE,
+            inline: false
+          },
+          {
+            name: 'Price (USD)',
+            value: '$' + price + ' USD',
+            inline: true
+          },
+          {
+            name: 'Price (XMR)',
+            value: '~' + xmrAmount + ' XMR',
+            inline: true
+          },
+          {
+            name: 'TXID / Status',
+            value: txHash,
+            inline: true
+          },
+          {
+            name: DIVIDER,
+            value: LINE,
+            inline: false
+          },
+          {
+            name: 'Monero (XMR) Payment Address',
+            value: address,
+            inline: false
+          },
+          {
+            name: 'Order Placed',
+            value: localTime + ' (' + timezone + ')',
+            inline: false
+          },
+          {
+            name: DIVIDER,
+            value: LINE,
+            inline: false
+          },
+          {
+            name: 'Staff Checklist',
+            value: '1. Create private ticket channel\n2. Add customer + staff role permissions\n3. Welcome customer in ticket\n4. Verify XMR payment on-chain\n5. Deliver license key\n6. Assign Verified Customer role\n7. Close ticket',
+            inline: false
+          }
         ],
-        footer: {
-          text: "Ambrosia.ovh Reseller System • Send XMR inside the private Discord ticket"
+        image: {
+          url: 'https://ambrosia.ovh/favicon.ico'
         },
-        timestamp: new Date().toISOString()
+        footer: {
+          text: 'Ambrosia.ovh Reseller System | Ticket #' + ticketRef
+        },
+        timestamp: now.toISOString()
+      }
+    ],
+    components: [
+      {
+        type: 1,
+        components: [
+          {
+            type: 2,
+            label: 'Open Discord Server',
+            style: 5,
+            url: 'https://discord.gg/bT9dpnerP4'
+          },
+          {
+            type: 2,
+            label: 'How To Buy Guide',
+            style: 5,
+            url: 'https://discord.gg/bT9dpnerP4'
+          }
+        ]
       }
     ]
   };

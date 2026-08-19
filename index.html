@@ -1517,6 +1517,17 @@
           class="w-full bg-slate-900 border border-blue-500/40 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.15)]"
           oninput="this.value=this.value.replace(/@/g,'')">
 
+        <div class="flex items-center justify-between">
+          <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider">
+            Discord User ID <span class="text-emerald-400">OPTIONAL</span>
+          </label>
+          <span class="text-[10px] text-slate-500 font-mono">Enables real @mention</span>
+        </div>
+        <small class="text-[9px] text-slate-400 block mt-1">Enables staff to ping you in the ticket. Go to Discord → Settings → Advanced → Enable Developer Mode → Right-click your profile → Copy User ID.</small>
+        <input type="text" id="modal-discord-id-input" placeholder="e.g. 819283746500000000"
+          class="w-full bg-slate-900 border border-emerald-500/25 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
+          oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+
         <input type="text" id="modal-txid-input" placeholder="Transaction ID (TXID) or type 'Paying in ticket'"
           class="w-full bg-slate-900 border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500">
 
@@ -1531,6 +1542,60 @@
         <span>Create Discord Ticket and Complete Purchase</span>
       </button>
 
+    </div>
+  </div>
+
+  <div id="confirm-modal" class="modal-overlay fixed inset-0 z-[60] flex items-center justify-center p-4" style="display:none;">
+    <div id="confirm-modal-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-md"></div>
+    <div class="confirm-modal-content relative w-full max-w-md rounded-2xl bg-[#0d0e14] border border-amber-500/30 p-6 shadow-[0_0_50px_rgba(245,158,11,0.2)] z-10">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center">
+          <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-400"></i>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold text-white">Are You Sure?</h3>
+          <p class="text-xs text-slate-400">Please confirm your order details below.</p>
+        </div>
+      </div>
+
+      <div class="rounded-xl bg-black/40 border border-white/10 p-4 mb-5 space-y-2">
+        <div class="flex justify-between text-xs">
+          <span class="text-slate-400">Product</span>
+          <span id="confirm-product" class="text-white font-semibold">--</span>
+        </div>
+        <div class="flex justify-between text-xs">
+          <span class="text-slate-400">Duration</span>
+          <span id="confirm-duration" class="text-white font-semibold">--</span>
+        </div>
+        <div class="flex justify-between text-xs">
+          <span class="text-slate-400">Price</span>
+          <span id="confirm-price" class="text-white font-semibold">--</span>
+        </div>
+        <div class="flex justify-between text-xs">
+          <span class="text-slate-400">Discord</span>
+          <span id="confirm-discord" class="text-blue-400 font-semibold">--</span>
+        </div>
+        <div id="confirm-id-row" class="flex justify-between text-xs" style="display:none;">
+          <span class="text-slate-400">User ID (for @mention)</span>
+          <span id="confirm-discord-id" class="text-emerald-400 font-mono font-semibold">--</span>
+        </div>
+      </div>
+
+      <p class="text-[10.5px] text-amber-400/90 leading-tight mb-5">
+        * You will be redirected to Discord to complete your purchase inside the private ticket channel.
+      </p>
+
+      <div class="grid grid-cols-2 gap-3">
+        <button id="confirm-cancel-btn"
+          class="py-2.5 rounded-xl text-xs font-bold text-slate-300 bg-white/5 border border-white/10 hover:bg-white/10 transition-all">
+          Go Back
+        </button>
+        <button id="confirm-submit-btn"
+          class="btn-glow-primary py-2.5 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-2">
+          <i data-lucide="check" class="w-4 h-4"></i>
+          <span>Yes, Create Ticket</span>
+        </button>
+      </div>
     </div>
   </div>
 
