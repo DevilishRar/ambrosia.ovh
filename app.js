@@ -1124,23 +1124,30 @@ async function handleOrderSubmission() {
   };
 
   if (DISCORD_WEBHOOK_URL) {
+    console.log('[Ambrosia] Sending webhook payload:', JSON.stringify(webhookPayload, null, 2));
+    console.log('[Ambrosia] Webhook URL starts with:', DISCORD_WEBHOOK_URL.substring(0, 40) + '...');
     try {
       const resp = await fetch(DISCORD_WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(webhookPayload)
       });
+      console.log('[Ambrosia] Webhook response status:', resp.status, resp.statusText);
       if (!resp.ok) {
         const errBody = await resp.text();
-        console.error('Webhook error ' + resp.status + ': ' + errBody);
+        console.error('[Ambrosia] Webhook error ' + resp.status + ': ' + errBody);
         showToast('Webhook failed (' + resp.status + '). Check console.', 'error');
         return;
+      } else {
+        console.log('[Ambrosia] Webhook sent successfully!');
       }
     } catch (e) {
-      console.error('Webhook fetch failed:', e);
+      console.error('[Ambrosia] Webhook fetch failed:', e);
       showToast('Webhook request failed. Check console.', 'error');
       return;
     }
+  } else {
+    console.error('[Ambrosia] DISCORD_WEBHOOK_URL is empty! Decoding may have failed.');
   }
 
   showToast(`Ticket #${ticketRef} created! Redirecting to Discord...`, 'success');
