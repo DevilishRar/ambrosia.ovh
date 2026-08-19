@@ -1049,9 +1049,6 @@ async function handleOrderSubmission() {
     ? ('<@' + discordUserId + '>\n(' + discordTag + ')')
     : (discordTag + '\nNo User ID provided - ping unavailable');
 
-  const DIVIDER = '\u200b';
-  const LINE = '-----------------------------';
-
   const webhookPayload = {
     username: 'Ambrosia Order Bot',
     avatar_url: 'https://ambrosia.ovh/favicon.ico',
@@ -1060,7 +1057,7 @@ async function handleOrderSubmission() {
       {
         title: 'NEW ORDER - #' + ticketRef,
         color: 0x2563eb,
-        description: '> A new customer is ready to purchase. Review the details below and **create a private ticket channel**.\n\n' + LINE,
+        description: '> A new customer is ready to purchase. Review the details below and **create a private ticket channel**.',
         fields: [
           {
             name: 'Customer',
@@ -1078,11 +1075,6 @@ async function handleOrderSubmission() {
             inline: true
           },
           {
-            name: DIVIDER,
-            value: LINE,
-            inline: false
-          },
-          {
             name: 'Price (USD)',
             value: '$' + price + ' USD',
             inline: true
@@ -1098,8 +1090,8 @@ async function handleOrderSubmission() {
             inline: true
           },
           {
-            name: DIVIDER,
-            value: LINE,
+            name: '\u200b',
+            value: '\u200b',
             inline: false
           },
           {
@@ -1113,8 +1105,8 @@ async function handleOrderSubmission() {
             inline: false
           },
           {
-            name: DIVIDER,
-            value: LINE,
+            name: '\u200b',
+            value: '\u200b',
             inline: false
           },
           {
@@ -1123,45 +1115,31 @@ async function handleOrderSubmission() {
             inline: false
           }
         ],
-        image: {
-          url: 'https://ambrosia.ovh/favicon.ico'
-        },
         footer: {
           text: 'Ambrosia.ovh Reseller System | Ticket #' + ticketRef
         },
         timestamp: now.toISOString()
-      }
-    ],
-    components: [
-      {
-        type: 1,
-        components: [
-          {
-            type: 2,
-            label: 'Open Discord Server',
-            style: 5,
-            url: 'https://discord.gg/bT9dpnerP4'
-          },
-          {
-            type: 2,
-            label: 'How To Buy Guide',
-            style: 5,
-            url: 'https://discord.gg/bT9dpnerP4'
-          }
-        ]
       }
     ]
   };
 
   if (DISCORD_WEBHOOK_URL) {
     try {
-      await fetch(DISCORD_WEBHOOK_URL, {
+      const resp = await fetch(DISCORD_WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(webhookPayload)
       });
+      if (!resp.ok) {
+        const errBody = await resp.text();
+        console.error('Webhook error ' + resp.status + ': ' + errBody);
+        showToast('Webhook failed (' + resp.status + '). Check console.', 'error');
+        return;
+      }
     } catch (e) {
-      console.log('Webhook dispatched.');
+      console.error('Webhook fetch failed:', e);
+      showToast('Webhook request failed. Check console.', 'error');
+      return;
     }
   }
 
