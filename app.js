@@ -1120,6 +1120,20 @@ async function handleOrderSubmission() {
         },
         timestamp: now.toISOString()
       }
+    ],
+    components: [
+      {
+        type: 1,
+        components: [
+          {
+            type: 2,
+            custom_id: 'create_ticket',
+            label: 'Create Ticket',
+            style: 1,
+            emoji: { name: '\uD83C\uDFAB' }
+          }
+        ]
+      }
     ]
   };
 

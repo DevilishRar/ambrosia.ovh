@@ -1,0 +1,8 @@
+{
+  "name": "ambrosia-website",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "tweetnacl": "^1.0.3"
+  }
+}
