@@ -133,14 +133,15 @@ module.exports = async function handler(req, res) {
       const guild = await guildRes.json();
 
       const permissionOverwrites = [
-        { id: guild.id, type: 0, deny: '1024' }
+        { id: guild.id, type: 0, allow: '0', deny: '1024' }
       ];
 
       if (STAFF_ROLE_ID) {
         permissionOverwrites.push({
           id: STAFF_ROLE_ID,
           type: 0,
-          allow: '1024|2048|16384|4096'
+          allow: '23552',
+          deny: '0'
         });
       }
 
@@ -148,7 +149,8 @@ module.exports = async function handler(req, res) {
         permissionOverwrites.push({
           id: customerId,
           type: 1,
-          allow: '1024|2048|16384|4096'
+          allow: '23552',
+          deny: '0'
         });
       }
 
