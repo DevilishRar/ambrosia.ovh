@@ -1043,125 +1043,41 @@ async function handleOrderSubmission() {
     timeZone: timezone
   });
 
-  const mentionText = discordUserId ? ('<@' + discordUserId + '>') : ('**' + discordTag + '**');
-
-  const customerField = discordUserId
-    ? ('<@' + discordUserId + '>\n(' + discordTag + ')')
-    : (discordTag + '\nNo User ID provided - ping unavailable');
-
-  const webhookPayload = {
-    username: 'Ambrosia Order Bot',
-    avatar_url: 'https://ambrosia.ovh/favicon.ico',
-    content: mentionText + ' - **New Order Ticket Created!**',
-    embeds: [
-      {
-        title: 'NEW ORDER - #' + ticketRef,
-        color: 0x2563eb,
-        description: '> A new customer is ready to purchase. Review the details below and **create a private ticket channel**.',
-        fields: [
-          {
-            name: 'Customer',
-            value: customerField,
-            inline: true
-          },
-          {
-            name: 'Product',
-            value: '**' + product.name + '**',
-            inline: true
-          },
-          {
-            name: 'Duration',
-            value: selectedCheckoutCycle.toUpperCase(),
-            inline: true
-          },
-          {
-            name: 'Price (USD)',
-            value: '$' + price + ' USD',
-            inline: true
-          },
-          {
-            name: 'Price (XMR)',
-            value: '~' + xmrAmount + ' XMR',
-            inline: true
-          },
-          {
-            name: 'TXID / Status',
-            value: txHash,
-            inline: true
-          },
-          {
-            name: '\u200b',
-            value: '\u200b',
-            inline: false
-          },
-          {
-            name: 'Monero (XMR) Payment Address',
-            value: address,
-            inline: false
-          },
-          {
-            name: 'Order Placed',
-            value: localTime + ' (' + timezone + ')',
-            inline: false
-          },
-          {
-            name: '\u200b',
-            value: '\u200b',
-            inline: false
-          },
-          {
-            name: 'Staff Checklist',
-            value: '1. Create private ticket channel\n2. Add customer + staff role permissions\n3. Welcome customer in ticket\n4. Verify XMR payment on-chain\n5. Deliver license key\n6. Assign Verified Customer role\n7. Close ticket',
-            inline: false
-          }
-        ],
-        footer: {
-          text: 'Ambrosia.ovh Reseller System | Ticket #' + ticketRef
-        },
-        timestamp: now.toISOString()
-      }
-    ],
-    components: [
-      {
-        type: 1,
-        components: [
-          {
-            type: 2,
-            custom_id: 'create_ticket',
-            label: 'Create Ticket',
-            style: 1,
-            emoji: { name: '\uD83C\uDFAB' }
-          }
-        ]
-      }
-    ]
+  const orderPayload = {
+    discordTag: discordTag,
+    discordUserId: discordUserId,
+    product: product.name,
+    duration: selectedCheckoutCycle.toUpperCase(),
+    price: price,
+    xmrAmount: xmrAmount,
+    address: address,
+    txHash: txHash,
+    ticketRef: ticketRef,
+    timezone: timezone,
+    localTime: localTime
   };
 
-  if (DISCORD_WEBHOOK_URL) {
-    console.log('[Ambrosia] Sending webhook payload:', JSON.stringify(webhookPayload, null, 2));
-    console.log('[Ambrosia] Webhook URL starts with:', DISCORD_WEBHOOK_URL.substring(0, 40) + '...');
-    try {
-      const resp = await fetch(DISCORD_WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(webhookPayload)
-      });
-      console.log('[Ambrosia] Webhook response status:', resp.status, resp.statusText);
-      if (!resp.ok) {
-        const errBody = await resp.text();
-        console.error('[Ambrosia] Webhook error ' + resp.status + ': ' + errBody);
-        showToast('Webhook failed (' + resp.status + '). Check console.', 'error');
-        return;
-      } else {
-        console.log('[Ambrosia] Webhook sent successfully!');
-      }
-    } catch (e) {
-      console.error('[Ambrosia] Webhook fetch failed:', e);
-      showToast('Webhook request failed. Check console.', 'error');
+  console.log('[Ambrosia] Sending order to serverless function:', JSON.stringify(orderPayload, null, 2));
+
+  try {
+    const resp = await fetch('/api/order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderPayload)
+    });
+
+    if (!resp.ok) {
+      const errBody = await resp.text();
+      console.error('[Ambrosia] Order API error ' + resp.status + ': ' + errBody);
+      showToast('Failed to send order (' + resp.status + '). Check console.', 'error');
       return;
     }
-  } else {
-    console.error('[Ambrosia] DISCORD_WEBHOOK_URL is empty! Decoding may have failed.');
+
+    console.log('[Ambrosia] Order sent successfully!');
+  } catch (e) {
+    console.error('[Ambrosia] Order API fetch failed:', e);
+    showToast('Order request failed. Check console.', 'error');
+    return;
   }
 
   showToast(`Ticket #${ticketRef} created! Redirecting to Discord...`, 'success');
