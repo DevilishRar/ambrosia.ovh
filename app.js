@@ -930,14 +930,14 @@ function initCheckoutModal() {
         idRow.style.display = 'none';
       }
 
-      document.getElementById('confirm-modal').style.display = 'flex';
+      document.getElementById('confirm-modal').classList.add('active');
     });
   }
 
   const confirmSubmitBtn = document.getElementById('confirm-submit-btn');
   if (confirmSubmitBtn) {
     confirmSubmitBtn.addEventListener('click', () => {
-      document.getElementById('confirm-modal').style.display = 'none';
+      document.getElementById('confirm-modal').classList.remove('active');
       handleOrderSubmission();
     });
   }
@@ -945,14 +945,14 @@ function initCheckoutModal() {
   const confirmCancelBtn = document.getElementById('confirm-cancel-btn');
   if (confirmCancelBtn) {
     confirmCancelBtn.addEventListener('click', () => {
-      document.getElementById('confirm-modal').style.display = 'none';
+      document.getElementById('confirm-modal').classList.remove('active');
     });
   }
 
   const confirmBackdrop = document.getElementById('confirm-modal-backdrop');
   if (confirmBackdrop) {
     confirmBackdrop.addEventListener('click', () => {
-      document.getElementById('confirm-modal').style.display = 'none';
+      document.getElementById('confirm-modal').classList.remove('active');
     });
   }
 }
