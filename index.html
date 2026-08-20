@@ -8,6 +8,7 @@
   <meta name="description"
     content="Official reseller for Ambrosia clients: FN, OW Lite, OW Pro, and CS2 Web Radar. Clean performance, streamproof visuals, and config sharing.">
 
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -40,30 +41,38 @@
     }
   </script>
 
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
+  <!-- QRCode.js for Monero XMR Checkout -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
+  <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="styles.css">
 </head>
 
 <body
   class="bg-[#07080a] text-slate-100 antialiased selection:bg-blue-600/30 selection:text-white relative min-h-screen">
 
+  <!-- Noise Shimmer animated background (full-page) -->
   <div data-aifx="noise-shimmer" data-aifx-colors="#0078ff,#4d4d4d,#82d7ff" data-aifx-scale="3"
     data-aifx-intensity="0.5" data-aifx-contrast="0.3" data-aifx-speed="0.61"
     class="absolute inset-0 -z-10 pointer-events-none" aria-hidden="true"></div>
 
+  <!-- 3D Cyber Perspective Matrix & Liquid Energy Canvas Background -->
   <canvas id="cyber-canvas"></canvas>
 
+  <!-- Unified Ambient Plasma Glow Layers -->
   <div class="ambient-glow-layer"></div>
   <div class="light-cone-right"></div>
   <div class="light-cone-left"></div>
 
+  <!-- FLOATING PILL NAVBAR -->
   <header class="fixed top-5 inset-x-0 z-40 flex justify-center px-4">
     <nav id="main-navbar"
       class="w-full max-w-5xl glass-pill rounded-full px-5 py-2.5 flex items-center justify-between transition-all duration-300 border border-white/10">
 
+      <!-- Brand Logo -->
       <a href="#" class="flex items-center gap-2.5 group">
         <div
           class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.5)] group-hover:scale-105 transition-transform">
@@ -79,6 +88,7 @@
         </div>
       </a>
 
+      <!-- Center Navigation Links -->
       <div class="hidden md:flex items-center gap-7 text-xs font-medium text-slate-300">
         <a href="#products" class="hover:text-white transition-colors">Products</a>
         <a href="#explorer" class="hover:text-white transition-colors">Overview</a>
@@ -88,6 +98,7 @@
         <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
       </div>
 
+      <!-- Action Buttons -->
       <div class="flex items-center gap-2.5">
         <a href="https://discord.gg/bT9dpnerP4" target="_blank"
           class="hidden sm:flex items-center gap-1.5 text-xs font-medium text-indigo-300 hover:text-white px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 hover:bg-indigo-500/20 transition-all">
@@ -103,9 +114,11 @@
     </nav>
   </header>
 
+  <!-- HERO SECTION -->
   <section class="relative isolate pt-36 pb-20 md:pt-44 md:pb-24 px-4 overflow-hidden motion-reveal">
     <div class="max-w-5xl mx-auto flex flex-col items-center text-center">
 
+      <!-- Top Status Pill -->
       <div
         class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/10 text-xs font-medium text-slate-300 mb-8 backdrop-blur-md">
         <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-dot"></span>
@@ -115,17 +128,20 @@
         <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-300"></i>
       </div>
 
+      <!-- Main Headline -->
       <h1
         class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white leading-[1.1] max-w-4xl mb-6">
         Precision Gaming Clients and <span class="text-gradient-cyan">Tactical Web Radar</span>
       </h1>
 
+      <!-- Subtitle -->
       <p class="text-base sm:text-lg text-slate-300 max-w-2xl leading-relaxed mb-9 font-normal">
         Undetected, virtualized client software for <strong class="text-slate-200">Overwatch 2</strong>, <strong
           class="text-slate-200">Counter Strike 2</strong>, and <strong class="text-slate-200">Fortnite</strong>.
         Featuring customizable aimbot, streamproof visuals, recoil control, and mobile web radar.
       </p>
 
+      <!-- CTA Button Group -->
       <div class="flex flex-wrap items-center justify-center gap-3.5 mb-14">
         <button onclick="openCheckoutModal('ambrosia-ow-pro', 'monthly')"
           class="btn-glow-primary text-sm font-semibold text-white px-6 py-3.5 rounded-full flex items-center gap-2 group">
@@ -140,6 +156,7 @@
         </a>
       </div>
 
+      <!-- Verified Specs Metrics Bar -->
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-3xl mb-16">
         <div class="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 flex flex-col items-center">
           <span class="text-xl font-bold font-mono text-white">Streamproof</span>
@@ -159,6 +176,7 @@
         </div>
       </div>
 
+      <!-- INTERACTIVE PRODUCT EXPLORER & QUICK SETUP -->
       <div id="explorer"
         class="w-full max-w-5xl rounded-2xl p-1 bg-gradient-to-b from-white/15 via-white/5 to-transparent shadow-[0_0_50px_rgba(59,130,246,0.15)] relative">
         <div
@@ -174,6 +192,7 @@
               <h3 id="playground-title" class="text-2xl font-bold text-white">Ambrosia OW Pro</h3>
             </div>
 
+            <!-- Switcher Tabs -->
             <div
               class="flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-black/50 border border-white/10 text-xs font-medium">
               <button data-product="ambrosia-ow-pro"
@@ -193,14 +212,18 @@
             </div>
           </div>
 
+          <!-- Explorer Content Grid -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
 
+            <!-- Features List -->
             <div class="md:col-span-2 space-y-3">
               <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Verified Feature Highlights</h4>
               <div id="playground-features-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <!-- Injected via JavaScript -->
               </div>
             </div>
 
+            <!-- Quick Specs & Purchase Column -->
             <div class="p-4 rounded-xl bg-slate-900/60 border border-white/10 flex flex-col justify-between space-y-4">
               <div>
                 <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3">System Details</h4>
@@ -231,6 +254,7 @@
 
           </div>
 
+          <!-- Bottom Explorer Info Strip -->
           <div
             class="mt-6 pt-4 border-t border-white/5 flex flex-wrap items-center justify-between text-xs text-slate-300 gap-3">
             <div class="flex items-center gap-3">
@@ -255,13 +279,16 @@
 
     </div>
 
+    <!-- Aurora Flow animated background -->
     <div data-aifx="aurora-flow" data-aifx-speed="2" data-aifx-ribbons="5" data-aifx-angle="-14"
       data-aifx-amplitude="0.25" data-aifx-scale="4" data-aifx-contrast="0.3"
       class="absolute inset-0 -z-10 pointer-events-none" aria-hidden="true"></div>
   </section>
 
+  <!-- Smooth Ambient Light Blender -->
   <div class="section-glow glow-cyan"></div>
 
+  <!-- ALL 5 PRODUCTS OVERVIEW GRID -->
   <section id="products" class="py-24 px-4 relative motion-reveal">
     <div class="max-w-5xl mx-auto">
 
@@ -279,8 +306,10 @@
         </p>
       </div>
 
+      <!-- 5 Products Cards Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
+        <!-- 1. ambrosia-fn -->
         <div class="spotlight-card p-6 flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between mb-3">
@@ -316,6 +345,7 @@
           </div>
         </div>
 
+        <!-- 2. ambrosia-ow-lite -->
         <div class="spotlight-card p-6 flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between mb-3">
@@ -351,6 +381,7 @@
           </div>
         </div>
 
+        <!-- 3. ambrosia-ow-pro (Featured Card) -->
         <div class="spotlight-card p-6 flex flex-col justify-between pricing-card-featured">
           <div>
             <div class="flex items-center justify-between mb-3">
@@ -393,6 +424,7 @@
           </div>
         </div>
 
+        <!-- 4. ambrosia-cs2-web -->
         <div class="spotlight-card p-6 flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between mb-3">
@@ -431,6 +463,7 @@
           </div>
         </div>
 
+        <!-- 5. ambrosia-ow-rbx (Unavailable / Pending Release) -->
         <div
           class="spotlight-card p-6 flex flex-col justify-between opacity-75 border-dashed border-white/15 bg-black/40">
           <div>
@@ -460,8 +493,10 @@
     </div>
   </section>
 
+  <!-- Smooth Ambient Light Blender -->
   <div class="section-glow glow-indigo"></div>
 
+  <!-- DYNAMIC FEATURES SECTION -->
   <section id="features" class="py-24 px-4 relative motion-reveal">
     <div class="max-w-5xl mx-auto">
 
@@ -479,8 +514,10 @@
         </p>
       </div>
 
+      <!-- Bento Grid Layout -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
+        <!-- Card 1: Custom Combat & Prediction -->
         <div class="spotlight-card md:col-span-2 p-6 sm:p-8 flex flex-col justify-between">
           <div class="mb-6">
             <div
@@ -515,6 +552,7 @@
           </div>
         </div>
 
+        <!-- Card 2: Streamproof Visuals -->
         <div class="spotlight-card p-6 sm:p-8 flex flex-col justify-between">
           <div>
             <div
@@ -533,6 +571,7 @@
           </div>
         </div>
 
+        <!-- Card 3: Config Sharing -->
         <div class="spotlight-card p-6 sm:p-8 flex flex-col justify-between">
           <div>
             <div
@@ -555,6 +594,7 @@
           </div>
         </div>
 
+        <!-- Card 4: Web Radar & Tactical Telemetry -->
         <div class="spotlight-card md:col-span-2 p-6 sm:p-8 flex flex-col justify-between">
           <div class="mb-6">
             <div
@@ -598,11 +638,15 @@
     </div>
   </section>
 
+
+  <!-- Smooth Ambient Light Blender -->
   <div class="section-glow glow-purple"></div>
 
+  <!-- PRICING & ACCESS TIER SECTION (Equal Height Cards & Fluid Background) -->
   <section id="pricing" class="py-24 px-4 relative motion-reveal">
     <div class="max-w-5xl mx-auto">
 
+      <!-- Section Header -->
       <div class="flex flex-col items-center text-center mb-12">
         <div
           class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-mono text-emerald-400 mb-3">
@@ -616,6 +660,7 @@
           Direct checkout via Monero (XMR). Select your billing cycle below.
         </p>
 
+        <!-- Duration Toggle (Weekly vs Monthly) -->
         <div
           class="relative p-1 rounded-full bg-slate-900/90 border border-white/10 flex items-center w-64 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
           <div id="billing-pill-slider"
@@ -633,8 +678,10 @@
         </div>
       </div>
 
+      <!-- Pricing Cards Grid (4 Purchasable Products, PERFECT EQUAL HEIGHT) -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pricing-grid">
 
+        <!-- Tier 1: OW-Lite -->
         <div class="spotlight-card p-6 pricing-card">
           <div>
             <div class="flex items-center justify-between mb-3">
@@ -676,6 +723,7 @@
           </div>
         </div>
 
+        <!-- Tier 2: OW-Pro (Featured Card, Exact Equal Height) -->
         <div class="spotlight-card p-6 pricing-card pricing-card-featured">
           <div>
             <div class="flex items-center justify-between mb-3">
@@ -720,6 +768,7 @@
           </div>
         </div>
 
+        <!-- Tier 3: CS2-Web-Radar -->
         <div class="spotlight-card p-6 pricing-card">
           <div>
             <div class="flex items-center justify-between mb-3">
@@ -761,6 +810,7 @@
           </div>
         </div>
 
+        <!-- Tier 4: Fortnite (FN) -->
         <div class="spotlight-card p-6 pricing-card">
           <div>
             <div class="flex items-center justify-between mb-3">
@@ -804,6 +854,7 @@
 
       </div>
 
+      <!-- Lifetime Disclaimer Note -->
       <div class="mt-6 text-center text-xs text-slate-500 font-mono">
         <span>* Lifetime access is <strong class="text-amber-400">[ Unavailable ]</strong> across all products.</span>
       </div>
@@ -811,8 +862,11 @@
     </div>
   </section>
 
+
+  <!-- Smooth Ambient Light Blender -->
   <div class="section-glow glow-cyan"></div>
 
+  <!-- PERFORMANCE & SPOOFER ADVISORY NOTICE -->
   <section class="py-16 px-4 relative motion-reveal">
     <div class="max-w-5xl mx-auto">
       <div class="p-6 rounded-2xl bg-amber-950/20 border border-amber-500/30 backdrop-blur-md">
@@ -839,8 +893,11 @@
     </div>
   </section>
 
+
+  <!-- Smooth Ambient Light Blender -->
   <div class="section-glow glow-rose"></div>
 
+  <!-- SERVER RULES & TERMS OF SERVICE SECTION -->
   <section id="rules" class="py-24 px-4 relative motion-reveal">
     <div class="max-w-5xl mx-auto">
 
@@ -859,8 +916,10 @@
         </p>
       </div>
 
+      <!-- Rules Cards Grid -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
 
+        <!-- Rule 1: Security & Screenshots -->
         <div class="spotlight-card p-5">
           <div class="flex items-center justify-between gap-2 mb-2">
             <span
@@ -881,6 +940,7 @@
           </span>
         </div>
 
+        <!-- Rule 2: Reverse Engineering -->
         <div class="spotlight-card p-5">
           <div class="flex items-center justify-between gap-2 mb-2">
             <span
@@ -901,6 +961,7 @@
           </span>
         </div>
 
+        <!-- Rule 3: Sales & Refunds -->
         <div class="spotlight-card p-5">
           <div class="flex items-center justify-between gap-2 mb-2">
             <span
@@ -921,6 +982,7 @@
           </span>
         </div>
 
+        <!-- Rule 4: Conflicts & Drama -->
         <div class="spotlight-card p-5">
           <div class="flex items-center justify-between gap-2 mb-2">
             <span
@@ -941,6 +1003,7 @@
           </span>
         </div>
 
+        <!-- Rule 5: Impersonation -->
         <div class="spotlight-card p-5">
           <div class="flex items-center justify-between gap-2 mb-2">
             <span
@@ -956,6 +1019,7 @@
             use similar nicknames, profile pictures, or fake accounts will result in an immediate permanent ban.</p>
         </div>
 
+        <!-- Rule 6: Discrimination & Toxicity -->
         <div class="spotlight-card p-5">
           <div class="flex items-center justify-between gap-2 mb-2">
             <span
@@ -984,11 +1048,15 @@
     </div>
   </section>
 
+
+  <!-- Smooth Ambient Light Blender -->
   <div class="section-glow glow-purple"></div>
 
+  <!-- ACCURATE & HONEST FAQ (ACCORDION) -->
   <section id="faq" class="py-24 px-4 relative motion-reveal">
     <div class="max-w-3xl mx-auto">
 
+      <!-- Section Header -->
       <div class="flex flex-col items-center text-center mb-12">
         <div
           class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-xs font-mono text-indigo-400 mb-3">
@@ -1003,8 +1071,10 @@
         </p>
       </div>
 
+      <!-- FAQ Accordion List -->
       <div class="space-y-3">
 
+        <!-- Item 1 -->
         <div class="faq-item spotlight-card rounded-xl border border-white/10 overflow-hidden">
           <button
             class="faq-trigger w-full px-6 py-4.5 text-left flex items-center justify-between text-sm font-semibold text-white hover:text-blue-400 transition-colors">
@@ -1021,6 +1091,7 @@
           </div>
         </div>
 
+        <!-- Item 2 -->
         <div class="faq-item spotlight-card rounded-xl border border-white/10 overflow-hidden">
           <button
             class="faq-trigger w-full px-6 py-4.5 text-left flex items-center justify-between text-sm font-semibold text-white hover:text-blue-400 transition-colors">
@@ -1038,6 +1109,7 @@
           </div>
         </div>
 
+        <!-- Item 3 -->
         <div class="faq-item spotlight-card rounded-xl border border-white/10 overflow-hidden">
           <button
             class="faq-trigger w-full px-6 py-4.5 text-left flex items-center justify-between text-sm font-semibold text-white hover:text-blue-400 transition-colors">
@@ -1055,6 +1127,7 @@
           </div>
         </div>
 
+        <!-- Item 4 -->
         <div class="faq-item spotlight-card rounded-xl border border-white/10 overflow-hidden">
           <button
             class="faq-trigger w-full px-6 py-4.5 text-left flex items-center justify-between text-sm font-semibold text-white hover:text-blue-400 transition-colors">
@@ -1073,6 +1146,7 @@
           </div>
         </div>
 
+        <!-- Item 5 -->
         <div class="faq-item spotlight-card rounded-xl border border-white/10 overflow-hidden">
           <button
             class="faq-trigger w-full px-6 py-4.5 text-left flex items-center justify-between text-sm font-semibold text-white hover:text-blue-400 transition-colors">
@@ -1088,6 +1162,7 @@
           </div>
         </div>
 
+        <!-- Item 6 -->
         <div class="faq-item spotlight-card rounded-xl border border-white/10 overflow-hidden">
           <button
             class="faq-trigger w-full px-6 py-4.5 text-left flex items-center justify-between text-sm font-semibold text-white hover:text-blue-400 transition-colors">
@@ -1108,8 +1183,11 @@
     </div>
   </section>
 
+
+  <!-- Smooth Ambient Light Blender -->
   <div class="section-glow glow-cyan"></div>
 
+  <!-- BOTTOM CALL TO ACTION -->
   <section class="relative py-28 px-4 overflow-hidden motion-reveal">
     <div class="light-cone-bottom"></div>
     <div class="max-w-4xl mx-auto text-center relative z-10">
@@ -1135,9 +1213,11 @@
     </div>
   </section>
 
+  <!-- FOOTER -->
   <footer class="border-t border-white/10 bg-[#050608] py-14 px-4 relative z-10 text-xs text-slate-300">
     <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-8 mb-12">
 
+      <!-- Brand column -->
       <div class="md:col-span-2 space-y-4">
         <div class="flex items-center gap-2.5">
           <div
@@ -1156,6 +1236,7 @@
         </div>
       </div>
 
+      <!-- Products Column -->
       <div class="space-y-2.5">
         <h4 class="text-xs font-semibold text-white uppercase tracking-wider">Products</h4>
         <ul class="space-y-2 text-slate-300">
@@ -1172,6 +1253,7 @@
         </ul>
       </div>
 
+      <!-- Resources Column -->
       <div class="space-y-2.5">
         <h4 class="text-xs font-semibold text-white uppercase tracking-wider">Resources</h4>
         <ul class="space-y-2 text-slate-300">
@@ -1183,6 +1265,7 @@
         </ul>
       </div>
 
+      <!-- Community Links -->
       <div class="space-y-2.5">
         <h4 class="text-xs font-semibold text-white uppercase tracking-wider">Community</h4>
         <ul class="space-y-2 text-slate-300">
@@ -1197,6 +1280,7 @@
 
     </div>
 
+    <!-- Bottom sub-footer -->
     <div
       class="max-w-5xl mx-auto pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500 font-mono">
       <div>
@@ -1210,6 +1294,7 @@
     </div>
   </footer>
 
+  <!-- FULL SPECS MODAL -->
   <div id="specs-modal" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4">
     <div id="specs-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-md"></div>
     <div
@@ -1250,6 +1335,7 @@
     </div>
   </div>
 
+  <!-- SERVER RULES & TOS MODAL -->
   <div id="rules-modal" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4">
     <div id="rules-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-md"></div>
     <div
@@ -1382,6 +1468,7 @@
     </div>
   </div>
 
+  <!-- INTERACTIVE MONERO (XMR) CHECKOUT MODAL -->
   <div id="checkout-modal" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4">
     <div id="modal-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-md"></div>
 
@@ -1407,6 +1494,7 @@
           Discord ticket.</p>
       </div>
 
+      <!-- Visual Step Tracker -->
       <div
         class="grid grid-cols-3 gap-2 p-2 rounded-xl bg-black/50 border border-white/5 mb-5 text-center text-[10.5px]">
         <div class="p-1 rounded bg-blue-600/20 border border-blue-500/30 text-blue-300 font-semibold">1. Select Tier
@@ -1415,6 +1503,7 @@
         <div class="p-1 rounded bg-white/5 text-slate-300">3. Receive Key</div>
       </div>
 
+      <!-- Product & Cycle Selection inside Modal (With Custom Dropdown) -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
         <div>
           <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Select
@@ -1464,6 +1553,7 @@
         </div>
       </div>
 
+      <!-- Pricing Summary Bar -->
       <div class="p-3.5 rounded-xl bg-black/50 border border-white/10 flex items-center justify-between mb-4">
         <div>
           <div class="text-[11px] text-slate-300">Total Price</div>
@@ -1475,6 +1565,7 @@
         </div>
       </div>
 
+      <!-- QR Code & Address Display Box -->
       <div
         class="flex flex-col sm:flex-row items-center gap-4 p-4 rounded-xl bg-slate-900/60 border border-white/10 mb-4">
         <div class="w-[140px] h-[140px] shrink-0 bg-white rounded-lg p-1.5 flex items-center justify-center shadow-md"
@@ -1504,6 +1595,7 @@
         </div>
       </div>
 
+      <!-- Mandatory Discord Tag & Payment Input -->
       <div class="space-y-2 mb-5">
         <div class="flex items-center justify-between">
           <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider">
@@ -1519,13 +1611,13 @@
 
         <div class="flex items-center justify-between">
           <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider">
-            Discord User ID <span class="text-emerald-400">OPTIONAL</span>
+            Discord User ID <span class="text-rose-400">* MANDATORY</span>
           </label>
-          <span class="text-[10px] text-slate-500 font-mono">Enables real @mention</span>
+          <span class="text-[10px] text-slate-500 font-mono">Required for private ticket access</span>
         </div>
-        <small class="text-[9px] text-slate-400 block mt-1">Enables staff to ping you in the ticket. Go to Discord → Settings → Advanced → Enable Developer Mode → Right-click your profile → Copy User ID.</small>
-        <input type="text" id="modal-discord-id-input" placeholder="e.g. 819283746500000000"
-          class="w-full bg-slate-900 border border-emerald-500/25 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
+        <small class="text-[9px] text-slate-400 block mt-1">Required so staff can add you to the private ticket channel. Go to Discord → Settings → Advanced → Enable Developer Mode → Right-click your profile → Copy User ID.</small>
+        <input type="text" id="modal-discord-id-input" required placeholder="e.g. 819283746500000000"
+          class="w-full bg-slate-900 border border-rose-500/30 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.1)]"
           oninput="this.value=this.value.replace(/[^0-9]/g,'')">
 
         <input type="text" id="modal-txid-input" placeholder="Transaction ID (TXID) or type 'Paying in ticket'"
@@ -1545,6 +1637,7 @@
     </div>
   </div>
 
+  <!-- CONFIRMATION MODAL -->
   <div id="confirm-modal" class="modal-overlay fixed inset-0 z-[60] flex items-center justify-center p-4">
     <div id="confirm-modal-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-md"></div>
     <div class="confirm-modal-content relative w-full max-w-md rounded-2xl bg-[#0d0e14] border border-amber-500/30 p-6 shadow-[0_0_50px_rgba(245,158,11,0.2)] z-10">
@@ -1599,12 +1692,16 @@
     </div>
   </div>
 
+  <!-- Toast Notification Container -->
   <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
+  <!-- Main Application Script -->
   <script src="app.js"></script>
 
+  <!-- Effect runtime (local copy) -->
   <script src="aidesigner-runtime.js" defer></script>
 
+  <!-- Watermark removal -->
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const sheet = document.createElement('style')

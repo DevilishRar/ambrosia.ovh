@@ -244,6 +244,137 @@ module.exports = async function handler(req, res) {
     }
   }
 
+  if (type === 3 && data && data.custom_id === 'select_ticket_product') {
+    const BOT_TOKEN = getBotToken();
+    if (!BOT_TOKEN) {
+      return res.json({ type: 4, data: { content: 'Bot not configured.', flags: 64 } });
+    }
+
+    const selectedValue = data.values ? data.values[0] : 'general-support';
+    const userId = req.body.member && req.body.member.user ? req.body.member.user.id : (req.body.user ? req.body.user.id : '');
+    const username = req.body.member && req.body.member.user ? req.body.member.user.username : (req.body.user ? req.body.user.username : 'unknown');
+
+    const productNames = {
+      'ambrosia-ow-lite': 'Ambrosia OW Lite',
+      'ambrosia-ow-pro': 'Ambrosia OW Pro',
+      'ambrosia-cs2-web': 'CS2 Web Radar',
+      'ambrosia-fn': 'Ambrosia FN',
+      'general-support': 'General Support'
+    };
+    const productName = productNames[selectedValue] || 'General Support';
+
+    const ticketRef = 'AMB-' + Math.floor(1000 + Math.random() * 9000);
+    const channelName = 'ticket-' + ticketRef.toLowerCase() + '-' + username.replace(/[^a-zA-Z0-9._-]/g, '').toLowerCase();
+
+    try {
+      const guildRes = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '?with_counts=false', {
+        headers: { Authorization: 'Bot ' + BOT_TOKEN }
+      });
+      if (!guildRes.ok) {
+        return res.json({ type: 4, data: { content: 'Failed to access guild.', flags: 64 } });
+      }
+      const guild = await guildRes.json();
+
+      const permissionOverwrites = [
+        { id: guild.id, type: 0, allow: '0', deny: '1024' }
+      ];
+
+      if (STAFF_ROLE_ID) {
+        permissionOverwrites.push({
+          id: STAFF_ROLE_ID,
+          type: 0,
+          allow: '23552',
+          deny: '0'
+        });
+      }
+
+      if (userId) {
+        permissionOverwrites.push({
+          id: userId,
+          type: 1,
+          allow: '23552',
+          deny: '0'
+        });
+      }
+
+      const createChannelRes = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '/channels', {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bot ' + BOT_TOKEN,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: channelName,
+          type: 0,
+          parent_id: TICKET_CATEGORY_ID || null,
+          permission_overwrites: permissionOverwrites
+        })
+      });
+
+      if (!createChannelRes.ok) {
+        const errText = await createChannelRes.text();
+        console.error('[Ambrosia] Ticket channel creation failed:', createChannelRes.status, errText);
+        return res.json({ type: 4, data: { content: 'Failed to create ticket channel. Please try again.', flags: 64 } });
+      }
+
+      const newChannel = await createChannelRes.json();
+
+      const welcomeEmbed = {
+        title: '🎫 Ticket #' + ticketRef,
+        color: 0x2563eb,
+        description: 'Welcome ' + (userId ? '<@' + userId + '>' : '**' + username + '**') + '!\n\nA staff member will assist you shortly. Please describe your request below.',
+        fields: [
+          { name: 'Product', value: '**' + productName + '**', inline: true },
+          { name: 'Status', value: '`Awaiting Staff`', inline: true },
+          { name: '\u200b', value: '\u200b', inline: false },
+          { name: '📋 Next Steps', value: '1. Share your **Discord User ID** if you haven\'t already\n2. Describe what you need help with\n3. Wait for a staff member to respond\n4. Send your XMR payment when ready', inline: false }
+        ],
+        footer: { text: 'Ambrosia.ovh Reseller System | Ticket #' + ticketRef },
+        timestamp: new Date().toISOString()
+      };
+
+      const closeRow = {
+        type: 1,
+        components: [{
+          type: 2,
+          custom_id: 'close_ticket',
+          label: 'Close Ticket',
+          style: 4,
+          emoji: { name: '🔒' }
+        }]
+      };
+
+      const mentionStr = userId
+        ? '<@' + userId + '>' + (STAFF_ROLE_ID ? ' <@&' + STAFF_ROLE_ID + '>' : '')
+        : (STAFF_ROLE_ID ? '<@&' + STAFF_ROLE_ID + '>' : '');
+
+      await fetch('https://discord.com/api/v10/channels/' + newChannel.id + '/messages', {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bot ' + BOT_TOKEN,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          content: mentionStr,
+          embeds: [welcomeEmbed],
+          components: [closeRow]
+        })
+      });
+
+      return res.json({
+        type: 4,
+        data: {
+          content: '✅ Your ticket has been created: <#' + newChannel.id + '>',
+          flags: 64
+        }
+      });
+
+    } catch (error) {
+      console.error('[Ambrosia] Error handling select_ticket_product:', error);
+      return res.json({ type: 4, data: { content: 'Error creating ticket. Please try again.', flags: 64 } });
+    }
+  }
+
   if (type === 3 && data && data.custom_id === 'close_ticket') {
     const BOT_TOKEN = getBotToken();
     const channelId = message ? message.channel_id : null;
