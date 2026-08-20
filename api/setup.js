@@ -237,6 +237,7 @@ module.exports = async function handler(req, res) {
     ch.ticketLogs = await mkCh('ticket-logs', 0, catSupId, staffOw());
     ch.staffChat = await mkCh('staff-chat', 0, catStfId, staffOw());
     ch.orderNotifications = await mkCh('order-notifications', 0, catStfId, staffOw());
+    ch.xmrAddresses = await mkCh('xmr-addresses', 0, catStfId, staffOw());
 
     ch.generalVoice = await mkCh('General Voice', 2, catVceId, voiceOw());
     ch.supportVoice = await mkCh('Support Voice', 2, catVceId, voiceOw());
@@ -293,7 +294,7 @@ module.exports = async function handler(req, res) {
       color: 0x5865f2,
       fields: [
         { name: 'Product Server', value: 'https://discord.gg/bT9dpnerP4', inline: false },
-        { name: 'Support Server', value: 'https://discord.gg/fE4QFQVBfD', inline: false },
+        { name: 'Support Server', value: 'https://discord.gg/jrnByjkNaw', inline: false },
         { name: 'Website', value: 'https://ambrosia.ovh', inline: false }
       ],
       footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' },
@@ -348,6 +349,49 @@ module.exports = async function handler(req, res) {
       timestamp: new Date().toISOString()
     }]});
 
+    await postMsg(ch.xmrAddresses, { embeds: [
+      {
+        title: '\uD83D\uDCB0 Official XMR Payment Addresses',
+        color: 0x10b981,
+        description: '**Staff and Seller only.** Do not share these addresses outside of staff channels.\nEach product and billing cycle has its own unique Monero address.',
+        image: { url: 'https://ambrosia.ovh/og-image.png' },
+        footer: { text: 'Ambrosia Payment System', icon_url: 'https://ambrosia.ovh/favicon.ico' },
+        timestamp: new Date().toISOString()
+      },
+      {
+        title: 'Ambrosia OW Lite',
+        color: 0x5865f2,
+        fields: [
+          { name: 'Weekly \u2014 $5 USD', value: '```\n89VPPCJ9qhEUnA53bDLPSFbdKm3zS7uxJ7Qewy9mAV23AFb7EnUBBDjfjwzKxE71yRjSADVb6Cs6t22DQ3vKtphnTRaBnZB\n```', inline: false },
+          { name: 'Monthly \u2014 $10 USD', value: '```\n89aFGA5EWqvJUnNacSNW6RGPctm74XKx8Nvz5t45BDm8ZfDWdBH2xJgZsL4mFi47kHaamwu2PcQAT3E1vUJmpPhD15WjkiB\n```', inline: false }
+        ]
+      },
+      {
+        title: 'Ambrosia OW Pro',
+        color: 0xf59e0b,
+        fields: [
+          { name: 'Weekly \u2014 $20 USD', value: '```\n88MtyMUqqrFbqAtg2g6M5Khi1dwEVyt6UCUi228VLpZNFqX4fepf6ixctZaPtERsP4dA1HSBnFteQhZsHnz8sMsp1Ld5YBH\n```', inline: false },
+          { name: 'Monthly \u2014 $45 USD', value: '```\n8AGpdyaAkKyb8daJ3xksAr9m6y5L6ChND2KHthouN4YcEXMtm5cH72DghMc2ZeMHdP2ewXWxWWRPTUuoMefj1DSg7FVf8kU\n```', inline: false }
+        ]
+      },
+      {
+        title: 'Ambrosia CS2 Web Radar',
+        color: 0x8b5cf6,
+        fields: [
+          { name: 'Weekly \u2014 $5 USD', value: '```\n871MfSycgoc8mhZ7SpUZoZZ1dbS6d5Bq1cde9LmEvcVqUn8fpCgZTvMKN1V2tNGqzBeh4pjgwzQHUf42qAvR71YbEtc59Xz\n```', inline: false },
+          { name: 'Monthly \u2014 $15 USD', value: '```\n8AVUcXxR3ircP1BhpUi3fhczeag4LQjCaJKBe2opbDrKCexzqYAwjk3U63uGeaU4Wk7ztyDtoYEuHXxQ46f27c4AR2c6mQf\n```', inline: false }
+        ]
+      },
+      {
+        title: 'Ambrosia FN',
+        color: 0x06b6d4,
+        fields: [
+          { name: 'Weekly \u2014 $20 USD', value: '```\n8BMLcSiK1rm7zZ11MPd2U1G4rMfkjTkZyQ9spnY6GAHEYSJVvWJ9wQQPKnNnZxHAmMazApZ2qJ6wKFAnbbR1LsaT5HAFSCK\n```', inline: false },
+          { name: 'Monthly \u2014 $45 USD', value: '```\n84hxPfyebV85yHJi6BuBnnKxBjYRGc1dMURtmv4By4QjNF9Czaho5EPQzeGEeNtVfpCyX1v4dRLac2LWLEnSC4EK7BsKZKc\n```', inline: false }
+        ]
+      }
+    ]});
+
     var envVars = {
       DISCORD_GUILD_ID: gid,
       DISCORD_TICKETS_CATEGORY_ID: catSupId || '',
@@ -359,6 +403,7 @@ module.exports = async function handler(req, res) {
       DISCORD_ORDER_NOTIFICATION_CHANNEL_ID: ch.orderNotifications || '',
       DISCORD_STAFF_CHAT_CHANNEL_ID: ch.staffChat || '',
       DISCORD_TICKET_PANEL_CHANNEL_ID: ch.ticketChannel || '',
+      DISCORD_XMR_ADDRESSES_CHANNEL_ID: ch.xmrAddresses || '',
       DISCORD_RULES_CHANNEL_ID: ch.rules || '',
       DISCORD_ANNOUNCEMENTS_CHANNEL_ID: ch.announcements || '',
       DISCORD_PRODUCT_CATALOG_CHANNEL_ID: ch.catalog || '',

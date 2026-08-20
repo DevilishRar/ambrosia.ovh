@@ -44,8 +44,8 @@ const PRODUCTS = {
     cpu: 'INTEL / AMD',
     notes: 'Lite version of the product with streamproof visuals and movement helpers.',
     addresses: {
-      weekly: '89aFGA5EWqvJUnNacSNW6RGPctm74XKx8Nvz5t45BDm8ZfDWdBH2xJgZsL4mFi47kHaamwu2PcQAT3E1vUJmpPhD15WjkiB',
-      monthly: '8AGpdyaAkKyb8daJ3xksAr9m6y5L6ChND2KHthouN4YcEXMtm5cH72DghMc2ZeMHdP2ewXWxWWRPTUuoMefj1DSg7FVf8kU'
+      weekly: '89VPPCJ9qhEUnA53bDLPSFbdKm3zS7uxJ7Qewy9mAV23AFb7EnUBBDjfjwzKxE71yRjSADVb6Cs6t22DQ3vKtphnTRaBnZB',
+      monthly: '89aFGA5EWqvJUnNacSNW6RGPctm74XKx8Nvz5t45BDm8ZfDWdBH2xJgZsL4mFi47kHaamwu2PcQAT3E1vUJmpPhD15WjkiB'
     },
     featureHighlights: [
       'Aimbot, Triggerbot and Flickbot with Prediction',
@@ -97,8 +97,8 @@ const PRODUCTS = {
     cpu: 'INTEL / AMD',
     notes: 'Full featured edition with hero action scripting, ally targeting, and HUD ult tracker.',
     addresses: {
-      weekly: '8AGpdyaAkKyb8daJ3xksAr9m6y5L6ChND2KHthouN4YcEXMtm5cH72DghMc2ZeMHdP2ewXWxWWRPTUuoMefj1DSg7FVf8kU',
-      monthly: '4BE8WBPizoyfveG6Sbtd66V184WktCEoq8EQ2d3ayxKLQxhRiFB4shQDHSVU8f188diVst9thbTtWh4KmrGKZXwwRm6fvyL'
+      weekly: '88MtyMUqqrFbqAtg2g6M5Khi1dwEVyt6UCUi228VLpZNFqX4fepf6ixctZaPtERsP4dA1HSBnFteQhZsHnz8sMsp1Ld5YBH',
+      monthly: '8AGpdyaAkKyb8daJ3xksAr9m6y5L6ChND2KHthouN4YcEXMtm5cH72DghMc2ZeMHdP2ewXWxWWRPTUuoMefj1DSg7FVf8kU'
     },
     featureHighlights: [
       'Dual Aim and Trigger Slots with Independent Configs',
@@ -195,7 +195,7 @@ const PRODUCTS = {
     cpu: 'INTEL / AMD',
     notes: 'Web radar can be opened on any second monitor, phone, or browser.',
     addresses: {
-      weekly: '84hxPfyebV85yHJi6BuBnnKxBjYRGc1dMURtmv4By4QjNF9Czaho5EPQzeGEeNtVfpCyX1v4dRLac2LWLEnSC4EK7BsKZKc',
+      weekly: '871MfSycgoc8mhZ7SpUZoZZ1dbS6d5Bq1cde9LmEvcVqUn8fpCgZTvMKN1V2tNGqzBeh4pjgwzQHUf42qAvR71YbEtc59Xz',
       monthly: '8AVUcXxR3ircP1BhpUi3fhczeag4LQjCaJKBe2opbDrKCexzqYAwjk3U63uGeaU4Wk7ztyDtoYEuHXxQ46f27c4AR2c6mQf'
     },
     featureHighlights: [
@@ -226,6 +226,56 @@ const PRODUCTS = {
         'Player Details: Name, Health, Teams',
         'Web component accessible via any phone, tablet, or secondary PC',
         'Compatible with Windows 10 and 11 (Web part on Android, iOS and Linux)'
+      ]
+    }
+  },
+
+  'ambrosia-fn': {
+    id: 'ambrosia-fn',
+    name: 'Ambrosia FN',
+    code: 'ambrosia-fn',
+    game: 'Fortnite',
+    badge: 'Fortnite',
+    tagline: 'Aimbot, visual ESP, loot distance, on screen radar, and 10 config slots.',
+    weeklyPrice: 20,
+    monthlyPrice: 45,
+    lifetimePrice: null,
+    available: true,
+    os: 'Windows 11',
+    cpu: 'INTEL / AMD',
+    notes: 'Full Fortnite client with aimbot, ESP suite, radar and configs.',
+    addresses: {
+      weekly: '8BMLcSiK1rm7zZ11MPd2U1G4rMfkjTkZyQ9spnY6GAHEYSJVvWJ9wQQPKnNnZxHAmMazApZ2qJ6wKFAnbbR1LsaT5HAFSCK',
+      monthly: '84hxPfyebV85yHJi6BuBnnKxBjYRGc1dMURtmv4By4QjNF9Czaho5EPQzeGEeNtVfpCyX1v4dRLac2LWLEnSC4EK7BsKZKc'
+    },
+    featureHighlights: [
+      'Aimbot with Prediction, Visible Check, Custom FOV, Aim Bone Selection',
+      'Box, Skeleton, China Hat, Rank, Distance, Ammo, Kills ESP',
+      'World Loot ESP with Rarity and Distance customisation',
+      'On Screen Radar (Circle or Square styles)',
+      'Config Sharing system with up to 10 Configs'
+    ],
+    fullCategories: {
+      'Aimbot': [
+        'Visible Check, Prediction, Custom Aim key, Secondary Aim key',
+        'Custom FOV, Aim Bone Selection, Ignore Bot/Knocked',
+        'Target Switch delay, Distance Based, Advanced Smoothing',
+        'Weapon Config, Team Check'
+      ],
+      'ESP Suite': [
+        'Box customisation (Glow/Bloom/Corners, Thickness, Vis color)',
+        'Skeleton customisation (Glow/Bloom/Thickness, Vis color)',
+        'China Hat customisation (Glow/Bloom)',
+        'Name ESP, Rank ESP (Icon), Distance ESP, Ammo/Kills/Level/Weapon/Platform ESP'
+      ],
+      'World ESP and Radar': [
+        'Loot ESP with Rarity and Distance customisation',
+        'On Screen Radar: Player Point, Range, Opacity, Enemy Point color, Background, Style, Position'
+      ],
+      'Indicators and Configs': [
+        'FOV Arrows, Target Dot, Target Line, Snaplines',
+        'Config Sharing system (share configs with friends)',
+        'Up to 10 Configs, Config Keybind switcher'
       ]
     }
   }
@@ -1062,7 +1112,7 @@ async function handleOrderSubmission() {
         showToast('You must join our Discord server first. Redirecting...', 'error');
         setTimeout(() => {
           closeCheckoutModal();
-          window.open('https://discord.gg/fE4QFQVBfD', '_blank');
+          window.open('https://discord.gg/jrnByjkNaw', '_blank');
         }, 2000);
       } else {
         showToast('Failed to send order (' + resp.status + '). Check console.', 'error');
@@ -1081,7 +1131,7 @@ async function handleOrderSubmission() {
 
   setTimeout(() => {
     closeCheckoutModal();
-    window.open('https://discord.gg/fE4QFQVBfD', '_blank');
+    window.open('https://discord.gg/jrnByjkNaw', '_blank');
   }, 1400);
 }
 

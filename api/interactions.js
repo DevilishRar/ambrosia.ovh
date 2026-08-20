@@ -9,7 +9,7 @@ const STAFF_ROLE_ID = process.env.DISCORD_STAFF_ROLE_ID || '1540087003369046026'
 const SELLER_ROLE_ID = process.env.DISCORD_SELLER_ROLE_ID || '1540087001783472218';
 const CUSTOMER_ROLE_ID = process.env.DISCORD_CUSTOMER_ROLE_ID || '1540087004132417547';
 const OWNER_ROLE_ID = process.env.DISCORD_OWNER_ROLE_ID || '1540087000156344390';
-const TICKET_SERVER_INVITE = 'https://discord.gg/fE4QFQVBfD';
+const TICKET_SERVER_INVITE = 'https://discord.gg/jrnByjkNaw';
 
 function getBotToken() {
   try { return atob(ENCODED_BOT_TOKEN); } catch { return ''; }
@@ -24,8 +24,8 @@ var PRODUCTS = {
     monthlyPrice: 10,
     weeklyXmr: '~0.03',
     monthlyXmr: '~0.06',
-    weeklyAddr: '89aFGA5EWqvJUnNacSNW6RGPctm74XKx8Nvz5t45BDm8ZfDWdBH2xJgZsL4mFi47kHaamwu2PcQAT3E1vUJmpPhD15WjkiB',
-    monthlyAddr: '8AGpdyaAkKyb8daJ3xksAr9m6y5L6ChND2KHthouN4YcEXMtm5cH72DghMc2ZeMHdP2ewXWxWWRPTUuoMefj1DSg7FVf8kU'
+    weeklyAddr: '89VPPCJ9qhEUnA53bDLPSFbdKm3zS7uxJ7Qewy9mAV23AFb7EnUBBDjfjwzKxE71yRjSADVb6Cs6t22DQ3vKtphnTRaBnZB',
+    monthlyAddr: '89aFGA5EWqvJUnNacSNW6RGPctm74XKx8Nvz5t45BDm8ZfDWdBH2xJgZsL4mFi47kHaamwu2PcQAT3E1vUJmpPhD15WjkiB'
   },
   'ambrosia-ow-pro': {
     name: 'Ambrosia OW Pro',
@@ -35,8 +35,8 @@ var PRODUCTS = {
     monthlyPrice: 45,
     weeklyXmr: '~0.12',
     monthlyXmr: '~0.27',
-    weeklyAddr: '8AGpdyaAkKyb8daJ3xksAr9m6y5L6ChND2KHthouN4YcEXMtm5cH72DghMc2ZeMHdP2ewXWxWWRPTUuoMefj1DSg7FVf8kU',
-    monthlyAddr: '4BE8WBPizoyfveG6Sbtd66V184WktCEoq8EQ2d3ayxKLQxhRiFB4shQDHSVU8f188diVst9thbTtWh4KmrGKZXwwRm6fvyL'
+    weeklyAddr: '88MtyMUqqrFbqAtg2g6M5Khi1dwEVyt6UCUi228VLpZNFqX4fepf6ixctZaPtERsP4dA1HSBnFteQhZsHnz8sMsp1Ld5YBH',
+    monthlyAddr: '8AGpdyaAkKyb8daJ3xksAr9m6y5L6ChND2KHthouN4YcEXMtm5cH72DghMc2ZeMHdP2ewXWxWWRPTUuoMefj1DSg7FVf8kU'
   },
   'ambrosia-cs2-web': {
     name: 'CS2 Web Radar',
@@ -46,7 +46,7 @@ var PRODUCTS = {
     monthlyPrice: 15,
     weeklyXmr: '~0.03',
     monthlyXmr: '~0.09',
-    weeklyAddr: '84hxPfyebV85yHJi6BuBnnKxBjYRGc1dMURtmv4By4QjNF9Czaho5EPQzeGEeNtVfpCyX1v4dRLac2LWLEnSC4EK7BsKZKc',
+    weeklyAddr: '871MfSycgoc8mhZ7SpUZoZZ1dbS6d5Bq1cde9LmEvcVqUn8fpCgZTvMKN1V2tNGqzBeh4pjgwzQHUf42qAvR71YbEtc59Xz',
     monthlyAddr: '8AVUcXxR3ircP1BhpUi3fhczeag4LQjCaJKBe2opbDrKCexzqYAwjk3U63uGeaU4Wk7ztyDtoYEuHXxQ46f27c4AR2c6mQf'
   },
   'ambrosia-fn': {
@@ -57,8 +57,8 @@ var PRODUCTS = {
     monthlyPrice: 45,
     weeklyXmr: '~0.12',
     monthlyXmr: '~0.27',
-    weeklyAddr: null,
-    monthlyAddr: null
+    weeklyAddr: '8BMLcSiK1rm7zZ11MPd2U1G4rMfkjTkZyQ9spnY6GAHEYSJVvWJ9wQQPKnNnZxHAmMazApZ2qJ6wKFAnbbR1LsaT5HAFSCK',
+    monthlyAddr: '84hxPfyebV85yHJi6BuBnnKxBjYRGc1dMURtmv4By4QjNF9Czaho5EPQzeGEeNtVfpCyX1v4dRLac2LWLEnSC4EK7BsKZKc'
   }
 };
 
