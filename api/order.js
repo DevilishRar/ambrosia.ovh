@@ -1,7 +1,7 @@
 ﻿const ENCODED_BOT_TOKEN = 'TVRVek9UY3dNVFF6TlRJek56WTJNamd6TUEuR1pzd1I4LmE0cms4NHJvM2hmSjdFREYwMEltM18tVlh0MWlOVURQSndYdmV3';
 const NOTIFICATION_CHANNEL_ID = '1539405270374154361';
 const GUILD_ID = '1539404742055166045';
-const DISCORD_INVITE = 'https://discord.gg/bT9dpnerP4';
+const TICKET_SERVER_INVITE = 'https://discord.gg/fE4QFQVBfD';
 
 function getBotToken() {
   try { return atob(ENCODED_BOT_TOKEN); } catch { return ''; }
@@ -35,7 +35,7 @@ module.exports = async function handler(req, res) {
   if (!isMember) {
     return res.status(403).json({
       error: 'not_member',
-      message: 'You must be a member of the Discord server to place an order. Join here: ' + DISCORD_INVITE
+      message: 'You must be a member of the Discord server to place an order. Join here: ' + TICKET_SERVER_INVITE
     });
   }
 
@@ -55,48 +55,66 @@ module.exports = async function handler(req, res) {
   const mentionText = '<@' + discordUserId + '>';
   const avatarUrl = 'https://cdn.discordapp.com/avatars/' + discordUserId + '.png?size=128';
 
+  const ticketEmbed = {
+    title: 'Ticket #' + ticketRef,
+    color: 0x2563eb,
+    description: 'Welcome ' + mentionText + '.\n\nA staff member will assist you shortly. Please follow the instructions below to get verified.',
+    fields: [
+      { name: 'Product', value: '**' + product + '**', inline: true },
+      { name: 'Duration', value: '`' + duration + '`', inline: true },
+      { name: 'Price', value: '`' + price + ' USD ~' + xmrAmount + ' XMR`', inline: true },
+      { name: '\u200b', value: '\u200b', inline: false },
+      { name: 'XMR Payment Address', value: '```\n' + address + '\n```', inline: false },
+      { name: 'TXID / Status', value: '`' + (txHash || 'Pending in ticket') + '`', inline: false },
+      { name: '\u200b', value: '\u200b', inline: false },
+      { name: 'Customer', value: mentionText + '\n`' + username + '` \u2022 `' + discordUserId + '`', inline: true },
+      { name: 'Order Placed', value: localTime + '\n`' + timezone + '`', inline: true },
+      { name: 'Ticket Reference', value: '`' + ticketRef + '`', inline: true }
+    ],
+    thumbnail: { url: avatarUrl },
+    image: { url: 'https://ambrosia.ovh/og-image.png' },
+    footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' },
+    timestamp: new Date().toISOString()
+  };
+
+  const instructionsEmbed = {
+    title: 'How to Get Verified',
+    color: 0x065f46,
+    description: 'Follow these steps to complete your purchase and receive your license key.',
+    fields: [
+      { name: 'Step 1', value: 'Send your Discord User ID in this ticket. Right click your profile in Discord and click "Copy User ID".', inline: false },
+      { name: 'Step 2', value: 'Send the correct XMR amount to the payment address shown above. Make sure you send the exact amount.', inline: false },
+      { name: 'Step 3', value: 'Wait for a staff member to verify your payment on the blockchain. This usually takes a few minutes.', inline: false },
+      { name: 'Step 4', value: 'Once verified, you will receive your license key in this ticket.', inline: false },
+      { name: 'Step 5', value: 'After receiving your key, a staff member will close this ticket.', inline: false },
+      { name: '\u26A0\uFE0F Important', value: 'Do not send XMR to any address other than the one shown in this ticket. Always verify the address matches exactly.', inline: false }
+    ],
+    footer: { text: 'Ambrosia Payment System', icon_url: 'https://ambrosia.ovh/favicon.ico' },
+    timestamp: new Date().toISOString()
+  };
+
+  const staffEmbed = {
+    title: 'Staff Order Handling Guide',
+    color: 0x991b1b,
+    description: 'Private instructions for Staff and Seller roles. Do not share this with customers.',
+    fields: [
+      { name: 'Step 1: Verify User ID', value: 'Ask the customer for their Discord User ID if not already provided. Verify it matches the ticket creator.', inline: false },
+      { name: 'Step 2: Check XMR Payment', value: 'Use a blockchain explorer (xmrchain.net or similar) to verify the customer sent the correct XMR amount to the shown address.', inline: false },
+      { name: 'Step 3: Confirm Amount', value: 'Make sure the amount received matches the expected price. Account for small fluctuations in XMR value.', inline: false },
+      { name: 'Step 4: Deliver License Key', value: 'Once payment is confirmed on chain, deliver the license key to the customer in this ticket.', inline: false },
+      { name: 'Step 5: Verify Purchase', value: 'Click the **Verify Purchase** button below to give the customer the Verified Customer role.', inline: false },
+      { name: 'Step 6: Close Ticket', value: 'After the key is delivered and role is assigned, click **Close Ticket** to close this channel.', inline: false },
+      { name: '\u274C Do Not', value: 'Do not deliver keys before payment is confirmed on chain. Do not close tickets without verifying the purchase first.', inline: false }
+    ],
+    footer: { text: 'Ambrosia Staff Hub \u2022 Private', icon_url: 'https://ambrosia.ovh/favicon.ico' },
+    timestamp: new Date().toISOString()
+  };
+
   const payload = {
     username: 'Ambrosia Order Bot',
     avatar_url: 'https://ambrosia.ovh/favicon.ico',
-    content: mentionText + ' placed a new order.',
-    embeds: [
-      {
-        title: 'NEW ORDER \u2014 #' + ticketRef,
-        color: 0xf59e0b,
-        description: 'A customer has completed checkout. Create a private ticket to begin assisting them.',
-        fields: [
-          { name: 'Customer', value: mentionText + '\n`' + username + '` \u2022 `' + discordUserId + '`', inline: true },
-          { name: 'Product', value: '**' + product + '**', inline: true },
-          { name: 'Duration', value: '`' + duration + '`', inline: true },
-          { name: '\u200b', value: '\u200b', inline: false },
-          { name: 'Price (USD)', value: '`$' + price + ' USD`', inline: true },
-          { name: 'Price (XMR)', value: '`~' + xmrAmount + ' XMR`', inline: true },
-          { name: 'Payment Status', value: '`PENDING`', inline: true },
-          { name: '\u200b', value: '\u200b', inline: false },
-          { name: 'XMR Payment Address', value: '```\n' + address + '\n```', inline: false },
-          { name: 'TXID / Status', value: '`' + (txHash || 'Pending in ticket') + '`', inline: false },
-          { name: '\u200b', value: '\u200b', inline: false },
-          { name: 'Order Placed', value: localTime + '\n`' + timezone + '`', inline: true },
-          { name: 'Ticket Reference', value: '`' + ticketRef + '`', inline: true }
-        ],
-        thumbnail: { url: avatarUrl },
-        image: { url: 'https://ambrosia.ovh/og-image.png' },
-        footer: { text: 'Ambrosia.ovh \u2022 Staff Action Required', icon_url: 'https://ambrosia.ovh/favicon.ico' },
-        timestamp: new Date().toISOString()
-      },
-      {
-        title: 'Staff Checklist',
-        color: 0x065f46,
-        description: '1. Click **Create Ticket** below\n'
-          + '2. Welcome customer in the new ticket\n'
-          + '3. Verify XMR payment on chain\n'
-          + '4. Deliver license key\n'
-          + '5. Assign Verified Customer role\n'
-          + '6. Close ticket when complete',
-        footer: { text: 'Ambrosia.ovh \u2022 Automated Order System', icon_url: 'https://ambrosia.ovh/favicon.ico' },
-        timestamp: new Date().toISOString()
-      }
-    ],
+    content: mentionText + ' placed a new order. A ticket channel will be created for you.',
+    embeds: [ticketEmbed, instructionsEmbed, staffEmbed],
     components: [{
       type: 1,
       components: [{

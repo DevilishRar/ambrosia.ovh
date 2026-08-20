@@ -286,6 +286,20 @@ module.exports = async function handler(req, res) {
       channels.catalog = ch3 ? ch3.id : null;
     }
 
+    var linksPerms = [
+      { id: guildId, type: 0, allow: readOnly(), deny: '0' },
+      { id: roles.staff, type: 0, allow: readOnly(), deny: '0' },
+      { id: roles.seller, type: 0, allow: readOnly(), deny: '0' },
+      { id: roles.bot, type: 0, allow: adminPerms(), deny: '0' }
+    ];
+
+    if (!channelExists('links')) {
+      channels.links = await createChannel(token, guildId, 'links', 0, categories.information, linksPerms);
+    } else {
+      var chLinks = existingChannelsRes.data.find(function(x) { return x.name === 'links'; });
+      channels.links = chLinks ? chLinks.id : null;
+    }
+
     var generalPerms = [
       { id: guildId, type: 0, allow: memberPerms(), deny: '0' },
       { id: roles.staff, type: 0, allow: staffPerms(), deny: '0' },
@@ -503,65 +517,31 @@ module.exports = async function handler(req, res) {
       if (await sendMsg(token, channels.catalog, { embeds: catalogEmbeds })) embedCount++;
     }
 
+    if (channels.links) {
+      var linksEmbed = {
+        title: '\uD83D\uDD17 Official Links',
+        color: 0x5865f2,
+        description: 'Official Ambrosia product server and website links.',
+        fields: [
+          { name: '\uD83C\uDF10 Official Product Server', value: 'https://discord.gg/bT9dpnerP4\nThis is the main Ambrosia product server for news, updates, and community.', inline: false },
+          { name: '\uD83D\uDD11 Support Server (You Are Here)', value: 'https://discord.gg/fE4QFQVBfD\nThis server is for support tickets, order assistance, and staff communication.', inline: false },
+          { name: '\uD83D\uDED2 Website', value: '[ambrosia.ovh](https://ambrosia.ovh)\nPlace orders, view products, and check XMR prices.', inline: false }
+        ],
+        image: { url: 'https://ambrosia.ovh/og-image.png' },
+        footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' },
+        timestamp: new Date().toISOString()
+      };
+      if (await sendMsg(token, channels.links, { embeds: [linksEmbed] })) embedCount++;
+    }
+
     if (channels.ticketChannel) {
       var panelEmbeds = [
         {
-          title: 'Ambrosia Support Hub',
-          description: 'Need help with an order or have a question? Open a private ticket and our staff will assist you directly.\n\n**You must be a member of this Discord server to open a ticket.** If you cannot interact with the dropdown below, join our server first.',
+          title: 'Open a Support Ticket',
+          description: 'Select a product from the dropdown below to open a private ticket with our staff.\n\nYou must be a member of this server to open a ticket.',
           color: 0x2563eb,
           thumbnail: { url: 'https://ambrosia.ovh/favicon.ico' },
           image: { url: 'https://ambrosia.ovh/og-image.png' },
-          timestamp: new Date().toISOString()
-        },
-        {
-          title: 'Product Catalog and XMR Addresses',
-          color: 0x1e3a8a,
-          fields: [
-            {
-              name: 'Ambrosia OW Lite',
-              value: 'Overwatch 2 | Aimbot, Triggerbot, Flickbot, Streamproof\n$5/week, $10/month\n\nWeekly Address:\n```\n89aFGA5EWqvJUnNacSNW6RGPctm74XKx8Nvz5t45BDm8ZfDWdBH2xJgZsL4mFi47kHaamwu2PcQAT3E1vUJmpPhD15WjkiB\n```\nMonthly Address:\n```\n8AGpdyaAkKyb8daJ3xksAr9m6y5L6ChND2KHthouN4YcEXMtm5cH72DghMc2ZeMHdP2ewXWxWWRPTUuoMefj1DSg7FVf8kU\n```',
-              inline: false
-            },
-            {
-              name: 'Ambrosia OW Pro',
-              value: 'Overwatch 2 | Hero Scripting, Ult Shower HUD, Dual Slots\n$20/week, $45/month\n\nWeekly Address:\n```\n8AGpdyaAkKyb8daJ3xksAr9m6y5L6ChND2KHthouN4YcEXMtm5cH72DghMc2ZeMHdP2ewXWxWWRPTUuoMefj1DSg7FVf8kU\n```\nMonthly Address:\n```\n4BE8WBPizoyfveG6Sbtd66V184WktCEoq8EQ2d3ayxKLQxhRiFB4shQDHSVU8f188diVst9thbTtWh4KmrGKZXwwRm6fvyL\n```',
-              inline: false
-            },
-            {
-              name: 'CS2 Web Radar',
-              value: 'Counter-Strike 2 | Triggerbot, RCS, 2D Tactical Radar\n$5/week, $15/month\n\nWeekly Address:\n```\n84hxPfyebV85yHJi6BuBnnKxBjYRGc1dMURtmv4By4QjNF9Czaho5EPQzeGEeNtVfpCyX1v4dRLac2LWLEnSC4EK7BsKZKc\n```\nMonthly Address:\n```\n8AVUcXxR3ircP1BhpUi3fhczeag4LQjCaJKBe2opbDrKCexzqYAwjk3U63uGeaU4Wk7ztyDtoYEuHXxQ46f27c4AR2c6mQf\n```',
-              inline: false
-            },
-            {
-              name: 'Ambrosia FN',
-              value: 'Fortnite | Aimbot, ESP, Loot Radar\n$20/week, $45/month\n\nContact staff in the ticket for the payment address.',
-              inline: false
-            }
-          ]
-        },
-        {
-          title: 'How It Works',
-          color: 0x5865f2,
-          fields: [
-            {
-              name: 'For Customers',
-              value: '1. Select a product from the dropdown below\n'
-                + '2. A private ticket channel will be created\n'
-                + '3. Send your Discord User ID in the ticket (right click your profile, Copy User ID)\n'
-                + '4. Describe what you need help with\n'
-                + '5. Send your XMR payment to the address shown above\n'
-                + '6. Staff will verify your payment on chain\n'
-                + '7. You will receive your license key\n'
-                + '8. Staff will close the ticket',
-              inline: true
-            },
-            {
-              name: 'Payment Verification',
-              value: 'After you send XMR, staff will check the blockchain to confirm your transaction. Once verified, your license key will be delivered in the ticket. No verification is needed from your side beyond sending the correct amount to the shown address.',
-              inline: true
-            }
-          ],
-          footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' },
           timestamp: new Date().toISOString()
         }
       ];
@@ -604,7 +584,23 @@ module.exports = async function handler(req, res) {
         footer: { text: 'Ambrosia Staff Hub', icon_url: 'https://ambrosia.ovh/favicon.ico' },
         timestamp: new Date().toISOString()
       };
-      if (await sendMsg(token, channels.staffChat, { embeds: [staffEmbed] })) embedCount++;
+      var staffInstructionsEmbed = {
+        title: 'Staff Order Handling Guide (XMR Only)',
+        color: 0x991b1b,
+        description: 'Private instructions for Staff and Seller roles. Do not share this with customers.',
+        fields: [
+          { name: 'Step 1: Verify User ID', value: 'Ask the customer for their Discord User ID if not already provided. Verify it matches the ticket creator.', inline: false },
+          { name: 'Step 2: Check XMR Payment', value: 'Use a blockchain explorer (xmrchain.net or similar) to verify the customer sent the correct XMR amount to the shown address.', inline: false },
+          { name: 'Step 3: Confirm Amount', value: 'Make sure the amount received matches the expected price. Account for small fluctuations in XMR value.', inline: false },
+          { name: 'Step 4: Deliver License Key', value: 'Once payment is confirmed on chain, deliver the license key to the customer in this ticket.', inline: false },
+          { name: 'Step 5: Verify Purchase', value: 'Click the **Verify Purchase** button to give the customer the Verified Customer role.', inline: false },
+          { name: 'Step 6: Close Ticket', value: 'After the key is delivered and role is assigned, click **Close Ticket** to close this channel.', inline: false },
+          { name: '\u274C Do Not', value: 'Do not deliver keys before payment is confirmed on chain. Do not close tickets without verifying the purchase first.', inline: false }
+        ],
+        footer: { text: 'Ambrosia Staff Hub \u2022 Private', icon_url: 'https://ambrosia.ovh/favicon.ico' },
+        timestamp: new Date().toISOString()
+      };
+      if (await sendMsg(token, channels.staffChat, { embeds: [staffEmbed, staffInstructionsEmbed] })) embedCount++;
     }
 
     if (channels.orderNotifications) {
@@ -634,6 +630,7 @@ module.exports = async function handler(req, res) {
       DISCORD_RULES_CHANNEL_ID: channels.rules || '',
       DISCORD_ANNOUNCEMENTS_CHANNEL_ID: channels.announcements || '',
       DISCORD_PRODUCT_CATALOG_CHANNEL_ID: channels.catalog || '',
+      DISCORD_LINKS_CHANNEL_ID: channels.links || '',
       DISCORD_GENERAL_CHAT_CHANNEL_ID: channels.generalChat || '',
       DISCORD_OFF_TOPIC_CHANNEL_ID: channels.offTopic || '',
       DISCORD_MEMBER_ROLE_ID: roles.member || '',

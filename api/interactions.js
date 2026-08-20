@@ -8,10 +8,41 @@ const CATEGORY_ID = process.env.DISCORD_TICKETS_CATEGORY_ID || '1539707872416636
 const STAFF_ROLE_ID = process.env.DISCORD_STAFF_ROLE_ID || '1539709640240005220';
 const SELLER_ROLE_ID = process.env.DISCORD_SELLER_ROLE_ID || '';
 const CUSTOMER_ROLE_ID = process.env.DISCORD_CUSTOMER_ROLE_ID || '';
-const DISCORD_INVITE = 'https://discord.gg/bT9dpnerP4';
+const TICKET_SERVER_INVITE = 'https://discord.gg/fE4QFQVBfD';
 
 function getBotToken() {
   try { return atob(ENCODED_BOT_TOKEN); } catch { return ''; }
+}
+
+const PRODUCT_ADDRESSES = {
+  'ambrosia-ow-lite': {
+    name: 'Ambrosia OW Lite',
+    weekly: '89aFGA5EWqvJUnNacSNW6RGPctm74XKx8Nvz5t45BDm8ZfDWdBH2xJgZsL4mFi47kHaamwu2PcQAT3E1vUJmpPhD15WjkiB',
+    monthly: '8AGpdyaAkKyb8daJ3xksAr9m6y5L6ChND2KHthouN4YcEXMtm5cH72DghMc2ZeMHdP2ewXWxWWRPTUuoMefj1DSg7FVf8kU'
+  },
+  'ambrosia-ow-pro': {
+    name: 'Ambrosia OW Pro',
+    weekly: '8AGpdyaAkKyb8daJ3xksAr9m6y5L6ChND2KHthouN4YcEXMtm5cH72DghMc2ZeMHdP2ewXWxWWRPTUuoMefj1DSg7FVf8kU',
+    monthly: '4BE8WBPizoyfveG6Sbtd66V184WktCEoq8EQ2d3ayxKLQxhRiFB4shQDHSVU8f188diVst9thbTtWh4KmrGKZXwwRm6fvyL'
+  },
+  'ambrosia-cs2-web': {
+    name: 'CS2 Web Radar',
+    weekly: '84hxPfyebV85yHJi6BuBnnKxBjYRGc1dMURtmv4By4QjNF9Czaho5EPQzeGEeNtVfpCyX1v4dRLac2LWLEnSC4EK7BsKZKc',
+    monthly: '8AVUcXxR3ircP1BhpUi3fhczeag4LQjCaJKBe2opbDrKCexzqYAwjk3U63uGeaU4Wk7ztyDtoYEuHXxQ46f27c4AR2c6mQf'
+  },
+  'ambrosia-fn': {
+    name: 'Ambrosia FN',
+    weekly: null,
+    monthly: null
+  }
+};
+
+function getAddress(productKey, duration) {
+  var p = PRODUCT_ADDRESSES[productKey];
+  if (!p) return 'Contact staff for payment details.';
+  var addr = duration === 'weekly' ? p.weekly : p.monthly;
+  if (!addr) return 'Contact staff for payment details.';
+  return addr;
 }
 
 function parseField(fields, name) {
@@ -75,6 +106,71 @@ async function addRole(token, guildId, userId, roleId) {
     console.error('[Ambrosia] Add role failed:', e);
     return false;
   }
+}
+
+function buildTicketEmbed(ticketRef, customerId, product, duration, priceUsd, priceXmr, xmrAddress, txHash, orderTime, isFromWebsite) {
+  var fields = [
+    { name: 'Product', value: '**' + product + '**', inline: true },
+    { name: 'Duration', value: '`' + duration.toUpperCase() + '`', inline: true },
+    { name: 'Price', value: '`' + priceUsd + ' ~' + priceXmr + '`', inline: true },
+    { name: '\u200b', value: '\u200b', inline: false },
+    { name: 'XMR Payment Address', value: '```\n' + xmrAddress + '\n```', inline: false },
+    { name: 'TXID / Status', value: '`' + txHash + '`', inline: false },
+    { name: '\u200b', value: '\u200b', inline: false },
+    { name: 'Order Placed', value: orderTime, inline: true }
+  ];
+
+  if (isFromWebsite) {
+    fields.push({ name: '\u200b', value: '\u200b', inline: false });
+    fields.push({ name: 'Customer', value: '<@' + customerId + '>', inline: true });
+  }
+
+  return {
+    title: 'Ticket #' + ticketRef,
+    color: 0x2563eb,
+    description: 'Welcome ' + (customerId ? '<@' + customerId + '>' : '**Customer**') + '.\n\nA staff member will assist you shortly. Please follow the instructions below to get verified.',
+    fields: fields,
+    image: { url: 'https://ambrosia.ovh/og-image.png' },
+    footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' },
+    timestamp: new Date().toISOString()
+  };
+}
+
+function buildCustomerInstructions(product) {
+  return {
+    title: 'How to Get Verified',
+    color: 0x065f46,
+    description: 'Follow these steps to complete your purchase and receive your license key.',
+    fields: [
+      { name: 'Step 1', value: 'Send your Discord User ID in this ticket. Right click your profile in Discord and click "Copy User ID".', inline: false },
+      { name: 'Step 2', value: 'Send the correct XMR amount to the payment address shown above. Make sure you send the exact amount.', inline: false },
+      { name: 'Step 3', value: 'Wait for a staff member to verify your payment on the blockchain. This usually takes a few minutes.', inline: false },
+      { name: 'Step 4', value: 'Once verified, you will receive your license key in this ticket.', inline: false },
+      { name: 'Step 5', value: 'After receiving your key, a staff member will close this ticket.', inline: false },
+      { name: '\u26A0\uFE0F Important', value: 'Do not send XMR to any address other than the one shown in this ticket. Always verify the address matches exactly.', inline: false }
+    ],
+    footer: { text: 'Ambrosia Payment System', icon_url: 'https://ambrosia.ovh/favicon.ico' },
+    timestamp: new Date().toISOString()
+  };
+}
+
+function buildStaffInstructions(product, ticketRef) {
+  return {
+    title: 'Staff Order Handling Guide',
+    color: 0x991b1b,
+    description: 'Private instructions for Staff and Seller roles. Do not share this with customers.',
+    fields: [
+      { name: 'Step 1: Verify User ID', value: 'Ask the customer for their Discord User ID if not already provided. Verify it matches the ticket creator.', inline: false },
+      { name: 'Step 2: Check XMR Payment', value: 'Use a blockchain explorer (xmrchain.net or similar) to verify the customer sent the correct XMR amount to the shown address.', inline: false },
+      { name: 'Step 3: Confirm Amount', value: 'Make sure the amount received matches the expected price. Account for small fluctuations in XMR value.', inline: false },
+      { name: 'Step 4: Deliver License Key', value: 'Once payment is confirmed on chain, deliver the license key to the customer in this ticket.', inline: false },
+      { name: 'Step 5: Verify Purchase', value: 'Click the **Verify Purchase** button below to give the customer the Verified Customer role.', inline: false },
+      { name: 'Step 6: Close Ticket', value: 'After the key is delivered and role is assigned, click **Close Ticket** to close this channel.', inline: false },
+      { name: '\u274C Do Not', value: 'Do not deliver keys before payment is confirmed on chain. Do not close tickets without verifying the purchase first.', inline: false }
+    ],
+    footer: { text: 'Ambrosia Staff Hub \u2022 Private', icon_url: 'https://ambrosia.ovh/favicon.ico' },
+    timestamp: new Date().toISOString()
+  };
 }
 
 module.exports = async function handler(req, res) {
@@ -159,24 +255,9 @@ module.exports = async function handler(req, res) {
         ? '<@' + customerId + '>' + (STAFF_ROLE_ID ? ' <@&' + STAFF_ROLE_ID + '>' : '')
         : (STAFF_ROLE_ID ? '<@&' + STAFF_ROLE_ID + '>' : '');
 
-      const welcomeEmbed = {
-        title: 'Ticket #' + ticketRef,
-        color: 0x2563eb,
-        description: 'Welcome ' + (customerId ? '<@' + customerId + '>' : '**' + customerRaw + '**') + '.\n\nA staff member will assist you shortly. Please share your Discord User ID and send your XMR payment in this channel.',
-        fields: [
-          { name: 'Product', value: '**' + product + '**', inline: true },
-          { name: 'Duration', value: '`' + duration.toUpperCase() + '`', inline: true },
-          { name: 'Price', value: '`' + priceUsd + ' ~' + priceXmr + '`', inline: true },
-          { name: '\u200b', value: '\u200b', inline: false },
-          { name: 'XMR Payment Address', value: '```\n' + xmrAddress + '\n```', inline: false },
-          { name: 'TXID / Status', value: '`' + txHash + '`', inline: false },
-          { name: '\u200b', value: '\u200b', inline: false },
-          { name: 'Order Placed', value: orderTime, inline: true }
-        ],
-        image: { url: 'https://ambrosia.ovh/og-image.png' },
-        footer: { text: 'Ambrosia.ovh \u2022 Staff Only: Verify Purchase then Close Ticket', icon_url: 'https://ambrosia.ovh/favicon.ico' },
-        timestamp: new Date().toISOString()
-      };
+      const ticketEmbed = buildTicketEmbed(ticketRef, customerId, product, duration, priceUsd, priceXmr, xmrAddress, txHash, orderTime, true);
+      const instructionsEmbed = buildCustomerInstructions(product);
+      const staffEmbed = buildStaffInstructions(product, ticketRef);
 
       const buttonRow = {
         type: 1,
@@ -189,7 +270,7 @@ module.exports = async function handler(req, res) {
       await fetch('https://discord.com/api/v10/channels/' + newChannel.id + '/messages', {
         method: 'POST',
         headers: { Authorization: 'Bot ' + BOT_TOKEN, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: mentionStr, embeds: [welcomeEmbed], components: [buttonRow] })
+        body: JSON.stringify({ content: mentionStr, embeds: [ticketEmbed, instructionsEmbed, staffEmbed], components: [buttonRow] })
       });
 
       return res.json({ type: 4, data: { content: 'Ticket channel created: <#' + newChannel.id + '>', flags: 64 } });
@@ -219,17 +300,6 @@ module.exports = async function handler(req, res) {
       if (!roleAdded) {
         return res.json({ type: 4, data: { content: 'Failed to assign role. Check bot permissions.', flags: 64 } });
       }
-
-      let customerName = 'Unknown';
-      try {
-        const userRes = await fetch('https://discord.com/api/v10/users/' + customerId, {
-          headers: { Authorization: 'Bot ' + BOT_TOKEN }
-        });
-        if (userRes.ok) {
-          const userData = await userRes.json();
-          customerName = userData.username || 'Unknown';
-        }
-      } catch (e) {}
 
       return res.json({
         type: 4,
@@ -277,7 +347,7 @@ module.exports = async function handler(req, res) {
         return res.json({
           type: 4,
           data: {
-            content: 'You must be a member of this Discord server to open a ticket.\n\nJoin here: ' + DISCORD_INVITE,
+            content: 'You must be a member of this Discord server to open a ticket.\n\nJoin here: ' + TICKET_SERVER_INVITE,
             flags: 64
           }
         });
@@ -325,20 +395,13 @@ module.exports = async function handler(req, res) {
 
         const mentionStr = '<@' + userId + '>' + (STAFF_ROLE_ID ? ' <@&' + STAFF_ROLE_ID + '>' : '');
 
-        const welcomeEmbed = {
-          title: 'Ticket #' + ticketRef,
-          color: 0x2563eb,
-          description: 'Welcome <@' + userId + '>.\n\nA staff member will assist you shortly. Describe your request below.',
-          fields: [
-            { name: 'Product', value: '**' + productName + '**', inline: true },
-            { name: 'Status', value: '`Awaiting Staff`', inline: true },
-            { name: '\u200b', value: '\u200b', inline: false },
-            { name: 'Next Steps', value: '1. Describe what you need help with\n2. Wait for a staff member to respond\n3. Send your XMR payment when ready\n4. Receive your license key', inline: false }
-          ],
-          image: { url: 'https://ambrosia.ovh/og-image.png' },
-          footer: { text: 'Ambrosia.ovh \u2022 Ticket #' + ticketRef, icon_url: 'https://ambrosia.ovh/favicon.ico' },
-          timestamp: new Date().toISOString()
-        };
+        const xmrAddress = getAddress(selectedValue, 'weekly');
+        const priceUsd = selectedValue === 'ambrosia-ow-lite' ? '$5 USD / $10 USD' : selectedValue === 'ambrosia-ow-pro' ? '$20 USD / $45 USD' : selectedValue === 'ambrosia-cs2-web' ? '$5 USD / $15 USD' : selectedValue === 'ambrosia-fn' ? '$20 USD / $45 USD' : 'TBD';
+        const priceXmr = selectedValue === 'ambrosia-ow-lite' ? '~0.03 XMR / ~0.06 XMR' : selectedValue === 'ambrosia-ow-pro' ? '~0.12 XMR / ~0.27 XMR' : selectedValue === 'ambrosia-cs2-web' ? '~0.03 XMR / ~0.09 XMR' : selectedValue === 'ambrosia-fn' ? '~0.12 XMR / ~0.27 XMR' : 'TBD';
+
+        const ticketEmbed = buildTicketEmbed(ticketRef, userId, productName, 'weekly or monthly', priceUsd, priceXmr, xmrAddress, 'Pending in ticket', new Date().toISOString(), false);
+        const instructionsEmbed = buildCustomerInstructions(productName);
+        const staffEmbed = buildStaffInstructions(productName, ticketRef);
 
         const buttonRow = {
           type: 1,
@@ -351,7 +414,7 @@ module.exports = async function handler(req, res) {
         await fetch('https://discord.com/api/v10/channels/' + newChannel.id + '/messages', {
           method: 'POST',
           headers: { Authorization: 'Bot ' + BOT_TOKEN, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ content: mentionStr, embeds: [welcomeEmbed], components: [buttonRow] })
+          body: JSON.stringify({ content: mentionStr, embeds: [ticketEmbed, instructionsEmbed, staffEmbed], components: [buttonRow] })
         });
 
         return res.json({ type: 4, data: { content: 'Ticket created: <#' + newChannel.id + '>', flags: 64 } });
