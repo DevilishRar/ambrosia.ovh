@@ -15,16 +15,26 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const BOT_TOKEN = getBotToken();
+  var BOT_TOKEN = getBotToken();
   if (!BOT_TOKEN) return res.status(500).json({ error: 'Bot token not configured' });
 
-  const { discordUserId, product, duration, price, xmrAmount, address, txHash, ticketRef, timezone, localTime } = req.body;
+  var body = req.body || {};
+  var discordUserId = body.discordUserId;
+  var product = body.product;
+  var duration = body.duration;
+  var price = body.price;
+  var xmrAmount = body.xmrAmount;
+  var address = body.address;
+  var txHash = body.txHash;
+  var ticketRef = body.ticketRef;
+  var timezone = body.timezone;
+  var localTime = body.localTime;
 
   if (!discordUserId) return res.status(400).json({ error: 'Discord User ID is mandatory' });
 
-  let isMember = false;
+  var isMember = false;
   try {
-    const memberRes = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '/members/' + discordUserId, {
+    var memberRes = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '/members/' + discordUserId, {
       headers: { Authorization: 'Bot ' + BOT_TOKEN }
     });
     isMember = memberRes.ok;
@@ -39,32 +49,33 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  let username = 'unknown';
+  var username = 'unknown';
   try {
-    const userRes = await fetch('https://discord.com/api/v10/users/' + discordUserId, {
+    var userRes = await fetch('https://discord.com/api/v10/users/' + discordUserId, {
       headers: { Authorization: 'Bot ' + BOT_TOKEN }
     });
     if (userRes.ok) {
-      const userData = await userRes.json();
+      var userData = await userRes.json();
       username = userData.username || 'unknown';
     }
   } catch (e) {
     console.error('[Ambrosia] Failed to fetch user:', e);
   }
 
-  const mentionText = '<@' + discordUserId + '>';
-  const avatarUrl = 'https://cdn.discordapp.com/avatars/' + discordUserId + '.png?size=128';
+  var mentionText = '<@' + discordUserId + '>';
+  var avatarUrl = 'https://cdn.discordapp.com/avatars/' + discordUserId + '.png?size=128';
+  var addrText = address ? '```\n' + address + '\n```' : 'Contact staff for payment details.';
 
-  const ticketEmbed = {
+  var ticketEmbed = {
     title: 'Ticket #' + ticketRef,
     color: 0x2563eb,
-    description: 'Welcome ' + mentionText + '.\n\nA staff member will assist you shortly. Please follow the instructions below to get verified.',
+    description: 'Welcome ' + mentionText + '.\n\nA staff member will assist you shortly. Please follow the instructions below to complete your purchase.',
     fields: [
       { name: 'Product', value: '**' + product + '**', inline: true },
       { name: 'Duration', value: '`' + duration + '`', inline: true },
-      { name: 'Price', value: '`' + price + ' USD ~' + xmrAmount + ' XMR`', inline: true },
+      { name: 'Price', value: '`$' + price + ' USD ~' + xmrAmount + ' XMR`', inline: true },
       { name: '\u200b', value: '\u200b', inline: false },
-      { name: 'XMR Payment Address', value: '```\n' + address + '\n```', inline: false },
+      { name: 'XMR Payment Address', value: addrText, inline: false },
       { name: 'TXID / Status', value: '`' + (txHash || 'Pending in ticket') + '`', inline: false },
       { name: '\u200b', value: '\u200b', inline: false },
       { name: 'Customer', value: mentionText + '\n`' + username + '` \u2022 `' + discordUserId + '`', inline: true },
@@ -77,44 +88,27 @@ module.exports = async function handler(req, res) {
     timestamp: new Date().toISOString()
   };
 
-  const instructionsEmbed = {
+  var instructionsEmbed = {
     title: 'How to Get Verified',
     color: 0x065f46,
     description: 'Follow these steps to complete your purchase and receive your license key.',
     fields: [
       { name: 'Step 1', value: 'Send your Discord User ID in this ticket. Right click your profile in Discord and click "Copy User ID".', inline: false },
       { name: 'Step 2', value: 'Send the correct XMR amount to the payment address shown above. Make sure you send the exact amount.', inline: false },
-      { name: 'Step 3', value: 'Wait for a staff member to verify your payment on the blockchain. This usually takes a few minutes.', inline: false },
-      { name: 'Step 4', value: 'Once verified, you will receive your license key in this ticket.', inline: false },
-      { name: 'Step 5', value: 'After receiving your key, a staff member will close this ticket.', inline: false },
+      { name: 'Step 3', value: 'Paste your transaction hash (TXID) in this ticket as proof of payment.', inline: false },
+      { name: 'Step 4', value: 'Wait for a staff member to verify your payment on the blockchain. This usually takes a few minutes.', inline: false },
+      { name: 'Step 5', value: 'Once verified, you will receive your license key in this ticket.', inline: false },
       { name: '\u26A0\uFE0F Important', value: 'Do not send XMR to any address other than the one shown in this ticket. Always verify the address matches exactly.', inline: false }
     ],
     footer: { text: 'Ambrosia Payment System', icon_url: 'https://ambrosia.ovh/favicon.ico' },
     timestamp: new Date().toISOString()
   };
 
-  const staffEmbed = {
-    title: 'Staff Order Handling Guide',
-    color: 0x991b1b,
-    description: 'Private instructions for Staff and Seller roles. Do not share this with customers.',
-    fields: [
-      { name: 'Step 1: Verify User ID', value: 'Ask the customer for their Discord User ID if not already provided. Verify it matches the ticket creator.', inline: false },
-      { name: 'Step 2: Check XMR Payment', value: 'Use a blockchain explorer (xmrchain.net or similar) to verify the customer sent the correct XMR amount to the shown address.', inline: false },
-      { name: 'Step 3: Confirm Amount', value: 'Make sure the amount received matches the expected price. Account for small fluctuations in XMR value.', inline: false },
-      { name: 'Step 4: Deliver License Key', value: 'Once payment is confirmed on chain, deliver the license key to the customer in this ticket.', inline: false },
-      { name: 'Step 5: Verify Purchase', value: 'Click the **Verify Purchase** button below to give the customer the Verified Customer role.', inline: false },
-      { name: 'Step 6: Close Ticket', value: 'After the key is delivered and role is assigned, click **Close Ticket** to close this channel.', inline: false },
-      { name: '\u274C Do Not', value: 'Do not deliver keys before payment is confirmed on chain. Do not close tickets without verifying the purchase first.', inline: false }
-    ],
-    footer: { text: 'Ambrosia Staff Hub \u2022 Private', icon_url: 'https://ambrosia.ovh/favicon.ico' },
-    timestamp: new Date().toISOString()
-  };
-
-  const payload = {
+  var payload = {
     username: 'Ambrosia Order Bot',
     avatar_url: 'https://ambrosia.ovh/favicon.ico',
-    content: mentionText + ' placed a new order. A ticket channel will be created for you.',
-    embeds: [ticketEmbed, instructionsEmbed, staffEmbed],
+    content: mentionText + ' placed a new order. Click **Create Ticket** to begin assisting them.',
+    embeds: [ticketEmbed, instructionsEmbed],
     components: [{
       type: 1,
       components: [{
@@ -128,7 +122,7 @@ module.exports = async function handler(req, res) {
   };
 
   try {
-    const resp = await fetch('https://discord.com/api/v10/channels/' + NOTIFICATION_CHANNEL_ID + '/messages', {
+    var resp = await fetch('https://discord.com/api/v10/channels/' + NOTIFICATION_CHANNEL_ID + '/messages', {
       method: 'POST',
       headers: {
         'Authorization': 'Bot ' + BOT_TOKEN,
@@ -138,7 +132,7 @@ module.exports = async function handler(req, res) {
     });
 
     if (!resp.ok) {
-      const err = await resp.text();
+      var err = await resp.text();
       console.error('[Ambrosia] Discord API error ' + resp.status + ': ' + err);
       return res.status(502).json({ error: 'Discord API error: ' + resp.status });
     }

@@ -1062,7 +1062,7 @@ async function handleOrderSubmission() {
         showToast('You must join our Discord server first. Redirecting...', 'error');
         setTimeout(() => {
           closeCheckoutModal();
-          window.open('https://discord.gg/bT9dpnerP4', '_blank');
+          window.open('https://discord.gg/fE4QFQVBfD', '_blank');
         }, 2000);
       } else {
         showToast('Failed to send order (' + resp.status + '). Check console.', 'error');
@@ -1081,7 +1081,7 @@ async function handleOrderSubmission() {
 
   setTimeout(() => {
     closeCheckoutModal();
-    window.open('https://discord.gg/bT9dpnerP4', '_blank');
+    window.open('https://discord.gg/fE4QFQVBfD', '_blank');
   }, 1400);
 }
 

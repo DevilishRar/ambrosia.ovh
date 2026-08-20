@@ -14,129 +14,158 @@ function getBotToken() {
   try { return atob(ENCODED_BOT_TOKEN); } catch { return ''; }
 }
 
-const PRODUCT_ADDRESSES = {
+var PRODUCTS = {
   'ambrosia-ow-lite': {
     name: 'Ambrosia OW Lite',
-    weekly: '89aFGA5EWqvJUnNacSNW6RGPctm74XKx8Nvz5t45BDm8ZfDWdBH2xJgZsL4mFi47kHaamwu2PcQAT3E1vUJmpPhD15WjkiB',
-    monthly: '8AGpdyaAkKyb8daJ3xksAr9m6y5L6ChND2KHthouN4YcEXMtm5cH72DghMc2ZeMHdP2ewXWxWWRPTUuoMefj1DSg7FVf8kU'
+    game: 'Overwatch 2',
+    features: 'Aimbot, Triggerbot, Flickbot with Prediction, Multipoint Visualisation, Hitbox Customisation, Auto Bunnyhop, Null Binding (SnapTap), Streamproof, 10 Configs',
+    weeklyPrice: 5,
+    monthlyPrice: 10,
+    weeklyXmr: '~0.03',
+    monthlyXmr: '~0.06',
+    weeklyAddr: '89aFGA5EWqvJUnNacSNW6RGPctm74XKx8Nvz5t45BDm8ZfDWdBH2xJgZsL4mFi47kHaamwu2PcQAT3E1vUJmpPhD15WjkiB',
+    monthlyAddr: '8AGpdyaAkKyb8daJ3xksAr9m6y5L6ChND2KHthouN4YcEXMtm5cH72DghMc2ZeMHdP2ewXWxWWRPTUuoMefj1DSg7FVf8kU'
   },
   'ambrosia-ow-pro': {
     name: 'Ambrosia OW Pro',
-    weekly: '8AGpdyaAkKyb8daJ3xksAr9m6y5L6ChND2KHthouN4YcEXMtm5cH72DghMc2ZeMHdP2ewXWxWWRPTUuoMefj1DSg7FVf8kU',
-    monthly: '4BE8WBPizoyfveG6Sbtd66V184WktCEoq8EQ2d3ayxKLQxhRiFB4shQDHSVU8f188diVst9thbTtWh4KmrGKZXwwRm6fvyL'
+    game: 'Overwatch 2',
+    features: 'Dual Aim and Trigger Slots, Hero Action Scripting (10 scripts), Ult Shower HUD, Ability Cooldown Panel, Player Outline ESP, Skeleton Hitbox Visuals, FOV Changer, Third Person, Streamproof',
+    weeklyPrice: 20,
+    monthlyPrice: 45,
+    weeklyXmr: '~0.12',
+    monthlyXmr: '~0.27',
+    weeklyAddr: '8AGpdyaAkKyb8daJ3xksAr9m6y5L6ChND2KHthouN4YcEXMtm5cH72DghMc2ZeMHdP2ewXWxWWRPTUuoMefj1DSg7FVf8kU',
+    monthlyAddr: '4BE8WBPizoyfveG6Sbtd66V184WktCEoq8EQ2d3ayxKLQxhRiFB4shQDHSVU8f188diVst9thbTtWh4KmrGKZXwwRm6fvyL'
   },
   'ambrosia-cs2-web': {
     name: 'CS2 Web Radar',
-    weekly: '84hxPfyebV85yHJi6BuBnnKxBjYRGc1dMURtmv4By4QjNF9Czaho5EPQzeGEeNtVfpCyX1v4dRLac2LWLEnSC4EK7BsKZKc',
-    monthly: '8AVUcXxR3ircP1BhpUi3fhczeag4LQjCaJKBe2opbDrKCexzqYAwjk3U63uGeaU4Wk7ztyDtoYEuHXxQ46f27c4AR2c6mQf'
+    game: 'Counter-Strike 2',
+    features: 'Triggerbot with Custom Delay, RCS Recoil Control, Interactive 2D Tactical Web Radar, Bomb Carrier/Defusing/Flashed/Grenades Display, Players Info: Name, Health, Teams, Weapons',
+    weeklyPrice: 5,
+    monthlyPrice: 15,
+    weeklyXmr: '~0.03',
+    monthlyXmr: '~0.09',
+    weeklyAddr: '84hxPfyebV85yHJi6BuBnnKxBjYRGc1dMURtmv4By4QjNF9Czaho5EPQzeGEeNtVfpCyX1v4dRLac2LWLEnSC4EK7BsKZKc',
+    monthlyAddr: '8AVUcXxR3ircP1BhpUi3fhczeag4LQjCaJKBe2opbDrKCexzqYAwjk3U63uGeaU4Wk7ztyDtoYEuHXxQ46f27c4AR2c6mQf'
   },
   'ambrosia-fn': {
     name: 'Ambrosia FN',
-    weekly: null,
-    monthly: null
+    game: 'Fortnite',
+    features: 'Under Development and Maintenance. Updates will be announced in Discord.',
+    weeklyPrice: 20,
+    monthlyPrice: 45,
+    weeklyXmr: '~0.12',
+    monthlyXmr: '~0.27',
+    weeklyAddr: null,
+    monthlyAddr: null
   }
 };
 
 function getAddress(productKey, duration) {
-  var p = PRODUCT_ADDRESSES[productKey];
-  if (!p) return 'Contact staff for payment details.';
-  var addr = duration === 'weekly' ? p.weekly : p.monthly;
-  if (!addr) return 'Contact staff for payment details.';
-  return addr;
+  var p = PRODUCTS[productKey];
+  if (!p) return null;
+  return duration === 'weekly' ? p.weeklyAddr : p.monthlyAddr;
+}
+
+function getPriceUsd(productKey, duration) {
+  var p = PRODUCTS[productKey];
+  if (!p) return 0;
+  return duration === 'weekly' ? p.weeklyPrice : p.monthlyPrice;
+}
+
+function getPriceXmr(productKey, duration) {
+  var p = PRODUCTS[productKey];
+  if (!p) return 'TBD';
+  return duration === 'weekly' ? p.weeklyXmr : p.monthlyXmr;
 }
 
 function parseField(fields, name) {
   if (!fields) return '';
-  const f = fields.find(f => f.name === name);
+  var f = fields.find(function(x) { return x.name === name; });
   return f ? f.value : '';
 }
 
 function extractUserId(val) {
   if (!val) return '';
-  const m = val.match(/(\d{17,20})/);
+  var m = val.match(/(\d{17,20})/);
   return m ? m[1] : '';
 }
 
 function extractUsername(val) {
   if (!val) return 'unknown';
-  const mention = val.match(/<@!?(\d+)>/);
-  const paren = val.match(/\((.+)\)/);
+  var mention = val.match(/<@!?(\d+)>/);
+  var paren = val.match(/\((.+)\)/);
   if (paren) return paren[1].replace('@', '').trim();
   if (mention) return 'user-' + mention[1];
   return val.split('\n')[0].replace('@', '').trim() || 'unknown';
 }
 
+function cleanBackticks(val) {
+  return val.replace(/`/g, '').trim();
+}
+
 async function isGuildMember(token, userId) {
   try {
-    const res = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '/members/' + userId, {
+    var res = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '/members/' + userId, {
       headers: { Authorization: 'Bot ' + token }
     });
     return res.ok;
   } catch (e) {
-    console.error('[Ambrosia] Membership check failed:', e);
     return false;
   }
 }
 
 async function isStaffOrSeller(token, guildId, userId) {
   try {
-    const res = await fetch('https://discord.com/api/v10/guilds/' + guildId + '/members/' + userId + '?with_roles=true', {
+    var res = await fetch('https://discord.com/api/v10/guilds/' + guildId + '/members/' + userId + '?with_roles=true', {
       headers: { Authorization: 'Bot ' + token }
     });
     if (!res.ok) return false;
-    const member = await res.json();
+    var member = await res.json();
     if (!member.roles) return false;
     if (STAFF_ROLE_ID && member.roles.indexOf(STAFF_ROLE_ID) !== -1) return true;
     if (SELLER_ROLE_ID && member.roles.indexOf(SELLER_ROLE_ID) !== -1) return true;
     return false;
   } catch (e) {
-    console.error('[Ambrosia] Role check failed:', e);
     return false;
   }
 }
 
 async function addRole(token, guildId, userId, roleId) {
   try {
-    const res = await fetch('https://discord.com/api/v10/guilds/' + guildId + '/members/' + userId + '/roles/' + roleId, {
+    var res = await fetch('https://discord.com/api/v10/guilds/' + guildId + '/members/' + userId + '/roles/' + roleId, {
       method: 'PUT',
       headers: { Authorization: 'Bot ' + token }
     });
     return res.ok;
   } catch (e) {
-    console.error('[Ambrosia] Add role failed:', e);
     return false;
   }
 }
 
-function buildTicketEmbed(ticketRef, customerId, product, duration, priceUsd, priceXmr, xmrAddress, txHash, orderTime, isFromWebsite) {
-  var fields = [
-    { name: 'Product', value: '**' + product + '**', inline: true },
-    { name: 'Duration', value: '`' + duration.toUpperCase() + '`', inline: true },
-    { name: 'Price', value: '`' + priceUsd + ' ~' + priceXmr + '`', inline: true },
-    { name: '\u200b', value: '\u200b', inline: false },
-    { name: 'XMR Payment Address', value: '```\n' + xmrAddress + '\n```', inline: false },
-    { name: 'TXID / Status', value: '`' + txHash + '`', inline: false },
-    { name: '\u200b', value: '\u200b', inline: false },
-    { name: 'Order Placed', value: orderTime, inline: true }
-  ];
-
-  if (isFromWebsite) {
-    fields.push({ name: '\u200b', value: '\u200b', inline: false });
-    fields.push({ name: 'Customer', value: '<@' + customerId + '>', inline: true });
-  }
-
+function buildTicketEmbed(ticketRef, customerId, productName, duration, priceUsd, priceXmr, xmrAddress, txHash, orderTime) {
+  var addrText = xmrAddress ? '```\n' + xmrAddress + '\n```' : 'Contact staff for payment details.';
   return {
     title: 'Ticket #' + ticketRef,
     color: 0x2563eb,
-    description: 'Welcome ' + (customerId ? '<@' + customerId + '>' : '**Customer**') + '.\n\nA staff member will assist you shortly. Please follow the instructions below to get verified.',
-    fields: fields,
+    description: 'Welcome <@' + customerId + '>.\n\nA staff member will assist you shortly. Please follow the instructions below to complete your purchase.',
+    fields: [
+      { name: 'Product', value: '**' + productName + '**', inline: true },
+      { name: 'Duration', value: '`' + duration.toUpperCase() + '`', inline: true },
+      { name: 'Price', value: '`$' + priceUsd + ' USD ~' + priceXmr + ' XMR`', inline: true },
+      { name: '\u200b', value: '\u200b', inline: false },
+      { name: 'XMR Payment Address', value: addrText, inline: false },
+      { name: 'TXID / Status', value: '`' + (txHash || 'Pending in ticket') + '`', inline: false },
+      { name: '\u200b', value: '\u200b', inline: false },
+      { name: 'Order Placed', value: orderTime || new Date().toISOString(), inline: true }
+    ],
     image: { url: 'https://ambrosia.ovh/og-image.png' },
     footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' },
     timestamp: new Date().toISOString()
   };
 }
 
-function buildCustomerInstructions(product) {
+function buildCustomerInstructions() {
   return {
     title: 'How to Get Verified',
     color: 0x065f46,
@@ -144,9 +173,9 @@ function buildCustomerInstructions(product) {
     fields: [
       { name: 'Step 1', value: 'Send your Discord User ID in this ticket. Right click your profile in Discord and click "Copy User ID".', inline: false },
       { name: 'Step 2', value: 'Send the correct XMR amount to the payment address shown above. Make sure you send the exact amount.', inline: false },
-      { name: 'Step 3', value: 'Wait for a staff member to verify your payment on the blockchain. This usually takes a few minutes.', inline: false },
-      { name: 'Step 4', value: 'Once verified, you will receive your license key in this ticket.', inline: false },
-      { name: 'Step 5', value: 'After receiving your key, a staff member will close this ticket.', inline: false },
+      { name: 'Step 3', value: 'Paste your transaction hash (TXID) in this ticket as proof of payment.', inline: false },
+      { name: 'Step 4', value: 'Wait for a staff member to verify your payment on the blockchain. This usually takes a few minutes.', inline: false },
+      { name: 'Step 5', value: 'Once verified, you will receive your license key in this ticket.', inline: false },
       { name: '\u26A0\uFE0F Important', value: 'Do not send XMR to any address other than the one shown in this ticket. Always verify the address matches exactly.', inline: false }
     ],
     footer: { text: 'Ambrosia Payment System', icon_url: 'https://ambrosia.ovh/favicon.ico' },
@@ -154,36 +183,17 @@ function buildCustomerInstructions(product) {
   };
 }
 
-function buildStaffInstructions(product, ticketRef) {
-  return {
-    title: 'Staff Order Handling Guide',
-    color: 0x991b1b,
-    description: 'Private instructions for Staff and Seller roles. Do not share this with customers.',
-    fields: [
-      { name: 'Step 1: Verify User ID', value: 'Ask the customer for their Discord User ID if not already provided. Verify it matches the ticket creator.', inline: false },
-      { name: 'Step 2: Check XMR Payment', value: 'Use a blockchain explorer (xmrchain.net or similar) to verify the customer sent the correct XMR amount to the shown address.', inline: false },
-      { name: 'Step 3: Confirm Amount', value: 'Make sure the amount received matches the expected price. Account for small fluctuations in XMR value.', inline: false },
-      { name: 'Step 4: Deliver License Key', value: 'Once payment is confirmed on chain, deliver the license key to the customer in this ticket.', inline: false },
-      { name: 'Step 5: Verify Purchase', value: 'Click the **Verify Purchase** button below to give the customer the Verified Customer role.', inline: false },
-      { name: 'Step 6: Close Ticket', value: 'After the key is delivered and role is assigned, click **Close Ticket** to close this channel.', inline: false },
-      { name: '\u274C Do Not', value: 'Do not deliver keys before payment is confirmed on chain. Do not close tickets without verifying the purchase first.', inline: false }
-    ],
-    footer: { text: 'Ambrosia Staff Hub \u2022 Private', icon_url: 'https://ambrosia.ovh/favicon.ico' },
-    timestamp: new Date().toISOString()
-  };
-}
-
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const signature = req.headers['x-signature-ed25519'];
-  const timestamp = req.headers['x-signature-timestamp'];
-  const body = JSON.stringify(req.body);
+  var signature = req.headers['x-signature-ed25519'];
+  var timestamp = req.headers['x-signature-timestamp'];
+  var body = JSON.stringify(req.body);
 
   if (!signature || !timestamp) return res.status(401).json({ error: 'Missing signature headers' });
   if (!APPLICATION_PUBLIC_KEY) return res.status(500).json({ error: 'Server misconfigured' });
 
-  const isValid = nacl.sign.detached.verify(
+  var isValid = nacl.sign.detached.verify(
     Buffer.from(timestamp + body),
     Buffer.from(signature, 'hex'),
     Buffer.from(APPLICATION_PUBLIC_KEY, 'hex')
@@ -191,75 +201,76 @@ module.exports = async function handler(req, res) {
 
   if (!isValid) return res.status(401).json({ error: 'Invalid request signature' });
 
-  const { type, data, message } = req.body;
+  var interactionType = req.body.type;
+  var data = req.body.data;
+  var message = req.body.message;
 
-  if (type === 1) return res.json({ type: 1 });
+  if (interactionType === 1) return res.json({ type: 1 });
 
-  if (type === 3 && data && data.custom_id) {
-    const BOT_TOKEN = getBotToken();
+  if (interactionType === 3 && data && data.custom_id) {
+    var BOT_TOKEN = getBotToken();
     if (!BOT_TOKEN) return res.json({ type: 4, data: { content: 'Bot not configured.', flags: 64 } });
 
-    const customId = data.custom_id;
-    const userId = (req.body.member && req.body.member.user) ? req.body.member.user.id : ((req.body.user && req.body.user.id) ? req.body.user.id : '');
-    const username = (req.body.member && req.body.member.user) ? req.body.member.user.username : ((req.body.user && req.body.user.username) ? req.body.user.username : 'unknown');
+    var customId = data.custom_id;
+    var userId = (req.body.member && req.body.member.user) ? req.body.member.user.id : ((req.body.user && req.body.user.id) ? req.body.user.id : '');
+    var username = (req.body.member && req.body.member.user) ? req.body.member.user.username : ((req.body.user && req.body.user.username) ? req.body.user.username : 'unknown');
 
     if (customId === 'create_ticket') {
-      const embed = message && message.embeds ? message.embeds[0] : null;
-      const fields = embed ? embed.fields : null;
+      var embed = message && message.embeds ? message.embeds[0] : null;
+      var fields = embed ? embed.fields : null;
 
-      const titleText = embed ? embed.title : '';
-      const ticketMatch = titleText.match(/#([A-Z]+-\d+)/);
-      const ticketRef = ticketMatch ? ticketMatch[1] : 'NEW-' + Math.floor(1000 + Math.random() * 9000);
+      var titleText = embed ? embed.title : '';
+      var ticketMatch = titleText.match(/#([A-Z]+-\d+)/);
+      var ticketRef = ticketMatch ? ticketMatch[1] : 'NEW-' + Math.floor(1000 + Math.random() * 9000);
 
-      const customerRaw = parseField(fields, 'Customer');
-      const product = parseField(fields, 'Product').replace(/\*\*/g, '').trim() || 'Ambrosia Client';
-      const duration = parseField(fields, 'Duration').trim() || 'MONTHLY';
-      const priceUsd = parseField(fields, 'Price (USD)').trim() || '$45 USD';
-      const priceXmr = parseField(fields, 'Price (XMR)').trim() || '~0.26 XMR';
-      const txHash = parseField(fields, 'TXID / Status').trim() || 'Pending in ticket';
-      const xmrAddress = parseField(fields, 'Monero (XMR) Payment Address').trim() || 'Address provided on website';
-      const orderTime = parseField(fields, 'Order Placed').trim() || new Date().toISOString();
+      var customerRaw = parseField(fields, 'Customer');
+      var product = parseField(fields, 'Product').replace(/\*\*/g, '').trim();
+      var duration = parseField(fields, 'Duration').replace(/`/g, '').trim().toLowerCase() || 'monthly';
+      var priceUsd = parseField(fields, 'Price (USD)').replace(/`/g, '').trim() || '$45 USD';
+      var priceXmr = parseField(fields, 'Price (XMR)').replace(/`/g, '').trim() || '~0.26 XMR';
+      var txHash = parseField(fields, 'TXID / Status').replace(/`/g, '').trim() || 'Pending in ticket';
+      var xmrAddress = cleanBackticks(parseField(fields, 'Monero (XMR) Payment Address')) || null;
+      var orderTime = parseField(fields, 'Order Placed').trim() || new Date().toISOString();
 
-      const customerId = extractUserId(customerRaw);
-      const cleanUsername = extractUsername(customerRaw).replace(/[^a-zA-Z0-9._-]/g, '').toLowerCase();
-      const channelName = 'ticket-' + ticketRef.toLowerCase() + '-' + cleanUsername;
+      var customerId = extractUserId(customerRaw);
+      var cleanUsername = extractUsername(customerRaw).replace(/[^a-zA-Z0-9._-]/g, '').toLowerCase();
+      var channelName = 'ticket-' + ticketRef.toLowerCase() + '-' + cleanUsername;
 
-      const guildRes = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '?with_counts=false', {
+      var guildRes = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '?with_counts=false', {
         headers: { Authorization: 'Bot ' + BOT_TOKEN }
       });
       if (!guildRes.ok) {
         return res.json({ type: 4, data: { content: 'Failed to access guild.', flags: 64 } });
       }
-      const guild = await guildRes.json();
+      var guild = await guildRes.json();
 
-      const perms = [{ id: guild.id, type: 0, allow: '0', deny: '1024' }];
+      var perms = [{ id: guild.id, type: 0, allow: '0', deny: '1024' }];
       if (STAFF_ROLE_ID) perms.push({ id: STAFF_ROLE_ID, type: 0, allow: '23552', deny: '0' });
       if (SELLER_ROLE_ID) perms.push({ id: SELLER_ROLE_ID, type: 0, allow: '23552', deny: '0' });
       if (customerId) perms.push({ id: customerId, type: 1, allow: '23552', deny: '0' });
 
-      const createRes = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '/channels', {
+      var createRes = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '/channels', {
         method: 'POST',
         headers: { Authorization: 'Bot ' + BOT_TOKEN, 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: channelName, type: 0, parent_id: CATEGORY_ID || null, permission_overwrites: perms })
       });
 
       if (!createRes.ok) {
-        const err = await createRes.text();
+        var err = await createRes.text();
         console.error('[Ambrosia] Channel creation failed:', createRes.status, err);
         return res.json({ type: 4, data: { content: 'Failed to create channel.', flags: 64 } });
       }
 
-      const newChannel = await createRes.json();
+      var newChannel = await createRes.json();
 
-      const mentionStr = customerId
+      var mentionStr = customerId
         ? '<@' + customerId + '>' + (STAFF_ROLE_ID ? ' <@&' + STAFF_ROLE_ID + '>' : '')
         : (STAFF_ROLE_ID ? '<@&' + STAFF_ROLE_ID + '>' : '');
 
-      const ticketEmbed = buildTicketEmbed(ticketRef, customerId, product, duration, priceUsd, priceXmr, xmrAddress, txHash, orderTime, true);
-      const instructionsEmbed = buildCustomerInstructions(product);
-      const staffEmbed = buildStaffInstructions(product, ticketRef);
+      var ticketEmbed = buildTicketEmbed(ticketRef, customerId, product, duration, priceUsd, priceXmr, xmrAddress, txHash, orderTime);
+      var instructionsEmbed = buildCustomerInstructions();
 
-      const buttonRow = {
+      var buttonRow = {
         type: 1,
         components: [
           { type: 2, custom_id: 'verify_purchase_' + customerId, label: 'Verify Purchase', style: 3, emoji: { name: '\u2705' } },
@@ -270,16 +281,218 @@ module.exports = async function handler(req, res) {
       await fetch('https://discord.com/api/v10/channels/' + newChannel.id + '/messages', {
         method: 'POST',
         headers: { Authorization: 'Bot ' + BOT_TOKEN, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: mentionStr, embeds: [ticketEmbed, instructionsEmbed, staffEmbed], components: [buttonRow] })
+        body: JSON.stringify({ content: mentionStr, embeds: [ticketEmbed, instructionsEmbed], components: [buttonRow] })
       });
 
       return res.json({ type: 4, data: { content: 'Ticket channel created: <#' + newChannel.id + '>', flags: 64 } });
     }
 
-    if (customId.startsWith('verify_purchase_')) {
-      const customerId = customId.replace('verify_purchase_', '');
+    if (customId === 'select_ticket_product') {
+      var selectedProduct = data.values && data.values[0] ? data.values[0] : 'general-support';
 
-      const hasPermission = await isStaffOrSeller(BOT_TOKEN, GUILD_ID, userId);
+      if (!userId) {
+        return res.json({ type: 4, data: { content: 'Could not identify your account. Please try again.', flags: 64 } });
+      }
+
+      var memberCheck = await isGuildMember(BOT_TOKEN, userId);
+      if (!memberCheck) {
+        return res.json({
+          type: 4,
+          data: {
+            content: 'You must be a member of this Discord server to open a ticket.\n\nJoin here: ' + TICKET_SERVER_INVITE,
+            flags: 64
+          }
+        });
+      }
+
+      if (selectedProduct === 'general-support') {
+        var ticketRef = 'SUP-' + Math.floor(1000 + Math.random() * 9000);
+        var cleanUser = username.replace(/[^a-zA-Z0-9._-]/g, '').toLowerCase();
+        var channelName = 'ticket-' + ticketRef.toLowerCase() + '-' + cleanUser;
+
+        var guildRes2 = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '?with_counts=false', {
+          headers: { Authorization: 'Bot ' + BOT_TOKEN }
+        });
+        if (!guildRes2.ok) {
+          return res.json({ type: 4, data: { content: 'Failed to access guild.', flags: 64 } });
+        }
+        var guild2 = await guildRes2.json();
+
+        var perms2 = [{ id: guild2.id, type: 0, allow: '0', deny: '1024' }];
+        if (STAFF_ROLE_ID) perms2.push({ id: STAFF_ROLE_ID, type: 0, allow: '23552', deny: '0' });
+        if (SELLER_ROLE_ID) perms2.push({ id: SELLER_ROLE_ID, type: 0, allow: '23552', deny: '0' });
+        perms2.push({ id: userId, type: 1, allow: '23552', deny: '0' });
+
+        var createRes2 = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '/channels', {
+          method: 'POST',
+          headers: { Authorization: 'Bot ' + BOT_TOKEN, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: channelName, type: 0, parent_id: CATEGORY_ID || null, permission_overwrites: perms2 })
+        });
+
+        if (!createRes2.ok) {
+          return res.json({ type: 4, data: { content: 'Failed to create channel.', flags: 64 } });
+        }
+
+        var newChannel2 = await createRes2.json();
+        var mentionStr2 = '<@' + userId + '>' + (STAFF_ROLE_ID ? ' <@&' + STAFF_ROLE_ID + '>' : '');
+
+        var supportEmbed = {
+          title: 'Ticket #' + ticketRef,
+          color: 0x2563eb,
+          description: 'Welcome <@' + userId + '>.\n\nA staff member will assist you shortly. Describe your request below.',
+          fields: [
+            { name: 'Product', value: '**General Support**', inline: true },
+            { name: 'Status', value: '`Awaiting Staff`', inline: true }
+          ],
+          image: { url: 'https://ambrosia.ovh/og-image.png' },
+          footer: { text: 'Ambrosia.ovh \u2022 Ticket #' + ticketRef, icon_url: 'https://ambrosia.ovh/favicon.ico' },
+          timestamp: new Date().toISOString()
+        };
+
+        var closeRow = {
+          type: 1,
+          components: [
+            { type: 2, custom_id: 'close_ticket_' + userId, label: 'Close Ticket', style: 4, emoji: { name: '\uD83D\uDD12' } }
+          ]
+        };
+
+        await fetch('https://discord.com/api/v10/channels/' + newChannel2.id + '/messages', {
+          method: 'POST',
+          headers: { Authorization: 'Bot ' + BOT_TOKEN, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: mentionStr2, embeds: [supportEmbed], components: [closeRow] })
+        });
+
+        return res.json({ type: 4, data: { content: 'Ticket created: <#' + newChannel2.id + '>', flags: 64 } });
+      }
+
+      var productInfo = PRODUCTS[selectedProduct];
+      if (!productInfo) {
+        return res.json({ type: 4, data: { content: 'Unknown product selected.', flags: 64 } });
+      }
+
+      var durationEmbed = {
+        title: productInfo.name,
+        color: 0x2563eb,
+        description: productInfo.game + '\n\n' + productInfo.features,
+        fields: [
+          { name: 'Weekly', value: '$' + productInfo.weeklyPrice + ' USD (~' + productInfo.weeklyXmr + ' XMR)', inline: true },
+          { name: 'Monthly', value: '$' + productInfo.monthlyPrice + ' USD (~' + productInfo.monthlyXmr + ' XMR)', inline: true }
+        ],
+        image: { url: 'https://ambrosia.ovh/og-image.png' },
+        footer: { text: 'Select a duration below to open your ticket', icon_url: 'https://ambrosia.ovh/favicon.ico' },
+        timestamp: new Date().toISOString()
+      };
+
+      var durationDropdown = {
+        type: 1,
+        components: [
+          {
+            type: 3,
+            custom_id: 'select_ticket_duration_' + selectedProduct,
+            placeholder: 'Choose weekly or monthly...',
+            min_values: 1,
+            max_values: 1,
+            options: [
+              { label: 'Weekly', description: '$' + productInfo.weeklyPrice + ' USD (~' + productInfo.weeklyXmr + ' XMR)', value: 'weekly', emoji: { name: '\uD83D\uDCB0' } },
+              { label: 'Monthly', description: '$' + productInfo.monthlyPrice + ' USD (~' + productInfo.monthlyXmr + ' XMR)', value: 'monthly', emoji: { name: '\uD83D\uDCB3' } }
+            ]
+          }
+        ]
+      };
+
+      return res.json({
+        type: 7,
+        data: {
+          embeds: [durationEmbed],
+          components: [durationDropdown]
+        }
+      });
+    }
+
+    if (customId.startsWith('select_ticket_duration_')) {
+      var selectedProduct2 = customId.replace('select_ticket_duration_', '');
+      var selectedDuration = data.values && data.values[0] ? data.values[0] : 'monthly';
+
+      if (!userId) {
+        return res.json({ type: 4, data: { content: 'Could not identify your account.', flags: 64 } });
+      }
+
+      var memberCheck2 = await isGuildMember(BOT_TOKEN, userId);
+      if (!memberCheck2) {
+        return res.json({
+          type: 4,
+          data: {
+            content: 'You must be a member of this Discord server to open a ticket.\n\nJoin here: ' + TICKET_SERVER_INVITE,
+            flags: 64
+          }
+        });
+      }
+
+      var productInfo2 = PRODUCTS[selectedProduct2];
+      if (!productInfo2) {
+        return res.json({ type: 4, data: { content: 'Unknown product.', flags: 64 } });
+      }
+
+      var xmrAddr = getAddress(selectedProduct2, selectedDuration);
+      var priceUsd2 = getPriceUsd(selectedProduct2, selectedDuration);
+      var priceXmr2 = getPriceXmr(selectedProduct2, selectedDuration);
+
+      var ticketRef2 = 'AMB-' + Math.floor(1000 + Math.random() * 9000);
+      var cleanUser2 = username.replace(/[^a-zA-Z0-9._-]/g, '').toLowerCase();
+      var channelName2 = 'ticket-' + ticketRef2.toLowerCase() + '-' + cleanUser2;
+
+      var guildRes3 = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '?with_counts=false', {
+        headers: { Authorization: 'Bot ' + BOT_TOKEN }
+      });
+      if (!guildRes3.ok) {
+        return res.json({ type: 4, data: { content: 'Failed to access guild.', flags: 64 } });
+      }
+      var guild3 = await guildRes3.json();
+
+      var perms3 = [{ id: guild3.id, type: 0, allow: '0', deny: '1024' }];
+      if (STAFF_ROLE_ID) perms3.push({ id: STAFF_ROLE_ID, type: 0, allow: '23552', deny: '0' });
+      if (SELLER_ROLE_ID) perms3.push({ id: SELLER_ROLE_ID, type: 0, allow: '23552', deny: '0' });
+      perms3.push({ id: userId, type: 1, allow: '23552', deny: '0' });
+
+      var createRes3 = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '/channels', {
+        method: 'POST',
+        headers: { Authorization: 'Bot ' + BOT_TOKEN, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: channelName2, type: 0, parent_id: CATEGORY_ID || null, permission_overwrites: perms3 })
+      });
+
+      if (!createRes3.ok) {
+        var err3 = await createRes3.text();
+        console.error('[Ambrosia] Channel creation failed:', createRes3.status, err3);
+        return res.json({ type: 4, data: { content: 'Failed to create channel.', flags: 64 } });
+      }
+
+      var newChannel3 = await createRes3.json();
+      var mentionStr3 = '<@' + userId + '>' + (STAFF_ROLE_ID ? ' <@&' + STAFF_ROLE_ID + '>' : '');
+
+      var ticketEmbed3 = buildTicketEmbed(ticketRef2, userId, productInfo2.name, selectedDuration, '$' + priceUsd2, priceXmr2, xmrAddr, 'Pending in ticket', new Date().toISOString());
+      var instructionsEmbed3 = buildCustomerInstructions();
+
+      var buttonRow3 = {
+        type: 1,
+        components: [
+          { type: 2, custom_id: 'verify_purchase_' + userId, label: 'Verify Purchase', style: 3, emoji: { name: '\u2705' } },
+          { type: 2, custom_id: 'close_ticket_' + userId, label: 'Close Ticket', style: 4, emoji: { name: '\uD83D\uDD12' } }
+        ]
+      };
+
+      await fetch('https://discord.com/api/v10/channels/' + newChannel3.id + '/messages', {
+        method: 'POST',
+        headers: { Authorization: 'Bot ' + BOT_TOKEN, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: mentionStr3, embeds: [ticketEmbed3, instructionsEmbed3], components: [buttonRow3] })
+      });
+
+      return res.json({ type: 4, data: { content: 'Ticket created: <#' + newChannel3.id + '>', flags: 64 } });
+    }
+
+    if (customId.startsWith('verify_purchase_')) {
+      var customerId2 = customId.replace('verify_purchase_', '');
+
+      var hasPermission = await isStaffOrSeller(BOT_TOKEN, GUILD_ID, userId);
       if (!hasPermission) {
         return res.json({
           type: 4,
@@ -287,7 +500,7 @@ module.exports = async function handler(req, res) {
         });
       }
 
-      if (!customerId || customerId.length < 17) {
+      if (!customerId2 || customerId2.length < 17) {
         return res.json({ type: 4, data: { content: 'No customer ID found in this ticket.', flags: 64 } });
       }
 
@@ -295,7 +508,7 @@ module.exports = async function handler(req, res) {
         return res.json({ type: 4, data: { content: 'Verified Customer role not configured. Set DISCORD_CUSTOMER_ROLE_ID in Vercel.', flags: 64 } });
       }
 
-      const roleAdded = await addRole(BOT_TOKEN, GUILD_ID, customerId, CUSTOMER_ROLE_ID);
+      var roleAdded = await addRole(BOT_TOKEN, GUILD_ID, customerId2, CUSTOMER_ROLE_ID);
 
       if (!roleAdded) {
         return res.json({ type: 4, data: { content: 'Failed to assign role. Check bot permissions.', flags: 64 } });
@@ -304,18 +517,17 @@ module.exports = async function handler(req, res) {
       return res.json({
         type: 4,
         data: {
-          content: '<@' + customerId + '> has been given the **Verified Customer** role. You can now close this ticket.',
+          content: '<@' + customerId2 + '> has been given the **Verified Customer** role. You can now close this ticket.',
           flags: 0
         }
       });
     }
 
     if (customId.startsWith('close_ticket_')) {
-      const customerId = customId.replace('close_ticket_', '');
-      const channelId = message ? message.channel_id : null;
+      var channelId = message ? message.channel_id : null;
 
-      const hasPermission = await isStaffOrSeller(BOT_TOKEN, GUILD_ID, userId);
-      if (!hasPermission) {
+      var hasPermission2 = await isStaffOrSeller(BOT_TOKEN, GUILD_ID, userId);
+      if (!hasPermission2) {
         return res.json({
           type: 4,
           data: { content: 'Only Staff and Seller roles can close tickets.', flags: 64 }
@@ -332,96 +544,6 @@ module.exports = async function handler(req, res) {
         return res.json({ type: 4, data: { content: 'Ticket closed.', flags: 64 } });
       } catch (error) {
         return res.json({ type: 4, data: { content: 'Failed to close ticket.', flags: 64 } });
-      }
-    }
-
-    if (customId === 'select_ticket_product') {
-      const selectedValue = data.values && data.values[0] ? data.values[0] : 'general-support';
-
-      if (!userId) {
-        return res.json({ type: 4, data: { content: 'Could not identify your account. Please try again.', flags: 64 } });
-      }
-
-      const memberCheck = await isGuildMember(BOT_TOKEN, userId);
-      if (!memberCheck) {
-        return res.json({
-          type: 4,
-          data: {
-            content: 'You must be a member of this Discord server to open a ticket.\n\nJoin here: ' + TICKET_SERVER_INVITE,
-            flags: 64
-          }
-        });
-      }
-
-      const productNames = {
-        'ambrosia-ow-lite': 'Ambrosia OW Lite',
-        'ambrosia-ow-pro': 'Ambrosia OW Pro',
-        'ambrosia-cs2-web': 'CS2 Web Radar',
-        'ambrosia-fn': 'Ambrosia FN',
-        'general-support': 'General Support'
-      };
-      const productName = productNames[selectedValue] || 'General Support';
-      const ticketRef = 'AMB-' + Math.floor(1000 + Math.random() * 9000);
-      const cleanUser = username.replace(/[^a-zA-Z0-9._-]/g, '').toLowerCase();
-      const channelName = 'ticket-' + ticketRef.toLowerCase() + '-' + cleanUser;
-
-      try {
-        const guildRes = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '?with_counts=false', {
-          headers: { Authorization: 'Bot ' + BOT_TOKEN }
-        });
-        if (!guildRes.ok) {
-          return res.json({ type: 4, data: { content: 'Failed to access guild.', flags: 64 } });
-        }
-        const guild = await guildRes.json();
-
-        const perms = [{ id: guild.id, type: 0, allow: '0', deny: '1024' }];
-        if (STAFF_ROLE_ID) perms.push({ id: STAFF_ROLE_ID, type: 0, allow: '23552', deny: '0' });
-        if (SELLER_ROLE_ID) perms.push({ id: SELLER_ROLE_ID, type: 0, allow: '23552', deny: '0' });
-        perms.push({ id: userId, type: 1, allow: '23552', deny: '0' });
-
-        const createRes = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '/channels', {
-          method: 'POST',
-          headers: { Authorization: 'Bot ' + BOT_TOKEN, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: channelName, type: 0, parent_id: CATEGORY_ID || null, permission_overwrites: perms })
-        });
-
-        if (!createRes.ok) {
-          const err = await createRes.text();
-          console.error('[Ambrosia] Channel creation failed:', createRes.status, err);
-          return res.json({ type: 4, data: { content: 'Failed to create channel.', flags: 64 } });
-        }
-
-        const newChannel = await createRes.json();
-
-        const mentionStr = '<@' + userId + '>' + (STAFF_ROLE_ID ? ' <@&' + STAFF_ROLE_ID + '>' : '');
-
-        const xmrAddress = getAddress(selectedValue, 'weekly');
-        const priceUsd = selectedValue === 'ambrosia-ow-lite' ? '$5 USD / $10 USD' : selectedValue === 'ambrosia-ow-pro' ? '$20 USD / $45 USD' : selectedValue === 'ambrosia-cs2-web' ? '$5 USD / $15 USD' : selectedValue === 'ambrosia-fn' ? '$20 USD / $45 USD' : 'TBD';
-        const priceXmr = selectedValue === 'ambrosia-ow-lite' ? '~0.03 XMR / ~0.06 XMR' : selectedValue === 'ambrosia-ow-pro' ? '~0.12 XMR / ~0.27 XMR' : selectedValue === 'ambrosia-cs2-web' ? '~0.03 XMR / ~0.09 XMR' : selectedValue === 'ambrosia-fn' ? '~0.12 XMR / ~0.27 XMR' : 'TBD';
-
-        const ticketEmbed = buildTicketEmbed(ticketRef, userId, productName, 'weekly or monthly', priceUsd, priceXmr, xmrAddress, 'Pending in ticket', new Date().toISOString(), false);
-        const instructionsEmbed = buildCustomerInstructions(productName);
-        const staffEmbed = buildStaffInstructions(productName, ticketRef);
-
-        const buttonRow = {
-          type: 1,
-          components: [
-            { type: 2, custom_id: 'verify_purchase_' + userId, label: 'Verify Purchase', style: 3, emoji: { name: '\u2705' } },
-            { type: 2, custom_id: 'close_ticket_' + userId, label: 'Close Ticket', style: 4, emoji: { name: '\uD83D\uDD12' } }
-          ]
-        };
-
-        await fetch('https://discord.com/api/v10/channels/' + newChannel.id + '/messages', {
-          method: 'POST',
-          headers: { Authorization: 'Bot ' + BOT_TOKEN, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ content: mentionStr, embeds: [ticketEmbed, instructionsEmbed, staffEmbed], components: [buttonRow] })
-        });
-
-        return res.json({ type: 4, data: { content: 'Ticket created: <#' + newChannel.id + '>', flags: 64 } });
-
-      } catch (error) {
-        console.error('[Ambrosia] select_ticket_product error:', error);
-        return res.json({ type: 4, data: { content: 'Error creating ticket.', flags: 64 } });
       }
     }
 

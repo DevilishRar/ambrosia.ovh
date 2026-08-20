@@ -82,10 +82,10 @@ function noTalk() {
   return allowBit(PERMISSIONS.VIEW_CHANNEL, PERMISSIONS.READ_MESSAGE_HISTORY);
 }
 
-async function api(token, method, path, body) {
+async function api(BOT_TOKEN, method, path, body) {
   var opts = {
     method: method,
-    headers: { Authorization: 'Bot ' + token, 'Content-Type': 'application/json' }
+    headers: { Authorization: 'Bot ' + BOT_TOKEN, 'Content-Type': 'application/json' }
   };
   if (body) opts.body = JSON.stringify(body);
   var res = await fetch('https://discord.com/api/v10' + path, opts);
@@ -95,8 +95,8 @@ async function api(token, method, path, body) {
   return { ok: res.ok, status: res.status, data: data };
 }
 
-async function createRole(token, guildId, name, color, perms, mentionable) {
-  var res = await api(token, 'POST', '/guilds/' + guildId + '/roles', {
+async function createRole(BOT_TOKEN, guildId, name, color, perms, mentionable) {
+  var res = await api(BOT_TOKEN, 'POST', '/guilds/' + guildId + '/roles', {
     name: name, color: color, permissions: perms, mentionable: mentionable || false, hoist: true
   });
   if (res.ok && res.data && res.data.id) {
@@ -107,8 +107,8 @@ async function createRole(token, guildId, name, color, perms, mentionable) {
   return null;
 }
 
-async function createCategory(token, guildId, name, overwrites) {
-  var res = await api(token, 'POST', '/guilds/' + guildId + '/channels', {
+async function createCategory(BOT_TOKEN, guildId, name, overwrites) {
+  var res = await api(BOT_TOKEN, 'POST', '/guilds/' + guildId + '/channels', {
     name: name, type: 4, permission_overwrites: overwrites || []
   });
   if (res.ok && res.data && res.data.id) {
@@ -119,10 +119,10 @@ async function createCategory(token, guildId, name, overwrites) {
   return null;
 }
 
-async function createChannel(token, guildId, name, type, parentId, overwrites) {
+async function createChannel(BOT_TOKEN, guildId, name, type, parentId, overwrites) {
   var body = { name: name, type: type, permission_overwrites: overwrites || [] };
   if (parentId) body.parent_id = parentId;
-  var res = await api(token, 'POST', '/guilds/' + guildId + '/channels', body);
+  var res = await api(BOT_TOKEN, 'POST', '/guilds/' + guildId + '/channels', body);
   if (res.ok && res.data && res.data.id) {
     console.log('[Setup] Channel: #' + name + ' (' + res.data.id + ')');
     return res.data.id;
@@ -131,8 +131,8 @@ async function createChannel(token, guildId, name, type, parentId, overwrites) {
   return null;
 }
 
-async function sendMsg(token, channelId, body) {
-  var res = await api(token, 'POST', '/channels/' + channelId + '/messages', body);
+async function sendMsg(BOT_TOKEN, channelId, body) {
+  var res = await api(BOT_TOKEN, 'POST', '/channels/' + channelId + '/messages', body);
   return res.ok;
 }
 
@@ -188,7 +188,7 @@ module.exports = async function handler(req, res) {
     var errors = [];
 
     if (!roleExists('Ambrosia Bot')) {
-      roles.bot = await createRole(token, guildId, 'Ambrosia Bot', 0xed4245, adminPerms(), false);
+      roles.bot = await createRole(BOT_TOKEN, guildId, 'Ambrosia Bot', 0xed4245, adminPerms(), false);
     } else {
       var r = existingRolesRes.data.find(function(x) { return x.name === 'Ambrosia Bot'; });
       roles.bot = r ? r.id : null;
@@ -196,28 +196,28 @@ module.exports = async function handler(req, res) {
     if (!roles.bot) { errors.push('Failed to create Ambrosia Bot role'); return res.status(500).json({ error: 'Role creation failed', errors: errors }); }
 
     if (!roleExists('Seller')) {
-      roles.seller = await createRole(token, guildId, 'Seller', 0xf47b67, sellerPerms(), true);
+      roles.seller = await createRole(BOT_TOKEN, guildId, 'Seller', 0xf47b67, sellerPerms(), true);
     } else {
       var r2 = existingRolesRes.data.find(function(x) { return x.name === 'Seller'; });
       roles.seller = r2 ? r2.id : null;
     }
 
     if (!roleExists('Staff')) {
-      roles.staff = await createRole(token, guildId, 'Staff', 0x5865f2, staffPerms(), true);
+      roles.staff = await createRole(BOT_TOKEN, guildId, 'Staff', 0x5865f2, staffPerms(), true);
     } else {
       var r3 = existingRolesRes.data.find(function(x) { return x.name === 'Staff'; });
       roles.staff = r3 ? r3.id : null;
     }
 
     if (!roleExists('Verified Customer')) {
-      roles.customer = await createRole(token, guildId, 'Verified Customer', 0x57f287, memberPerms(), false);
+      roles.customer = await createRole(BOT_TOKEN, guildId, 'Verified Customer', 0x57f287, memberPerms(), false);
     } else {
       var r4 = existingRolesRes.data.find(function(x) { return x.name === 'Verified Customer'; });
       roles.customer = r4 ? r4.id : null;
     }
 
     if (!roleExists('Member')) {
-      roles.member = await createRole(token, guildId, 'Member', 0x99aab5, memberPerms(), false);
+      roles.member = await createRole(BOT_TOKEN, guildId, 'Member', 0x99aab5, memberPerms(), false);
     } else {
       var r5 = existingRolesRes.data.find(function(x) { return x.name === 'Member'; });
       roles.member = r5 ? r5.id : null;
@@ -238,7 +238,7 @@ module.exports = async function handler(req, res) {
     ];
 
     if (!channelExists('INFORMATION')) {
-      categories.information = await createCategory(token, guildId, 'INFORMATION', infoPerms);
+      categories.information = await createCategory(BOT_TOKEN, guildId, 'INFORMATION', infoPerms);
     } else {
       var c1 = existingChannelsRes.data.find(function(x) { return x.name === 'INFORMATION'; });
       categories.information = c1 ? c1.id : null;
@@ -252,7 +252,7 @@ module.exports = async function handler(req, res) {
     ];
 
     if (!channelExists('rules')) {
-      channels.rules = await createChannel(token, guildId, 'rules', 0, categories.information, rulesPerms);
+      channels.rules = await createChannel(BOT_TOKEN, guildId, 'rules', 0, categories.information, rulesPerms);
     } else {
       var ch1 = existingChannelsRes.data.find(function(x) { return x.name === 'rules'; });
       channels.rules = ch1 ? ch1.id : null;
@@ -266,7 +266,7 @@ module.exports = async function handler(req, res) {
     ];
 
     if (!channelExists('announcements')) {
-      channels.announcements = await createChannel(token, guildId, 'announcements', 0, categories.information, announcePerms);
+      channels.announcements = await createChannel(BOT_TOKEN, guildId, 'announcements', 0, categories.information, announcePerms);
     } else {
       var ch2 = existingChannelsRes.data.find(function(x) { return x.name === 'announcements'; });
       channels.announcements = ch2 ? ch2.id : null;
@@ -280,7 +280,7 @@ module.exports = async function handler(req, res) {
     ];
 
     if (!channelExists('product-catalog')) {
-      channels.catalog = await createChannel(token, guildId, 'product-catalog', 0, categories.information, catalogPerms);
+      channels.catalog = await createChannel(BOT_TOKEN, guildId, 'product-catalog', 0, categories.information, catalogPerms);
     } else {
       var ch3 = existingChannelsRes.data.find(function(x) { return x.name === 'product-catalog'; });
       channels.catalog = ch3 ? ch3.id : null;
@@ -294,7 +294,7 @@ module.exports = async function handler(req, res) {
     ];
 
     if (!channelExists('links')) {
-      channels.links = await createChannel(token, guildId, 'links', 0, categories.information, linksPerms);
+      channels.links = await createChannel(BOT_TOKEN, guildId, 'links', 0, categories.information, linksPerms);
     } else {
       var chLinks = existingChannelsRes.data.find(function(x) { return x.name === 'links'; });
       channels.links = chLinks ? chLinks.id : null;
@@ -308,21 +308,21 @@ module.exports = async function handler(req, res) {
     ];
 
     if (!channelExists('GENERAL')) {
-      categories.general = await createCategory(token, guildId, 'GENERAL', generalPerms);
+      categories.general = await createCategory(BOT_TOKEN, guildId, 'GENERAL', generalPerms);
     } else {
       var c2 = existingChannelsRes.data.find(function(x) { return x.name === 'GENERAL'; });
       categories.general = c2 ? c2.id : null;
     }
 
     if (!channelExists('general-chat')) {
-      channels.generalChat = await createChannel(token, guildId, 'general-chat', 0, categories.general, generalPerms);
+      channels.generalChat = await createChannel(BOT_TOKEN, guildId, 'general-chat', 0, categories.general, generalPerms);
     } else {
       var ch4 = existingChannelsRes.data.find(function(x) { return x.name === 'general-chat'; });
       channels.generalChat = ch4 ? ch4.id : null;
     }
 
     if (!channelExists('off-topic')) {
-      channels.offTopic = await createChannel(token, guildId, 'off-topic', 0, categories.general, generalPerms);
+      channels.offTopic = await createChannel(BOT_TOKEN, guildId, 'off-topic', 0, categories.general, generalPerms);
     } else {
       var ch5 = existingChannelsRes.data.find(function(x) { return x.name === 'off-topic'; });
       channels.offTopic = ch5 ? ch5.id : null;
@@ -336,7 +336,7 @@ module.exports = async function handler(req, res) {
     ];
 
     if (!channelExists('SUPPORT')) {
-      categories.support = await createCategory(token, guildId, 'SUPPORT', supportPerms);
+      categories.support = await createCategory(BOT_TOKEN, guildId, 'SUPPORT', supportPerms);
     } else {
       var c3 = existingChannelsRes.data.find(function(x) { return x.name === 'SUPPORT'; });
       categories.support = c3 ? c3.id : null;
@@ -350,7 +350,7 @@ module.exports = async function handler(req, res) {
     ];
 
     if (!channelExists('open-your-own-ticket')) {
-      channels.ticketChannel = await createChannel(token, guildId, 'open-your-own-ticket', 0, categories.support, ticketPerms);
+      channels.ticketChannel = await createChannel(BOT_TOKEN, guildId, 'open-your-own-ticket', 0, categories.support, ticketPerms);
     } else {
       var ch6 = existingChannelsRes.data.find(function(x) { return x.name === 'open-your-own-ticket'; });
       channels.ticketChannel = ch6 ? ch6.id : null;
@@ -364,7 +364,7 @@ module.exports = async function handler(req, res) {
     ];
 
     if (!channelExists('ticket-logs')) {
-      channels.ticketLogs = await createChannel(token, guildId, 'ticket-logs', 0, categories.support, ticketLogPerms);
+      channels.ticketLogs = await createChannel(BOT_TOKEN, guildId, 'ticket-logs', 0, categories.support, ticketLogPerms);
     } else {
       var ch7 = existingChannelsRes.data.find(function(x) { return x.name === 'ticket-logs'; });
       channels.ticketLogs = ch7 ? ch7.id : null;
@@ -378,21 +378,21 @@ module.exports = async function handler(req, res) {
     ];
 
     if (!channelExists('STAFF')) {
-      categories.staff = await createCategory(token, guildId, 'STAFF', staffPermsOverwrite);
+      categories.staff = await createCategory(BOT_TOKEN, guildId, 'STAFF', staffPermsOverwrite);
     } else {
       var c4 = existingChannelsRes.data.find(function(x) { return x.name === 'STAFF'; });
       categories.staff = c4 ? c4.id : null;
     }
 
     if (!channelExists('staff-chat')) {
-      channels.staffChat = await createChannel(token, guildId, 'staff-chat', 0, categories.staff, staffPermsOverwrite);
+      channels.staffChat = await createChannel(BOT_TOKEN, guildId, 'staff-chat', 0, categories.staff, staffPermsOverwrite);
     } else {
       var ch8 = existingChannelsRes.data.find(function(x) { return x.name === 'staff-chat'; });
       channels.staffChat = ch8 ? ch8.id : null;
     }
 
     if (!channelExists('order-notifications')) {
-      channels.orderNotifications = await createChannel(token, guildId, 'order-notifications', 0, categories.staff, staffPermsOverwrite);
+      channels.orderNotifications = await createChannel(BOT_TOKEN, guildId, 'order-notifications', 0, categories.staff, staffPermsOverwrite);
     } else {
       var ch9 = existingChannelsRes.data.find(function(x) { return x.name === 'order-notifications'; });
       channels.orderNotifications = ch9 ? ch9.id : null;
@@ -406,21 +406,21 @@ module.exports = async function handler(req, res) {
     ];
 
     if (!channelExists('VOICE')) {
-      categories.voice = await createCategory(token, guildId, 'VOICE', voicePerms);
+      categories.voice = await createCategory(BOT_TOKEN, guildId, 'VOICE', voicePerms);
     } else {
       var c5 = existingChannelsRes.data.find(function(x) { return x.name === 'VOICE'; });
       categories.voice = c5 ? c5.id : null;
     }
 
     if (!channelExists('General Voice')) {
-      channels.generalVoice = await createChannel(token, guildId, 'General Voice', 2, categories.voice, voicePerms);
+      channels.generalVoice = await createChannel(BOT_TOKEN, guildId, 'General Voice', 2, categories.voice, voicePerms);
     } else {
       var ch10 = existingChannelsRes.data.find(function(x) { return x.name === 'General Voice'; });
       channels.generalVoice = ch10 ? ch10.id : null;
     }
 
     if (!channelExists('Support Voice')) {
-      channels.supportVoice = await createChannel(token, guildId, 'Support Voice', 2, categories.voice, voicePerms);
+      channels.supportVoice = await createChannel(BOT_TOKEN, guildId, 'Support Voice', 2, categories.voice, voicePerms);
     } else {
       var ch11 = existingChannelsRes.data.find(function(x) { return x.name === 'Support Voice'; });
       channels.supportVoice = ch11 ? ch11.id : null;
@@ -446,7 +446,7 @@ module.exports = async function handler(req, res) {
         footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' },
         timestamp: new Date().toISOString()
       };
-      if (await sendMsg(token, channels.rules, { embeds: [rulesEmbed] })) embedCount++;
+      if (await sendMsg(BOT_TOKEN, channels.rules, { embeds: [rulesEmbed] })) embedCount++;
     }
 
     if (channels.announcements) {
@@ -464,7 +464,7 @@ module.exports = async function handler(req, res) {
         footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' },
         timestamp: new Date().toISOString()
       };
-      if (await sendMsg(token, channels.announcements, { embeds: [welcomeEmbed] })) embedCount++;
+      if (await sendMsg(BOT_TOKEN, channels.announcements, { embeds: [welcomeEmbed] })) embedCount++;
     }
 
     if (channels.catalog) {
@@ -514,7 +514,7 @@ module.exports = async function handler(req, res) {
           ]
         }
       ];
-      if (await sendMsg(token, channels.catalog, { embeds: catalogEmbeds })) embedCount++;
+      if (await sendMsg(BOT_TOKEN, channels.catalog, { embeds: catalogEmbeds })) embedCount++;
     }
 
     if (channels.links) {
@@ -531,7 +531,7 @@ module.exports = async function handler(req, res) {
         footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' },
         timestamp: new Date().toISOString()
       };
-      if (await sendMsg(token, channels.links, { embeds: [linksEmbed] })) embedCount++;
+      if (await sendMsg(BOT_TOKEN, channels.links, { embeds: [linksEmbed] })) embedCount++;
     }
 
     if (channels.ticketChannel) {
@@ -568,7 +568,7 @@ module.exports = async function handler(req, res) {
         }
       ];
 
-      if (await sendMsg(token, channels.ticketChannel, { embeds: panelEmbeds, components: panelComponents })) embedCount++;
+      if (await sendMsg(BOT_TOKEN, channels.ticketChannel, { embeds: panelEmbeds, components: panelComponents })) embedCount++;
     }
 
     if (channels.staffChat) {
@@ -600,7 +600,7 @@ module.exports = async function handler(req, res) {
         footer: { text: 'Ambrosia Staff Hub \u2022 Private', icon_url: 'https://ambrosia.ovh/favicon.ico' },
         timestamp: new Date().toISOString()
       };
-      if (await sendMsg(token, channels.staffChat, { embeds: [staffEmbed, staffInstructionsEmbed] })) embedCount++;
+      if (await sendMsg(BOT_TOKEN, channels.staffChat, { embeds: [staffEmbed, staffInstructionsEmbed] })) embedCount++;
     }
 
     if (channels.orderNotifications) {
@@ -614,7 +614,7 @@ module.exports = async function handler(req, res) {
         footer: { text: 'Ambrosia Order System', icon_url: 'https://ambrosia.ovh/favicon.ico' },
         timestamp: new Date().toISOString()
       };
-      if (await sendMsg(token, channels.orderNotifications, { embeds: [orderEmbed] })) embedCount++;
+      if (await sendMsg(BOT_TOKEN, channels.orderNotifications, { embeds: [orderEmbed] })) embedCount++;
     }
 
     var envVars = {
