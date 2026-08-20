@@ -1055,8 +1055,18 @@ async function handleOrderSubmission() {
 
     if (!resp.ok) {
       const errBody = await resp.text();
+      let parsed;
+      try { parsed = JSON.parse(errBody); } catch (e) { parsed = {}; }
       console.error('[Ambrosia] Order API error ' + resp.status + ': ' + errBody);
-      showToast('Failed to send order (' + resp.status + '). Check console.', 'error');
+      if (parsed.error === 'not_member') {
+        showToast('You must join our Discord server first. Redirecting...', 'error');
+        setTimeout(() => {
+          closeCheckoutModal();
+          window.open('https://discord.gg/bT9dpnerP4', '_blank');
+        }, 2000);
+      } else {
+        showToast('Failed to send order (' + resp.status + '). Check console.', 'error');
+      }
       return;
     }
 
