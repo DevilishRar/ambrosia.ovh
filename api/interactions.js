@@ -112,20 +112,21 @@ module.exports = async function handler(req, res) {
         : (STAFF_ROLE_ID ? '<@&' + STAFF_ROLE_ID + '>' : '');
 
       const welcomeEmbed = {
-        title: 'Ticket #' + ticketRef,
+        title: '\uD83C\uDFAB Ticket #' + ticketRef,
         color: 0x2563eb,
-        description: 'Welcome ' + (customerId ? '<@' + customerId + '>' : '**' + customerRaw + '**') + '!\n\nA staff member will assist you shortly. Please send your XMR payment in this channel.',
+        description: 'Welcome ' + (customerId ? '<@' + customerId + '>' : '**' + customerRaw + '**') + '!\n\n> A staff member will assist you shortly. Please share your **Discord User ID** and send your XMR payment in this channel.',
         fields: [
-          { name: 'Product', value: product, inline: true },
-          { name: 'Duration', value: duration.toUpperCase(), inline: true },
-          { name: 'Price', value: priceUsd + ' (' + priceXmr + ')', inline: true },
+          { name: '\uD83C\uDFAE **Product**', value: '**' + product + '**', inline: true },
+          { name: '\u23F0 **Duration**', value: '`' + duration.toUpperCase() + '`', inline: true },
+          { name: '\uD83D\uDCB0 **Price**', value: '`' + priceUsd + ' ~' + priceXmr + '`', inline: true },
           { name: '\u200b', value: '\u200b', inline: false },
-          { name: 'TXID / Status', value: '`' + txHash + '`', inline: false },
-          { name: 'XMR Payment Address', value: '```' + xmrAddress + '```', inline: false },
+          { name: '\uD83D\uDCB3 **XMR Payment Address**', value: '```\n' + xmrAddress + '\n```', inline: false },
+          { name: '\uD83D\uDCC3 **TXID / Status**', value: '`' + txHash + '`', inline: false },
           { name: '\u200b', value: '\u200b', inline: false },
-          { name: 'Order Placed', value: orderTime, inline: true }
+          { name: '\uD83D\uDCC5 **Order Placed**', value: orderTime, inline: true }
         ],
-        footer: { text: 'Ambrosia.ovh Reseller System | Send XMR in this ticket' },
+        image: { url: 'https://ambrosia.ovh/og-image.png' },
+        footer: { text: 'Ambrosia.ovh \u2022 Send XMR in this ticket', icon_url: 'https://ambrosia.ovh/favicon.ico' },
         timestamp: new Date().toISOString()
       };
 
@@ -202,16 +203,17 @@ module.exports = async function handler(req, res) {
         : (STAFF_ROLE_ID ? '<@&' + STAFF_ROLE_ID + '>' : '');
 
       const welcomeEmbed = {
-        title: 'Ticket #' + ticketRef,
+        title: '\uD83C\uDFAB Ticket #' + ticketRef,
         color: 0x2563eb,
-        description: 'Welcome ' + (userId ? '<@' + userId + '>' : '**' + username + '**') + '!\n\nA staff member will assist you shortly.',
+        description: 'Welcome ' + (userId ? '<@' + userId + '>' : '**' + username + '**') + '!\n\n> A staff member will assist you shortly. Describe your request below.',
         fields: [
-          { name: 'Product', value: '**' + productName + '**', inline: true },
-          { name: 'Status', value: '`Awaiting Staff`', inline: true },
+          { name: '\uD83C\uDFAE **Product**', value: '**' + productName + '**', inline: true },
+          { name: '\u2705 **Status**', value: '`Awaiting Staff`', inline: true },
           { name: '\u200b', value: '\u200b', inline: false },
-          { name: 'Next Steps', value: '1. Describe what you need help with\n2. Wait for a staff member\n3. Send your XMR payment when ready', inline: false }
+          { name: '\uD83D\uDCCB **Next Steps**', value: '``` \n 1. Describe what you need help with \n 2. Wait for a staff member to respond \n 3. Send your XMR payment when ready \n 4. Receive your license key \n ```', inline: false }
         ],
-        footer: { text: 'Ambrosia.ovh | Ticket #' + ticketRef },
+        image: { url: 'https://ambrosia.ovh/og-image.png' },
+        footer: { text: 'Ambrosia.ovh \u2022 Ticket #' + ticketRef, icon_url: 'https://ambrosia.ovh/favicon.ico' },
         timestamp: new Date().toISOString()
       };
 
