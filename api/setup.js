@@ -7,108 +7,40 @@ function getBotToken() {
 }
 
 const P = {
-  ADMIN: '8',
-  VIEW_CHANNEL: '1024',
-  SEND_MESSAGES: '2048',
-  SEND_MESSAGES_THREADS: '274877906944',
-  CREATE_PUBLIC_THREADS: '1073741824',
-  CREATE_PRIVATE_THREADS: '16',
-  EMBED_LINKS: '16384',
-  ATTACH_FILES: '4096',
-  READ_MESSAGE_HISTORY: '65536',
-  MENTION_EVERYONE: '131072',
-  MANAGE_MESSAGES: '8192',
-  MANAGE_THREADS: '34359738368',
-  MANAGE_CHANNELS: '32',
-  MANAGE_ROLES: '134217728',
-  ADD_REACTIONS: '64',
-  CONNECT: '2097152',
-  SPEAK: '4194304',
-  MUTE_MEMBERS: '8388608',
-  DEAFEN_MEMBERS: '16777216',
-  MOVE_MEMBERS: '33554432',
-  USE_APPLICATION_COMMANDS: '2147483648'
+  ADMIN: '8', VIEW_CHANNEL: '1024', SEND_MESSAGES: '2048',
+  SEND_MESSAGES_THREADS: '274877906944', CREATE_PUBLIC_THREADS: '1073741824',
+  CREATE_PRIVATE_THREADS: '16', EMBED_LINKS: '16384', ATTACH_FILES: '4096',
+  READ_MESSAGE_HISTORY: '65536', MENTION_EVERYONE: '131072',
+  MANAGE_MESSAGES: '8192', MANAGE_THREADS: '34359738368', MANAGE_CHANNELS: '32',
+  MANAGE_ROLES: '134217728', ADD_REACTIONS: '64', CONNECT: '2097152',
+  SPEAK: '4194304', MUTE_MEMBERS: '8388608', DEAFEN_MEMBERS: '16777216',
+  MOVE_MEMBERS: '33554432', USE_APPLICATION_COMMANDS: '2147483648'
 };
 
-function a() {
+function ab() {
   var r = BigInt(0);
   for (var i = 0; i < arguments.length; i++) {
-    if (arguments[i] !== undefined && arguments[i] !== null) r = r | BigInt(String(arguments[i]));
+    if (arguments[i] != null) r = r | BigInt(String(arguments[i]));
   }
   return r.toString();
 }
 
-function d() {
-  var r = BigInt(0);
-  for (var i = 0; i < arguments.length; i++) {
-    if (arguments[i] !== undefined && arguments[i] !== null) r = r | BigInt(String(arguments[i]));
-  }
-  return r.toString();
-}
+var STAFF_P = ab(P.VIEW_CHANNEL, P.SEND_MESSAGES, P.SEND_MESSAGES_THREADS, P.CREATE_PUBLIC_THREADS, P.CREATE_PRIVATE_THREADS, P.EMBED_LINKS, P.ATTACH_FILES, P.READ_MESSAGE_HISTORY, P.MENTION_EVERYONE, P.MANAGE_MESSAGES, P.MANAGE_THREADS, P.ADD_REACTIONS, P.USE_APPLICATION_COMMANDS);
+var SELLER_P = ab(P.VIEW_CHANNEL, P.SEND_MESSAGES, P.SEND_MESSAGES_THREADS, P.CREATE_PUBLIC_THREADS, P.CREATE_PRIVATE_THREADS, P.EMBED_LINKS, P.ATTACH_FILES, P.READ_MESSAGE_HISTORY, P.MENTION_EVERYONE, P.MANAGE_MESSAGES, P.MANAGE_THREADS, P.MANAGE_CHANNELS, P.ADD_REACTIONS, P.USE_APPLICATION_COMMANDS);
+var MEMBER_P = ab(P.VIEW_CHANNEL, P.SEND_MESSAGES, P.READ_MESSAGE_HISTORY, P.ADD_REACTIONS, P.EMBED_LINKS, P.ATTACH_FILES, P.CREATE_PUBLIC_THREADS, P.SEND_MESSAGES_THREADS, P.USE_APPLICATION_COMMANDS);
+var RO_P = ab(P.VIEW_CHANNEL, P.READ_MESSAGE_HISTORY, P.ADD_REACTIONS, P.EMBED_LINKS);
+var NO_TALK = ab(P.VIEW_CHANNEL, P.READ_MESSAGE_HISTORY);
+var VOICE_P = ab(P.VIEW_CHANNEL, P.CONNECT, P.SPEAK);
+var VOICE_STAFF = ab(P.VIEW_CHANNEL, P.CONNECT, P.SPEAK, P.MUTE_MEMBERS, P.DEAFEN_MEMBERS, P.MOVE_MEMBERS);
+var DENY_VIEW = ab(P.VIEW_CHANNEL);
 
-function adminPerms() { return P.ADMIN; }
-
-function staffPerms() {
-  return a(P.VIEW_CHANNEL, P.SEND_MESSAGES, P.SEND_MESSAGES_THREADS, P.CREATE_PUBLIC_THREADS, P.CREATE_PRIVATE_THREADS, P.EMBED_LINKS, P.ATTACH_FILES, P.READ_MESSAGE_HISTORY, P.MENTION_EVERYONE, P.MANAGE_MESSAGES, P.MANAGE_THREADS, P.ADD_REACTIONS, P.USE_APPLICATION_COMMANDS);
-}
-
-function sellerPerms() {
-  return a(P.VIEW_CHANNEL, P.SEND_MESSAGES, P.SEND_MESSAGES_THREADS, P.CREATE_PUBLIC_THREADS, P.CREATE_PRIVATE_THREADS, P.EMBED_LINKS, P.ATTACH_FILES, P.READ_MESSAGE_HISTORY, P.MENTION_EVERYONE, P.MANAGE_MESSAGES, P.MANAGE_THREADS, P.MANAGE_CHANNELS, P.ADD_REACTIONS, P.USE_APPLICATION_COMMANDS);
-}
-
-function memberPerms() {
-  return a(P.VIEW_CHANNEL, P.SEND_MESSAGES, P.READ_MESSAGE_HISTORY, P.ADD_REACTIONS, P.EMBED_LINKS, P.ATTACH_FILES, P.CREATE_PUBLIC_THREADS, P.SEND_MESSAGES_THREADS, P.USE_APPLICATION_COMMANDS);
-}
-
-function readOnly() {
-  return a(P.VIEW_CHANNEL, P.READ_MESSAGE_HISTORY, P.ADD_REACTIONS, P.EMBED_LINKS);
-}
-
-function noTalk() {
-  return a(P.VIEW_CHANNEL, P.READ_MESSAGE_HISTORY);
-}
-
-function voicePerms() {
-  return a(P.VIEW_CHANNEL, P.CONNECT, P.SPEAK);
-}
-
-function voiceStaffPerms() {
-  return a(P.VIEW_CHANNEL, P.CONNECT, P.SPEAK, P.MUTE_MEMBERS, P.DEAFEN_MEMBERS, P.MOVE_MEMBERS);
-}
-
-async function api(token, method, path, body) {
-  var opts = { method: method, headers: { Authorization: 'Bot ' + token, 'Content-Type': 'application/json' } };
-  if (body) opts.body = JSON.stringify(body);
-  var res = await fetch('https://discord.com/api/v10' + path, opts);
-  var text = await res.text();
-  var data;
-  try { data = JSON.parse(text); } catch (e) { data = text; }
-  return { ok: res.ok, status: res.status, data: data };
-}
-
-async function createRole(token, guildId, name, color, perms, mentionable) {
-  var res = await api(token, 'POST', '/guilds/' + guildId + '/roles', { name: name, color: color, permissions: perms, mentionable: mentionable || false, hoist: true });
-  if (res.ok && res.data && res.data.id) { console.log('[Setup] Role: ' + name + ' (' + res.data.id + ')'); return res.data.id; }
-  console.error('[Setup] Failed role: ' + name); return null;
-}
-
-async function createCategory(token, guildId, name, overwrites) {
-  var res = await api(token, 'POST', '/guilds/' + guildId + '/channels', { name: name, type: 4, permission_overwrites: overwrites || [] });
-  if (res.ok && res.data && res.data.id) { console.log('[Setup] Category: ' + name + ' (' + res.data.id + ')'); return res.data.id; }
-  console.error('[Setup] Failed category: ' + name); return null;
-}
-
-async function createChannel(token, guildId, name, type, parentId, overwrites) {
-  var body = { name: name, type: type, permission_overwrites: overwrites || [] };
-  if (parentId) body.parent_id = parentId;
-  var res = await api(token, 'POST', '/guilds/' + guildId + '/channels', body);
-  if (res.ok && res.data && res.data.id) { console.log('[Setup] Channel: #' + name + ' (' + res.data.id + ')'); return res.data.id; }
-  console.error('[Setup] Failed channel: #' + name); return null;
-}
-
-async function sendMsg(token, channelId, body) {
-  var res = await api(token, 'POST', '/channels/' + channelId + '/messages', body);
-  return res.ok;
+async function api(t, m, p, b) {
+  var o = { method: m, headers: { Authorization: 'Bot ' + t, 'Content-Type': 'application/json' } };
+  if (b) o.body = JSON.stringify(b);
+  var r = await fetch('https://discord.com/api/v10' + p, o);
+  var txt = await r.text();
+  var d; try { d = JSON.parse(txt); } catch (e) { d = txt; }
+  return { ok: r.ok, data: d };
 }
 
 module.exports = async function handler(req, res) {
@@ -118,306 +50,287 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  var BOT_TOKEN = getBotToken();
-  if (!BOT_TOKEN) return res.status(500).json({ error: 'Bot token not configured' });
+  var BT = getBotToken();
+  if (!BT) return res.status(500).json({ error: 'No bot token' });
+  if (!req.body || req.body.secret !== SECRET) return res.status(403).json({ error: 'Bad secret' });
 
-  var secret = req.body ? req.body.secret : '';
-  if (secret !== SECRET) return res.status(403).json({ error: 'Invalid secret' });
-
-  var guildId = GUILD_ID;
-
+  var gid = GUILD_ID;
   try {
-    console.log('[Setup] ========================================');
-    console.log('[Setup] STARTING FULL SERVER SETUP');
-    console.log('[Setup] ========================================');
+    var g = await api(BT, 'GET', '/guilds/' + gid + '?with_counts=true');
+    if (!g.ok) return res.status(500).json({ error: 'No guild access' });
 
-    var guildRes = await api(BOT_TOKEN, 'GET', '/guilds/' + guildId + '?with_counts=true');
-    if (!guildRes.ok) return res.status(500).json({ error: 'Cannot access guild.' });
-    console.log('[Setup] Guild: ' + guildRes.data.name);
+    var chR = await api(BT, 'GET', '/guilds/' + gid + '/channels');
+    if (chR.ok && Array.isArray(chR.data)) {
+      var dels = chR.data.map(function(c) { return api(BT, 'DELETE', '/channels/' + c.id).catch(function(){return}); });
+      await Promise.all(dels);
+    }
 
-    console.log('[Setup] Deleting channels...');
-    var chRes = await api(BOT_TOKEN, 'GET', '/guilds/' + guildId + '/channels');
-    if (chRes.ok && Array.isArray(chRes.data)) {
-      var sorted = chRes.data.sort(function(x, y) { return x.type === 4 ? -1 : y.type === 4 ? 1 : 0; });
-      for (var i = 0; i < sorted.length; i++) {
-        try { await api(BOT_TOKEN, 'DELETE', '/channels/' + sorted[i].id); } catch (e) {}
+    var rlR = await api(BT, 'GET', '/guilds/' + gid + '/roles');
+    if (rlR.ok && Array.isArray(rlR.data)) {
+      var rdels = rlR.data.filter(function(r) { return r.name !== '@everyone' && !r.managed; }).map(function(r) {
+        return api(BT, 'DELETE', '/guilds/' + gid + '/roles/' + r.id).catch(function(){return});
+      });
+      await Promise.all(rdels);
+    }
+
+    var rBot = await api(BT, 'POST', '/guilds/' + gid + '/roles', { name: 'Ambrosia Bot', color: 0xed4245, permissions: ab(P.ADMIN), mentionable: false, hoist: true });
+    var rSeller = await api(BT, 'POST', '/guilds/' + gid + '/roles', { name: 'Seller', color: 0xf47b67, permissions: SELLER_P, mentionable: true, hoist: true });
+    var rStaff = await api(BT, 'POST', '/guilds/' + gid + '/roles', { name: 'Staff', color: 0x5865f2, permissions: STAFF_P, mentionable: true, hoist: true });
+    var rCust = await api(BT, 'POST', '/guilds/' + gid + '/roles', { name: 'Verified Customer', color: 0x57f287, permissions: MEMBER_P, mentionable: false, hoist: true });
+    var rMember = await api(BT, 'POST', '/guilds/' + gid + '/roles', { name: 'Member', color: 0x99aab5, permissions: MEMBER_P, mentionable: false, hoist: false });
+
+    var botId = rBot.ok ? rBot.data.id : null;
+    var sellerId = rSeller.ok ? rSeller.data.id : null;
+    var staffId = rStaff.ok ? rStaff.data.id : null;
+    var custId = rCust.ok ? rCust.data.id : null;
+    var memberId = rMember.ok ? rMember.data.id : null;
+    if (!botId) return res.status(500).json({ error: 'Bot role failed' });
+
+    function mkOw(isMember) {
+      var base = [
+        { id: gid, type: 0, allow: isMember ? MEMBER_P : RO_P, deny: '0' },
+        { id: staffId, type: 0, allow: STAFF_P, deny: '0' },
+        { id: sellerId, type: 0, allow: SELLER_P, deny: '0' },
+        { id: botId, type: 0, allow: ab(P.ADMIN), deny: '0' }
+      ];
+      return base;
+    }
+
+    var catInfo = await api(BT, 'POST', '/guilds/' + gid + '/channels', { name: 'INFORMATION', type: 4, permission_overwrites: mkOw(false) });
+    var catGen = await api(BT, 'POST', '/guilds/' + gid + '/channels', { name: 'GENERAL', type: 4, permission_overwrites: mkOw(true) });
+    var catStaff = await api(BT, 'POST', '/guilds/' + gid + '/channels', { name: 'STAFF', type: 4, permission_overwrites: [
+      { id: gid, type: 0, allow: '0', deny: DENY_VIEW },
+      { id: staffId, type: 0, allow: STAFF_P, deny: '0' },
+      { id: sellerId, type: 0, allow: SELLER_P, deny: '0' },
+      { id: botId, type: 0, allow: ab(P.ADMIN), deny: '0' }
+    ]});
+    var catVoice = await api(BT, 'POST', '/guilds/' + gid + '/channels', { name: 'VOICE', type: 4, permission_overwrites: [
+      { id: gid, type: 0, allow: VOICE_P, deny: '0' },
+      { id: staffId, type: 0, allow: VOICE_STAFF, deny: '0' },
+      { id: sellerId, type: 0, allow: VOICE_STAFF, deny: '0' },
+      { id: botId, type: 0, allow: ab(P.ADMIN), deny: '0' }
+    ]});
+
+    var infoId = catInfo.ok ? catInfo.data.id : null;
+    var genId = catGen.ok ? catGen.data.id : null;
+    var staffCatId = catStaff.ok ? catStaff.data.id : null;
+    var voiceId = catVoice.ok ? catVoice.data.id : null;
+
+    var chPromises = [];
+
+    chPromises.push(api(BT, 'POST', '/guilds/' + gid + '/channels', { name: 'rules', type: 0, parent_id: infoId, permission_overwrites: [
+      { id: gid, type: 0, allow: NO_TALK, deny: '0' },
+      { id: staffId, type: 0, allow: ab(P.VIEW_CHANNEL, P.SEND_MESSAGES, P.READ_MESSAGE_HISTORY, P.MANAGE_MESSAGES), deny: '0' },
+      { id: sellerId, type: 0, allow: ab(P.VIEW_CHANNEL, P.SEND_MESSAGES, P.READ_MESSAGE_HISTORY, P.MANAGE_MESSAGES), deny: '0' },
+      { id: botId, type: 0, allow: ab(P.ADMIN), deny: '0' }
+    ]}));
+
+    chPromises.push(api(BT, 'POST', '/guilds/' + gid + '/channels', { name: 'announcements', type: 0, parent_id: infoId, permission_overwrites: [
+      { id: gid, type: 0, allow: RO_P, deny: '0' },
+      { id: staffId, type: 0, allow: ab(P.VIEW_CHANNEL, P.SEND_MESSAGES, P.READ_MESSAGE_HISTORY, P.MENTION_EVERYONE), deny: '0' },
+      { id: sellerId, type: 0, allow: ab(P.VIEW_CHANNEL, P.SEND_MESSAGES, P.READ_MESSAGE_HISTORY, P.MENTION_EVERYONE), deny: '0' },
+      { id: botId, type: 0, allow: ab(P.ADMIN), deny: '0' }
+    ]}));
+
+    chPromises.push(api(BT, 'POST', '/guilds/' + gid + '/channels', { name: 'product-catalog', type: 0, parent_id: infoId, permission_overwrites: [
+      { id: gid, type: 0, allow: RO_P, deny: '0' },
+      { id: staffId, type: 0, allow: ab(P.VIEW_CHANNEL, P.SEND_MESSAGES, P.READ_MESSAGE_HISTORY), deny: '0' },
+      { id: sellerId, type: 0, allow: ab(P.VIEW_CHANNEL, P.SEND_MESSAGES, P.READ_MESSAGE_HISTORY), deny: '0' },
+      { id: botId, type: 0, allow: ab(P.ADMIN), deny: '0' }
+    ]}));
+
+    chPromises.push(api(BT, 'POST', '/guilds/' + gid + '/channels', { name: 'links', type: 0, parent_id: infoId, permission_overwrites: [
+      { id: gid, type: 0, allow: RO_P, deny: '0' },
+      { id: staffId, type: 0, allow: RO_P, deny: '0' },
+      { id: sellerId, type: 0, allow: RO_P, deny: '0' },
+      { id: botId, type: 0, allow: ab(P.ADMIN), deny: '0' }
+    ]}));
+
+    chPromises.push(api(BT, 'POST', '/guilds/' + gid + '/channels', { name: 'general-chat', type: 0, parent_id: genId, permission_overwrites: mkOw(true) }));
+    chPromises.push(api(BT, 'POST', '/guilds/' + gid + '/channels', { name: 'off-topic', type: 0, parent_id: genId, permission_overwrites: mkOw(true) }));
+
+    var supOw = [
+      { id: gid, type: 0, allow: ab(P.VIEW_CHANNEL, P.READ_MESSAGE_HISTORY), deny: '0' },
+      { id: staffId, type: 0, allow: STAFF_P, deny: '0' },
+      { id: sellerId, type: 0, allow: SELLER_P, deny: '0' },
+      { id: botId, type: 0, allow: ab(P.ADMIN), deny: '0' }
+    ];
+    var catSup = await api(BT, 'POST', '/guilds/' + gid + '/channels', { name: 'SUPPORT', type: 4, permission_overwrites: supOw });
+    var supId = catSup.ok ? catSup.data.id : null;
+
+    chPromises.push(api(BT, 'POST', '/guilds/' + gid + '/channels', { name: 'open-your-own-ticket', type: 0, parent_id: supId, permission_overwrites: [
+      { id: gid, type: 0, allow: ab(P.VIEW_CHANNEL, P.READ_MESSAGE_HISTORY, P.USE_APPLICATION_COMMANDS), deny: '0' },
+      { id: staffId, type: 0, allow: ab(P.VIEW_CHANNEL, P.READ_MESSAGE_HISTORY, P.USE_APPLICATION_COMMANDS), deny: '0' },
+      { id: sellerId, type: 0, allow: ab(P.VIEW_CHANNEL, P.READ_MESSAGE_HISTORY, P.USE_APPLICATION_COMMANDS), deny: '0' },
+      { id: botId, type: 0, allow: ab(P.ADMIN), deny: '0' }
+    ]}));
+
+    var staffOw = [
+      { id: gid, type: 0, allow: '0', deny: DENY_VIEW },
+      { id: staffId, type: 0, allow: STAFF_P, deny: '0' },
+      { id: sellerId, type: 0, allow: SELLER_P, deny: '0' },
+      { id: botId, type: 0, allow: ab(P.ADMIN), deny: '0' }
+    ];
+    chPromises.push(api(BT, 'POST', '/guilds/' + gid + '/channels', { name: 'ticket-logs', type: 0, parent_id: supId, permission_overwrites: staffOw }));
+    chPromises.push(api(BT, 'POST', '/guilds/' + gid + '/channels', { name: 'staff-chat', type: 0, parent_id: staffCatId, permission_overwrites: staffOw }));
+    chPromises.push(api(BT, 'POST', '/guilds/' + gid + '/channels', { name: 'order-notifications', type: 0, parent_id: staffCatId, permission_overwrites: staffOw }));
+
+    chPromises.push(api(BT, 'POST', '/guilds/' + gid + '/channels', { name: 'General Voice', type: 2, parent_id: voiceId, permission_overwrites: [
+      { id: gid, type: 0, allow: VOICE_P, deny: '0' },
+      { id: staffId, type: 0, allow: VOICE_STAFF, deny: '0' },
+      { id: sellerId, type: 0, allow: VOICE_STAFF, deny: '0' },
+      { id: botId, type: 0, allow: ab(P.ADMIN), deny: '0' }
+    ]}));
+    chPromises.push(api(BT, 'POST', '/guilds/' + gid + '/channels', { name: 'Support Voice', type: 2, parent_id: voiceId, permission_overwrites: [
+      { id: gid, type: 0, allow: VOICE_P, deny: '0' },
+      { id: staffId, type: 0, allow: VOICE_STAFF, deny: '0' },
+      { id: sellerId, type: 0, allow: VOICE_STAFF, deny: '0' },
+      { id: botId, type: 0, allow: ab(P.ADMIN), deny: '0' }
+    ]}));
+
+    var chResults = await Promise.all(chPromises);
+    var chIds = {};
+    var chNames = ['rules','announcements','product-catalog','links','general-chat','off-topic','open-your-own-ticket','ticket-logs','staff-chat','order-notifications','General Voice','Support Voice'];
+    for (var i = 0; i < chResults.length; i++) {
+      if (chResults[i].ok && chResults[i].data && chResults[i].data.id) {
+        chIds[chNames[i]] = chResults[i].data.id;
       }
     }
 
-    console.log('[Setup] Deleting roles...');
-    var rlRes = await api(BOT_TOKEN, 'GET', '/guilds/' + guildId + '/roles');
-    if (rlRes.ok && Array.isArray(rlRes.data)) {
-      for (var j = 0; j < rlRes.data.length; j++) {
-        var rl = rlRes.data[j];
-        if (rl.name === '@everyone') continue;
-        if (rl.managed) continue;
-        try { await api(BOT_TOKEN, 'DELETE', '/guilds/' + guildId + '/roles/' + rl.id); } catch (e) {}
-      }
-    }
+    var ticketPanelId = chIds['open-your-own-ticket'];
+    var staffChatId = chIds['staff-chat'];
+    var rulesId = chIds['rules'];
+    var annId = chIds['announcements'];
+    var catId = chIds['product-catalog'];
+    var linksId = chIds['links'];
+    var ordId = chIds['order-notifications'];
 
-    console.log('[Setup] Creating roles...');
-    var roles = {};
-    roles.bot = await createRole(BOT_TOKEN, guildId, 'Ambrosia Bot', 0xed4245, adminPerms(), false);
-    roles.seller = await createRole(BOT_TOKEN, guildId, 'Seller', 0xf47b67, sellerPerms(), true);
-    roles.staff = await createRole(BOT_TOKEN, guildId, 'Staff', 0x5865f2, staffPerms(), true);
-    roles.customer = await createRole(BOT_TOKEN, guildId, 'Verified Customer', 0x57f287, memberPerms(), false);
-    roles.member = await createRole(BOT_TOKEN, guildId, 'Member', 0x99aab5, memberPerms(), false);
-    if (!roles.bot) return res.status(500).json({ error: 'Failed to create bot role' });
+    var msgPromises = [];
 
-    var categoryPerms = [
-      { id: guildId, type: 0, allow: readOnly(), deny: '0' },
-      { id: roles.staff, type: 0, allow: staffPerms(), deny: '0' },
-      { id: roles.seller, type: 0, allow: sellerPerms(), deny: '0' },
-      { id: roles.bot, type: 0, allow: adminPerms(), deny: '0' }
-    ];
+    if (rulesId) msgPromises.push(api(BT, 'POST', '/channels/' + rulesId + '/messages', { embeds: [{
+      title: '\u26A0\uFE0F Server Rules',
+      color: 0x2563eb,
+      description: 'Welcome to the official Ambrosia Discord server. Please read and follow these rules.',
+      fields: [
+        { name: 'Rule 1', value: 'Be respectful. No harassment, hate speech, or personal attacks.', inline: false },
+        { name: 'Rule 2', value: 'No spamming, self-promotion, or advertising.', inline: false },
+        { name: 'Rule 3', value: 'Keep conversations in the appropriate channels.', inline: false },
+        { name: 'Rule 4', value: 'Do not share personal information, payment addresses, or license keys.', inline: false },
+        { name: 'Rule 5', value: 'Staff decisions are final. Open a ticket for issues.', inline: false },
+        { name: 'Support', value: 'Open a ticket in <#' + ticketPanelId + '>.', inline: false }
+      ],
+      image: { url: 'https://ambrosia.ovh/og-image.png' },
+      footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' },
+      timestamp: new Date().toISOString()
+    }}) }));
 
-    var memberCategoryPerms = [
-      { id: guildId, type: 0, allow: memberPerms(), deny: '0' },
-      { id: roles.staff, type: 0, allow: staffPerms(), deny: '0' },
-      { id: roles.seller, type: 0, allow: sellerPerms(), deny: '0' },
-      { id: roles.bot, type: 0, allow: adminPerms(), deny: '0' }
-    ];
+    if (annId) msgPromises.push(api(BT, 'POST', '/channels/' + annId + '/messages', { embeds: [{
+      title: '\uD83D\uDCE2 Welcome to Ambrosia',
+      color: 0x5865f2,
+      description: 'Official Ambrosia support server. Premium game cheats for OW2, CS2, and Fortnite.',
+      fields: [
+        { name: 'Website', value: '[ambrosia.ovh](https://ambrosia.ovh)', inline: true },
+        { name: 'Products', value: 'OW Lite, OW Pro, CS2 Web Radar, FN', inline: true },
+        { name: 'Support', value: 'Open a ticket in <#' + ticketPanelId + '>', inline: true }
+      ],
+      image: { url: 'https://ambrosia.ovh/og-image.png' },
+      footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' },
+      timestamp: new Date().toISOString()
+    }}) }));
 
-    var staffOnlyPerms = [
-      { id: guildId, type: 0, allow: '0', deny: d(P.VIEW_CHANNEL) },
-      { id: roles.staff, type: 0, allow: staffPerms(), deny: '0' },
-      { id: roles.seller, type: 0, allow: sellerPerms(), deny: '0' },
-      { id: roles.bot, type: 0, allow: adminPerms(), deny: '0' }
-    ];
+    if (catId) msgPromises.push(api(BT, 'POST', '/channels/' + catId + '/messages', { embeds: [
+      { title: '\uD83D\uDED2 Product Catalog', color: 0x2563eb, description: 'All Ambrosia products. Visit the website or open a ticket.', image: { url: 'https://ambrosia.ovh/og-image.png' }, footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' }, timestamp: new Date().toISOString() },
+      { title: 'OW Lite', color: 0x5865f2, fields: [{ name: 'Game', value: 'Overwatch 2', inline: true }, { name: 'Price', value: '$5/wk, $10/mo', inline: true }, { name: 'Features', value: 'Aimbot, Triggerbot, Flickbot, Streamproof', inline: false }] },
+      { title: 'OW Pro', color: 0xf59e0b, fields: [{ name: 'Game', value: 'Overwatch 2', inline: true }, { name: 'Price', value: '$20/wk, $45/mo', inline: true }, { name: 'Features', value: 'Hero Scripting, Ult HUD, Dual Slots', inline: false }] },
+      { title: 'CS2 Web Radar', color: 0x10b981, fields: [{ name: 'Game', value: 'Counter-Strike 2', inline: true }, { name: 'Price', value: '$5/wk, $15/mo', inline: true }, { name: 'Features', value: 'Triggerbot, RCS, 2D Tactical Radar', inline: false }] },
+      { title: 'Ambrosia FN', color: 0xed4245, fields: [{ name: 'Game', value: 'Fortnite', inline: true }, { name: 'Price', value: '$20/wk, $45/mo', inline: true }, { name: 'Status', value: 'Under Development', inline: false }] }
+    ]) }));
 
-    var voiceCategoryPerms = [
-      { id: guildId, type: 0, allow: voicePerms(), deny: '0' },
-      { id: roles.staff, type: 0, allow: voiceStaffPerms(), deny: '0' },
-      { id: roles.seller, type: 0, allow: voiceStaffPerms(), deny: '0' },
-      { id: roles.bot, type: 0, allow: adminPerms(), deny: '0' }
-    ];
+    if (linksId) msgPromises.push(api(BT, 'POST', '/channels/' + linksId + '/messages', { embeds: [{
+      title: '\uD83D\uDD17 Official Links',
+      color: 0x5865f2,
+      fields: [
+        { name: 'Product Server', value: 'https://discord.gg/bT9dpnerP4', inline: false },
+        { name: 'Support Server', value: 'https://discord.gg/fE4QFQVBfD', inline: false },
+        { name: 'Website', value: '[ambrosia.ovh](https://ambrosia.ovh)', inline: false }
+      ],
+      footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' },
+      timestamp: new Date().toISOString()
+    }}) }));
 
-    var channels = {};
-    var categories = {};
-    var embedCount = 0;
-
-    console.log('[Setup] Creating INFORMATION category...');
-    categories.information = await createCategory(BOT_TOKEN, guildId, 'INFORMATION', categoryPerms);
-
-    channels.rules = await createChannel(BOT_TOKEN, guildId, 'rules', 0, categories.information, [
-      { id: guildId, type: 0, allow: noTalk(), deny: '0' },
-      { id: roles.staff, type: 0, allow: a(P.VIEW_CHANNEL, P.SEND_MESSAGES, P.READ_MESSAGE_HISTORY, P.MANAGE_MESSAGES), deny: '0' },
-      { id: roles.seller, type: 0, allow: a(P.VIEW_CHANNEL, P.SEND_MESSAGES, P.READ_MESSAGE_HISTORY, P.MANAGE_MESSAGES), deny: '0' },
-      { id: roles.bot, type: 0, allow: adminPerms(), deny: '0' }
-    ]);
-
-    channels.announcements = await createChannel(BOT_TOKEN, guildId, 'announcements', 0, categories.information, [
-      { id: guildId, type: 0, allow: readOnly(), deny: '0' },
-      { id: roles.staff, type: 0, allow: a(P.VIEW_CHANNEL, P.SEND_MESSAGES, P.READ_MESSAGE_HISTORY, P.MENTION_EVERYONE), deny: '0' },
-      { id: roles.seller, type: 0, allow: a(P.VIEW_CHANNEL, P.SEND_MESSAGES, P.READ_MESSAGE_HISTORY, P.MENTION_EVERYONE), deny: '0' },
-      { id: roles.bot, type: 0, allow: adminPerms(), deny: '0' }
-    ]);
-
-    channels.catalog = await createChannel(BOT_TOKEN, guildId, 'product-catalog', 0, categories.information, [
-      { id: guildId, type: 0, allow: readOnly(), deny: '0' },
-      { id: roles.staff, type: 0, allow: a(P.VIEW_CHANNEL, P.SEND_MESSAGES, P.READ_MESSAGE_HISTORY), deny: '0' },
-      { id: roles.seller, type: 0, allow: a(P.VIEW_CHANNEL, P.SEND_MESSAGES, P.READ_MESSAGE_HISTORY), deny: '0' },
-      { id: roles.bot, type: 0, allow: adminPerms(), deny: '0' }
-    ]);
-
-    channels.links = await createChannel(BOT_TOKEN, guildId, 'links', 0, categories.information, [
-      { id: guildId, type: 0, allow: readOnly(), deny: '0' },
-      { id: roles.staff, type: 0, allow: readOnly(), deny: '0' },
-      { id: roles.seller, type: 0, allow: readOnly(), deny: '0' },
-      { id: roles.bot, type: 0, allow: adminPerms(), deny: '0' }
-    ]);
-
-    console.log('[Setup] Creating GENERAL category...');
-    categories.general = await createCategory(BOT_TOKEN, guildId, 'GENERAL', memberCategoryPerms);
-    channels.generalChat = await createChannel(BOT_TOKEN, guildId, 'general-chat', 0, categories.general, memberCategoryPerms);
-    channels.offTopic = await createChannel(BOT_TOKEN, guildId, 'off-topic', 0, categories.general, memberCategoryPerms);
-
-    console.log('[Setup] Creating SUPPORT category...');
-    categories.support = await createCategory(BOT_TOKEN, guildId, 'SUPPORT', [
-      { id: guildId, type: 0, allow: a(P.VIEW_CHANNEL, P.READ_MESSAGE_HISTORY), deny: '0' },
-      { id: roles.staff, type: 0, allow: staffPerms(), deny: '0' },
-      { id: roles.seller, type: 0, allow: sellerPerms(), deny: '0' },
-      { id: roles.bot, type: 0, allow: adminPerms(), deny: '0' }
-    ]);
-
-    channels.ticketChannel = await createChannel(BOT_TOKEN, guildId, 'open-your-own-ticket', 0, categories.support, [
-      { id: guildId, type: 0, allow: a(P.VIEW_CHANNEL, P.READ_MESSAGE_HISTORY, P.USE_APPLICATION_COMMANDS), deny: '0' },
-      { id: roles.staff, type: 0, allow: a(P.VIEW_CHANNEL, P.READ_MESSAGE_HISTORY, P.USE_APPLICATION_COMMANDS), deny: '0' },
-      { id: roles.seller, type: 0, allow: a(P.VIEW_CHANNEL, P.READ_MESSAGE_HISTORY, P.USE_APPLICATION_COMMANDS), deny: '0' },
-      { id: roles.bot, type: 0, allow: adminPerms(), deny: '0' }
-    ]);
-
-    channels.ticketLogs = await createChannel(BOT_TOKEN, guildId, 'ticket-logs', 0, categories.support, staffOnlyPerms);
-
-    console.log('[Setup] Creating STAFF category...');
-    categories.staff = await createCategory(BOT_TOKEN, guildId, 'STAFF', staffOnlyPerms);
-    channels.staffChat = await createChannel(BOT_TOKEN, guildId, 'staff-chat', 0, categories.staff, staffOnlyPerms);
-    channels.orderNotifications = await createChannel(BOT_TOKEN, guildId, 'order-notifications', 0, categories.staff, staffOnlyPerms);
-
-    console.log('[Setup] Creating VOICE category...');
-    categories.voice = await createCategory(BOT_TOKEN, guildId, 'VOICE', voiceCategoryPerms);
-    channels.generalVoice = await createChannel(BOT_TOKEN, guildId, 'General Voice', 2, categories.voice, voiceCategoryPerms);
-    channels.supportVoice = await createChannel(BOT_TOKEN, guildId, 'Support Voice', 2, categories.voice, voiceCategoryPerms);
-
-    console.log('[Setup] Sending embeds...');
-
-    if (channels.rules) {
-      if (await sendMsg(BOT_TOKEN, channels.rules, { embeds: [{
-        title: '\u26A0\uFE0F Server Rules',
-        color: 0x2563eb,
-        description: 'Welcome to the official Ambrosia Discord server. Please read and follow these rules at all times.',
-        fields: [
-          { name: 'Rule 1', value: 'Be respectful to all members. No harassment, hate speech, or personal attacks.', inline: false },
-          { name: 'Rule 2', value: 'No spamming, self-promotion, or unsolicited advertising in any channel.', inline: false },
-          { name: 'Rule 3', value: 'Keep conversations in the appropriate channels.', inline: false },
-          { name: 'Rule 4', value: 'Do not share other people\'s personal information, payment addresses, or license keys.', inline: false },
-          { name: 'Rule 5', value: 'Staff decisions are final. Open a ticket if you have an issue.', inline: false },
-          { name: 'Support', value: 'Open a ticket in <#' + channels.ticketChannel + '>. A staff member will assist you.', inline: false }
-        ],
-        image: { url: 'https://ambrosia.ovh/og-image.png' },
-        footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' },
-        timestamp: new Date().toISOString()
-      }})) embedCount++; }
-
-    if (channels.announcements) {
-      if (await sendMsg(BOT_TOKEN, channels.announcements, { embeds: [{
-        title: '\uD83D\uDCE2 Welcome to Ambrosia',
-        color: 0x5865f2,
-        description: 'This is the official Ambrosia support server. We provide premium game cheats for Overwatch 2, Counter-Strike 2, and Fortnite.',
-        fields: [
-          { name: 'Website', value: '[ambrosia.ovh](https://ambrosia.ovh)', inline: true },
-          { name: 'Products', value: 'OW Lite, OW Pro, CS2 Web Radar, Ambrosia FN', inline: true },
-          { name: 'Support', value: 'Open a ticket in <#' + channels.ticketChannel + '>', inline: true }
-        ],
-        image: { url: 'https://ambrosia.ovh/og-image.png' },
-        footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' },
-        timestamp: new Date().toISOString()
-      }})) embedCount++; }
-
-    if (channels.catalog) {
-      if (await sendMsg(BOT_TOKEN, channels.catalog, { embeds: [
-        { title: '\uD83D\uDED2 Product Catalog', color: 0x2563eb, description: 'All available Ambrosia products. Visit the website to purchase, or open a ticket if you need assistance.', image: { url: 'https://ambrosia.ovh/og-image.png' }, footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' }, timestamp: new Date().toISOString() },
-        { title: 'Ambrosia OW Lite', color: 0x5865f2, fields: [{ name: 'Game', value: 'Overwatch 2', inline: true }, { name: 'Price', value: '$5/week, $10/month', inline: true }, { name: 'Features', value: 'Aimbot, Triggerbot, Flickbot, Streamproof, 10 Configs', inline: false }] },
-        { title: 'Ambrosia OW Pro', color: 0xf59e0b, fields: [{ name: 'Game', value: 'Overwatch 2', inline: true }, { name: 'Price', value: '$20/week, $45/month', inline: true }, { name: 'Features', value: 'Hero Scripting, Ult Shower HUD, Dual Slots, Streamproof', inline: false }] },
-        { title: 'CS2 Web Radar', color: 0x10b981, fields: [{ name: 'Game', value: 'Counter-Strike 2', inline: true }, { name: 'Price', value: '$5/week, $15/month', inline: true }, { name: 'Features', value: 'Triggerbot, RCS, Interactive 2D Tactical Web Radar', inline: false }] },
-        { title: 'Ambrosia FN', color: 0xed4245, fields: [{ name: 'Game', value: 'Fortnite', inline: true }, { name: 'Price', value: '$20/week, $45/month', inline: true }, { name: 'Status', value: 'Under Development', inline: false }] }
-      ]})) embedCount++; }
-
-    if (channels.links) {
-      if (await sendMsg(BOT_TOKEN, channels.links, { embeds: [{
-        title: '\uD83D\uDD17 Official Links',
-        color: 0x5865f2,
-        fields: [
-          { name: 'Official Product Server', value: 'https://discord.gg/bT9dpnerP4\nMain server for news, updates, and community.', inline: false },
-          { name: 'Support Server (You Are Here)', value: 'https://discord.gg/fE4QFQVBfD\nTickets, order assistance, and staff communication.', inline: false },
-          { name: 'Website', value: '[ambrosia.ovh](https://ambrosia.ovh)\nPlace orders, view products, and check XMR prices.', inline: false }
-        ],
-        image: { url: 'https://ambrosia.ovh/og-image.png' },
-        footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' },
-        timestamp: new Date().toISOString()
-      }})) embedCount++; }
-
-    if (channels.ticketChannel) {
-      if (await sendMsg(BOT_TOKEN, channels.ticketChannel, { embeds: [{
+    if (ticketPanelId) msgPromises.push(api(BT, 'POST', '/channels/' + ticketPanelId + '/messages', {
+      embeds: [{
         title: 'Open a Support Ticket',
-        description: 'Select a product from the dropdown below to open a private ticket with our staff.\n\nYou must be a member of this server to open a ticket.',
+        description: 'Select a product below to open a private ticket.\nYou must be a member of this server.',
         color: 0x2563eb,
         thumbnail: { url: 'https://ambrosia.ovh/favicon.ico' },
         image: { url: 'https://ambrosia.ovh/og-image.png' },
         timestamp: new Date().toISOString()
-      }], components: [{
+      }],
+      components: [{
         type: 1,
         components: [{
-          type: 3,
-          custom_id: 'select_ticket_product',
+          type: 3, custom_id: 'select_ticket_product',
           placeholder: 'Select a product to open a ticket...',
-          min_values: 1,
-          max_values: 1,
+          min_values: 1, max_values: 1,
           options: [
             { label: 'Ambrosia OW Lite', description: 'Overwatch 2 | $5/wk | $10/mo', value: 'ambrosia-ow-lite', emoji: { name: '\uD83C\uDFAF' } },
             { label: 'Ambrosia OW Pro', description: 'Overwatch 2 | $20/wk | $45/mo', value: 'ambrosia-ow-pro', emoji: { name: '\u26A1' } },
             { label: 'CS2 Web Radar', description: 'Counter-Strike 2 | $5/wk | $15/mo', value: 'ambrosia-cs2-web', emoji: { name: '\uD83D\uDCE1' } },
             { label: 'Ambrosia FN', description: 'Fortnite | $20/wk | $45/mo', value: 'ambrosia-fn', emoji: { name: '\uD83C\uDF96\uFE0F' } },
-            { label: 'General Support', description: 'Questions, issues, or anything else', value: 'general-support', emoji: { name: '\uD83D\uDCAC' } }
+            { label: 'General Support', description: 'Questions or anything else', value: 'general-support', emoji: { name: '\uD83D\uDCAC' } }
           ]
         }]
-      }]})) embedCount++; }
+      }]
+    }) }));
 
-    if (channels.staffChat) {
-      if (await sendMsg(BOT_TOKEN, channels.staffChat, { embeds: [
-        {
-          title: '\uD83D\uDD28 Staff Channel',
-          color: 0x5865f2,
-          description: 'This channel is for Staff and Seller role members only.',
-          fields: [
-            { name: 'Roles', value: 'Staff and Seller roles have access to this channel.', inline: false },
-            { name: 'Note', value: 'This channel is hidden from regular members and customers.', inline: false }
-          ],
-          footer: { text: 'Ambrosia Staff Hub', icon_url: 'https://ambrosia.ovh/favicon.ico' },
-          timestamp: new Date().toISOString()
-        },
-        {
-          title: 'Staff Order Handling Guide (XMR Only)',
-          color: 0x991b1b,
-          description: 'Private instructions for Staff and Seller roles. Do not share this with customers.',
-          fields: [
-            { name: 'Step 1: Verify User ID', value: 'Ask the customer for their Discord User ID. Verify it matches the ticket creator.', inline: false },
-            { name: 'Step 2: Check XMR Payment', value: 'Use xmrchain.net or similar to verify the customer sent the correct XMR amount.', inline: false },
-            { name: 'Step 3: Confirm Amount', value: 'Make sure the amount matches the expected price. Account for XMR fluctuations.', inline: false },
-            { name: 'Step 4: Deliver License Key', value: 'Once payment is confirmed on chain, deliver the license key to the customer.', inline: false },
-            { name: 'Step 5: Verify Purchase', value: 'Click the **Verify Purchase** button to give them the Verified Customer role.', inline: false },
-            { name: 'Step 6: Close Ticket', value: 'After key is delivered and role is assigned, click **Close Ticket**.', inline: false },
-            { name: 'Do Not', value: 'Do not deliver keys before payment is confirmed. Do not close tickets without verifying.', inline: false }
-          ],
-          footer: { text: 'Ambrosia Staff Hub \u2022 Private', icon_url: 'https://ambrosia.ovh/favicon.ico' },
-          timestamp: new Date().toISOString()
-        }
-      ]})) embedCount++; }
-
-    if (channels.orderNotifications) {
-      if (await sendMsg(BOT_TOKEN, channels.orderNotifications, { embeds: [{
-        title: '\uD83D\uDCCA Order Notifications',
-        color: 0xf59e0b,
-        description: 'All new orders will appear here. Each has a **Create Ticket** button to begin assisting the customer.',
+    if (staffChatId) msgPromises.push(api(BT, 'POST', '/channels/' + staffChatId + '/messages', { embeds: [
+      { title: '\uD83D\uDD28 Staff Channel', color: 0x5865f2, description: 'Staff and Seller only. Hidden from members.' },
+      { title: 'Order Handling Guide (XMR Only)', color: 0x991b1b, description: 'Do not share with customers.',
         fields: [
-          { name: 'How It Works', value: '1. Customer places an order on the website\n2. An embed appears here with their details\n3. Click **Create Ticket** to assist them\n4. Verify payment on chain\n5. Deliver license key\n6. Close the ticket', inline: false }
+          { name: '1. Verify User ID', value: 'Check it matches the ticket creator.', inline: false },
+          { name: '2. Check XMR Payment', value: 'Use xmrchain.net to verify payment on chain.', inline: false },
+          { name: '3. Deliver Key', value: 'Once confirmed, send the license key.', inline: false },
+          { name: '4. Verify Purchase', value: 'Click the green button to assign Verified Customer role.', inline: false },
+          { name: '5. Close Ticket', value: 'Click the red Close Ticket button.', inline: false }
         ],
-        footer: { text: 'Ambrosia Order System', icon_url: 'https://ambrosia.ovh/favicon.ico' },
-        timestamp: new Date().toISOString()
-      }})) embedCount++; }
+        footer: { text: 'Private \u2022 Staff Only', icon_url: 'https://ambrosia.ovh/favicon.ico' },
+        timestamp: new Date().toISOString() }
+    ] }) }));
+
+    if (ordId) msgPromises.push(api(BT, 'POST', '/channels/' + ordId + '/messages', { embeds: [{
+      title: '\uD83D\uDCCA Order Notifications',
+      color: 0xf59e0b,
+      description: 'New orders appear here with a **Create Ticket** button.',
+      footer: { text: 'Ambrosia Order System', icon_url: 'https://ambrosia.ovh/favicon.ico' },
+      timestamp: new Date().toISOString()
+    }}) }));
+
+    await Promise.all(msgPromises);
 
     var envVars = {
-      DISCORD_GUILD_ID: guildId,
-      DISCORD_TICKETS_CATEGORY_ID: categories.support || '',
-      DISCORD_STAFF_ROLE_ID: roles.staff || '',
-      DISCORD_SELLER_ROLE_ID: roles.seller || '',
-      DISCORD_BOT_ROLE_ID: roles.bot || '',
-      DISCORD_TICKET_LOG_CHANNEL_ID: channels.ticketLogs || '',
-      DISCORD_ORDER_NOTIFICATION_CHANNEL_ID: channels.orderNotifications || '',
-      DISCORD_STAFF_CHAT_CHANNEL_ID: channels.staffChat || '',
-      DISCORD_TICKET_PANEL_CHANNEL_ID: channels.ticketChannel || '',
-      DISCORD_RULES_CHANNEL_ID: channels.rules || '',
-      DISCORD_ANNOUNCEMENTS_CHANNEL_ID: channels.announcements || '',
-      DISCORD_PRODUCT_CATALOG_CHANNEL_ID: channels.catalog || '',
-      DISCORD_LINKS_CHANNEL_ID: channels.links || '',
-      DISCORD_GENERAL_CHAT_CHANNEL_ID: channels.generalChat || '',
-      DISCORD_OFF_TOPIC_CHANNEL_ID: channels.offTopic || '',
-      DISCORD_MEMBER_ROLE_ID: roles.member || '',
-      DISCORD_CUSTOMER_ROLE_ID: roles.customer || ''
+      DISCORD_GUILD_ID: gid,
+      DISCORD_TICKETS_CATEGORY_ID: supId || '',
+      DISCORD_STAFF_ROLE_ID: staffId || '',
+      DISCORD_SELLER_ROLE_ID: sellerId || '',
+      DISCORD_BOT_ROLE_ID: botId || '',
+      DISCORD_TICKET_LOG_CHANNEL_ID: chIds['ticket-logs'] || '',
+      DISCORD_ORDER_NOTIFICATION_CHANNEL_ID: ordId || '',
+      DISCORD_STAFF_CHAT_CHANNEL_ID: staffChatId || '',
+      DISCORD_TICKET_PANEL_CHANNEL_ID: ticketPanelId || '',
+      DISCORD_RULES_CHANNEL_ID: rulesId || '',
+      DISCORD_ANNOUNCEMENTS_CHANNEL_ID: annId || '',
+      DISCORD_PRODUCT_CATALOG_CHANNEL_ID: catId || '',
+      DISCORD_LINKS_CHANNEL_ID: linksId || '',
+      DISCORD_GENERAL_CHAT_CHANNEL_ID: chIds['general-chat'] || '',
+      DISCORD_OFF_TOPIC_CHANNEL_ID: chIds['off-topic'] || '',
+      DISCORD_MEMBER_ROLE_ID: memberId || '',
+      DISCORD_CUSTOMER_ROLE_ID: custId || ''
     };
 
-    console.log('\n[Setup] ========================================');
-    console.log('[Setup] SERVER SETUP COMPLETE');
-    console.log('[Setup] Roles: ' + Object.keys(roles).length);
-    console.log('[Setup] Categories: ' + Object.keys(categories).length);
-    console.log('[Setup] Channels: ' + Object.keys(channels).length);
-    console.log('[Setup] Embeds: ' + embedCount);
-    console.log('[Setup] ========================================');
-
-    return res.status(200).json({ success: true, guild: guildRes.data.name, roles: roles, categories: categories, channels: channels, embeds: embedCount, env: envVars });
+    return res.status(200).json({ success: true, guild: g.data.name, channels: chIds, env: envVars });
 
   } catch (e) {
-    console.error('[Setup] Fatal error:', e);
-    return res.status(500).json({ error: 'Setup failed: ' + e.message });
+    return res.status(500).json({ error: e.message });
   }
 };
