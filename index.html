@@ -1507,21 +1507,9 @@
       <div class="space-y-2 mb-5">
         <div class="flex items-center justify-between">
           <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider">
-            Discord Username <span class="text-rose-400">* MANDATORY</span>
-          </label>
-          <span class="text-[10px] text-slate-500 font-mono" title="The @ will be added automatically">e.g.
-            username</span>
-        </div>
-        <small class="text-[9px] text-slate-400 block mt-1">Discord must be in @username format (e.g. @User#1234). We do NOT accept user#0000 format. Type only the username part without @ - the @ will be added automatically.</small>
-        <input type="text" id="modal-discord-input" required placeholder="Username#1234"
-          class="w-full bg-slate-900 border border-blue-500/40 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.15)]"
-          oninput="this.value=this.value.replace(/@/g,'')">
-
-        <div class="flex items-center justify-between">
-          <label class="block text-[11px] font-semibold text-slate-300 uppercase tracking-wider">
             Discord User ID <span class="text-rose-400">* MANDATORY</span>
           </label>
-          <span class="text-[10px] text-slate-500 font-mono">Required for private ticket access</span>
+          <span class="text-[10px] text-slate-500 font-mono">Required for ticket access</span>
         </div>
         <small class="text-[9px] text-slate-400 block mt-1">Required so staff can add you to the private ticket channel. Go to Discord → Settings → Advanced → Enable Developer Mode → Right-click your profile → Copy User ID.</small>
         <input type="text" id="modal-discord-id-input" required placeholder="e.g. 819283746500000000"
@@ -1572,8 +1560,8 @@
           <span id="confirm-price" class="text-white font-semibold">--</span>
         </div>
         <div class="flex justify-between text-xs">
-          <span class="text-slate-400">Discord</span>
-          <span id="confirm-discord" class="text-blue-400 font-semibold">--</span>
+          <span class="text-slate-400">Discord User ID</span>
+          <span id="confirm-discord" class="text-blue-400 font-mono font-semibold">--</span>
         </div>
         <div id="confirm-id-row" class="flex justify-between text-xs" style="display:none;">
           <span class="text-slate-400">User ID (for @mention)</span>

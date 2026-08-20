@@ -903,28 +903,26 @@ function initCheckoutModal() {
   const submitTxBtn = document.getElementById('submit-tx-btn');
   if (submitTxBtn) {
     submitTxBtn.addEventListener('click', () => {
-      const discordInput = document.getElementById('modal-discord-input');
-      const discordTag = discordInput ? discordInput.value.trim() : '';
-      if (!discordTag) {
-        showToast('Including your Discord username is MANDATORY!', 'error');
-        if (discordInput) discordInput.focus();
+      const discordIdInput = document.getElementById('modal-discord-id-input');
+      const discordUserId = discordIdInput ? discordIdInput.value.trim() : '';
+
+      if (!discordUserId || discordUserId.length < 17) {
+        showToast('Discord User ID is MANDATORY! Right-click your profile \u2192 Copy User ID.', 'error');
+        if (discordIdInput) discordIdInput.focus();
         return;
       }
 
       const product = PRODUCTS[selectedCheckoutProduct] || PRODUCTS['ambrosia-ow-pro'];
       const price = selectedCheckoutCycle === 'weekly' ? product.weeklyPrice : product.monthlyPrice;
       const xmrAmount = (price / XMR_RATE_USD).toFixed(5);
-      const discordIdInput = document.getElementById('modal-discord-id-input');
-      const discordUserId = discordIdInput ? discordIdInput.value.trim() : '';
 
       document.getElementById('confirm-product').textContent = product.name;
       document.getElementById('confirm-duration').textContent = selectedCheckoutCycle.toUpperCase();
       document.getElementById('confirm-price').textContent = `$${price} USD (~${xmrAmount} XMR)`;
-      document.getElementById('confirm-discord').textContent = discordTag.startsWith('@') ? discordTag : '@' + discordTag;
+      document.getElementById('confirm-discord').textContent = discordUserId;
 
       const idRow = document.getElementById('confirm-id-row');
-      idRow.style.display = 'flex';
-      document.getElementById('confirm-discord-id').textContent = discordUserId;
+      idRow.style.display = 'none';
 
       document.getElementById('confirm-modal').classList.add('active');
     });
@@ -1003,21 +1001,13 @@ function renderCheckoutDetails() {
 }
 
 async function handleOrderSubmission() {
-  const discordInput = document.getElementById('modal-discord-input');
   const discordIdInput = document.getElementById('modal-discord-id-input');
   const txInput = document.getElementById('modal-txid-input');
-  let discordTag = discordInput ? discordInput.value.trim() : '';
   const discordUserId = discordIdInput ? discordIdInput.value.trim() : '';
   const txHash = txInput ? txInput.value.trim() : 'Payment in Discord Ticket';
 
-  if (!discordTag) {
-    showToast('Including your Discord username is MANDATORY!', 'error');
-    if (discordInput) discordInput.focus();
-    return;
-  }
-
   if (!discordUserId || discordUserId.length < 17) {
-    showToast('Discord User ID is MANDATORY! Right-click your profile → Copy User ID.', 'error');
+    showToast('Discord User ID is MANDATORY!', 'error');
     if (discordIdInput) discordIdInput.focus();
     return;
   }
@@ -1027,10 +1017,6 @@ async function handleOrderSubmission() {
   const address = product.addresses[selectedCheckoutCycle];
   const ticketRef = 'AMB-' + Math.floor(1000 + Math.random() * 9000);
   const xmrAmount = (price / XMR_RATE_USD).toFixed(5);
-
-  if (!discordTag.startsWith('@')) {
-    discordTag = '@' + discordTag;
-  }
 
   const now = new Date();
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -1046,7 +1032,6 @@ async function handleOrderSubmission() {
   });
 
   const orderPayload = {
-    discordTag: discordTag,
     discordUserId: discordUserId,
     product: product.name,
     duration: selectedCheckoutCycle.toUpperCase(),

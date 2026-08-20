@@ -16,14 +16,25 @@ module.exports = async function handler(req, res) {
   const BOT_TOKEN = getBotToken();
   if (!BOT_TOKEN) return res.status(500).json({ error: 'Bot token not configured' });
 
-  const { discordTag, discordUserId, product, duration, price, xmrAmount, address, txHash, ticketRef, timezone, localTime } = req.body;
+  const { discordUserId, product, duration, price, xmrAmount, address, txHash, ticketRef, timezone, localTime } = req.body;
 
-  if (!discordTag) return res.status(400).json({ error: 'Discord username is mandatory' });
+  if (!discordUserId) return res.status(400).json({ error: 'Discord User ID is mandatory' });
 
-  const mentionText = discordUserId ? ('<@' + discordUserId + '>') : ('**' + discordTag + '**');
-  const customerField = discordUserId
-    ? ('<@' + discordUserId + '>\n(' + discordTag + ')')
-    : (discordTag + '\nNo User ID provided - ping unavailable');
+  let username = 'unknown';
+  try {
+    const userRes = await fetch('https://discord.com/api/v10/users/' + discordUserId, {
+      headers: { Authorization: 'Bot ' + BOT_TOKEN }
+    });
+    if (userRes.ok) {
+      const userData = await userRes.json();
+      username = userData.username || 'unknown';
+    }
+  } catch (e) {
+    console.error('[Ambrosia] Failed to fetch user:', e);
+  }
+
+  const mentionText = '<@' + discordUserId + '>';
+  const customerField = '<@' + discordUserId + '>\n(' + username + ' \u2022 ID: ' + discordUserId + ')';
 
   const payload = {
     username: 'Ambrosia Order Bot',
@@ -77,7 +88,7 @@ module.exports = async function handler(req, res) {
       return res.status(502).json({ error: 'Discord API error: ' + resp.status });
     }
 
-    return res.status(200).json({ success: true, ticketRef: ticketRef });
+    return res.status(200).json({ success: true, ticketRef: ticketRef, username: username });
   } catch (e) {
     console.error('[Ambrosia] Failed to send message:', e);
     return res.status(500).json({ error: 'Failed to send message' });
