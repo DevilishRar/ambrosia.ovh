@@ -42,104 +42,45 @@ module.exports = async function handler(req, res) {
     content: mentionText + ' \u2014 **New Order Received!**',
     embeds: [
       {
-        title: '\uD83D\uDCE6 NEW ORDER \u2014 #' + ticketRef,
+        title: '\uD83D\uDCE6 **NEW ORDER** \u2014 Ticket #' + ticketRef,
         color: 0xf59e0b,
-        description: '> A customer has completed checkout and is waiting in line. **Create a private ticket** to begin assisting them.',
+        description: '> A customer has completed checkout and is waiting in line.\n'
+          + '> **Create a private ticket** to begin assisting them immediately.',
         fields: [
-          {
-            name: '\uD83D\uDC64 **Customer**',
-            value: mentionText + '\n`' + username + '` \u2022 `' + discordUserId + '`',
-            inline: true
-          },
-          {
-            name: '\uD83C\uDFAE **Product**',
-            value: '**' + product + '**',
-            inline: true
-          },
-          {
-            name: '\u23F0 **Duration**',
-            value: '`' + duration + '`',
-            inline: true
-          },
-          {
-            name: '\u200b',
-            value: '\u200b',
-            inline: false
-          },
-          {
-            name: '\uD83D\uDCB0 **Price (USD)**',
-            value: '```ansi\n\u001b[1;32m$' + price + ' USD\u001b[0m\n```',
-            inline: true
-          },
-          {
-            name: '\uD83D\uDCB0 **Price (XMR)**',
-            value: '```ansi\n\u001b[1;36m~' + xmrAmount + ' XMR\u001b[0m\n```',
-            inline: true
-          },
-          {
-            name: '\u23F3 **Payment Status**',
-            value: '```ansi\n\u001b[1;33mPENDING\u001b[0m\n```',
-            inline: true
-          },
-          {
-            name: '\u200b',
-            value: '\u200b',
-            inline: false
-          },
-          {
-            name: '\uD83D\uDCB3 **XMR Payment Address**',
-            value: '```\n' + address + '\n```',
-            inline: false
-          },
-          {
-            name: '\uD83D\uDCC3 **TXID / Status**',
-            value: '`' + (txHash || 'Pending in ticket') + '`',
-            inline: false
-          },
-          {
-            name: '\u200b',
-            value: '\u200b',
-            inline: false
-          },
-          {
-            name: '\uD83D\uDCC5 **Order Placed**',
-            value: localTime + '\n`' + timezone + '`',
-            inline: true
-          },
-          {
-            name: '\uD83D\uDD27 **Ticket Reference**',
-            value: '`' + ticketRef + '`',
-            inline: true
-          }
+          { name: '\uD83D\uDC64 **Customer**', value: mentionText + '\n`' + username + '` \u2022 `' + discordUserId + '`', inline: true },
+          { name: '\uD83C\uDFAE **Product**', value: '**' + product + '**', inline: true },
+          { name: '\u23F0 **Duration**', value: '`' + duration + '`', inline: true },
+          { name: '\u200b', value: '\u200b', inline: false },
+          { name: '\uD83D\uDCB0 **Price (USD)**', value: '```ansi\n\u001b[1;32m$' + price + ' USD\u001b[0m\n```', inline: true },
+          { name: '\uD83D\uDCB0 **Price (XMR)**', value: '```ansi\n\u001b[1;36m~' + xmrAmount + ' XMR\u001b[0m\n```', inline: true },
+          { name: '\u23F3 **Payment Status**', value: '```ansi\n\u001b[1;33mPENDING\u001b[0m\n```', inline: true },
+          { name: '\u200b', value: '\u200b', inline: false },
+          { name: '\uD83D\uDCB3 **XMR Payment Address**', value: '```\n' + address + '\n```', inline: false },
+          { name: '\uD83D\uDCC3 **TXID / Status**', value: '`' + (txHash || 'Pending in ticket') + '`', inline: false },
+          { name: '\u200b', value: '\u200b', inline: false },
+          { name: '\uD83D\uDCC5 **Order Placed**', value: localTime + '\n`' + timezone + '`', inline: true },
+          { name: '\uD83D\uDD27 **Ticket Reference**', value: '`' + ticketRef + '`', inline: true }
         ],
-        thumbnail: {
-          url: avatarUrl
-        },
-        image: {
-          url: 'https://ambrosia.ovh/og-image.png'
-        },
-        footer: {
-          text: 'Ambrosia.ovh \u2022 Staff Action Required',
-          icon_url: 'https://ambrosia.ovh/favicon.ico'
-        },
+        thumbnail: { url: avatarUrl },
+        image: { url: 'https://ambrosia.ovh/og-image.png' },
+        footer: { text: 'Ambrosia.ovh \u2022 Staff Action Required', icon_url: 'https://ambrosia.ovh/favicon.ico' },
         timestamp: new Date().toISOString()
       },
       {
         title: '\u2705 **Staff Checklist**',
         color: 0x065f46,
-        description:
-          '``` \n'
-          + ' 1. \u2705 Click **Create Ticket** below \n'
-          + ' 2. \uD83D\uDC4B Welcome customer in the new ticket \n'
-          + ' 3. \uD83D\uDD0D Verify XMR payment on-chain \n'
-          + ' 4. \uD83D\uDCE6 Deliver license key \n'
-          + ' 5. \u2B50 Assign Verified Customer role \n'
-          + ' 6. \uD83D\uDD12 Close ticket when complete \n'
+        description: '``` \n'
+          + ' \u2460 Click **Create Ticket** below \n'
+          + ' \u2461 Welcome the customer in the new ticket \n'
+          + ' \u2462 Ask for their Discord User ID (if not provided) \n'
+          + ' \u2463 Verify XMR payment on-chain (blockchain explorer) \n'
+          + ' \u2464 Wait for sufficient confirmations (min 10) \n'
+          + ' \u2465 Generate and deliver the license key \n'
+          + ' \u2466 Assign the "Verified Customer" role \n'
+          + ' \u2467 Grant access to private product channels \n'
+          + ' \u2468 Close the ticket when complete \n'
           + ' ```',
-        footer: {
-          text: 'Ambrosia.ovh \u2022 Automated Order System',
-          icon_url: 'https://ambrosia.ovh/favicon.ico'
-        },
+        footer: { text: 'Ambrosia.ovh \u2022 Automated Order System', icon_url: 'https://ambrosia.ovh/favicon.ico' },
         timestamp: new Date().toISOString()
       }
     ],

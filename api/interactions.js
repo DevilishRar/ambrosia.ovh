@@ -7,6 +7,14 @@ const GUILD_ID = process.env.DISCORD_GUILD_ID || '1539404742055166045';
 const CATEGORY_ID = process.env.DISCORD_TICKETS_CATEGORY_ID || '1539707872416636939';
 const STAFF_ROLE_ID = process.env.DISCORD_STAFF_ROLE_ID || '1539709640240005220';
 
+const XMR_MAP = {
+  'ambrosia-ow-lite': { name: 'Ambrosia OW Lite', game: 'Overwatch 2' },
+  'ambrosia-ow-pro': { name: 'Ambrosia OW Pro', game: 'Overwatch 2' },
+  'ambrosia-cs2-web': { name: 'CS2 Web Radar', game: 'Counter-Strike 2' },
+  'ambrosia-fn': { name: 'Ambrosia FN', game: 'Fortnite' },
+  'general-support': { name: 'General Support', game: null }
+};
+
 function getBotToken() {
   try { return atob(ENCODED_BOT_TOKEN); } catch { return ''; }
 }
@@ -111,22 +119,44 @@ module.exports = async function handler(req, res) {
         ? '<@' + customerId + '>' + (STAFF_ROLE_ID ? ' <@&' + STAFF_ROLE_ID + '>' : '')
         : (STAFF_ROLE_ID ? '<@&' + STAFF_ROLE_ID + '>' : '');
 
+      const productKey = Object.keys(XMR_MAP).find(k => XMR_MAP[k].name === product) || 'general-support';
+      const productInfo = XMR_MAP[productKey] || { name: product, game: null };
+
       const welcomeEmbed = {
-        title: '\uD83C\uDFAB Ticket #' + ticketRef,
+        title: '\uD83C\uDFAB **' + productInfo.name + '** \u2014 Ticket #' + ticketRef,
         color: 0x2563eb,
-        description: 'Welcome ' + (customerId ? '<@' + customerId + '>' : '**' + customerRaw + '**') + '!\n\n> A staff member will assist you shortly. Please share your **Discord User ID** and send your XMR payment in this channel.',
+        description: 'Welcome ' + (customerId ? '<@' + customerId + '>' : '**' + customerRaw + '**') + '!\n\n'
+          + '> Your private ticket has been created. A staff member will assist you shortly.\n'
+          + '> Please follow the instructions below to complete your purchase.',
         fields: [
           { name: '\uD83C\uDFAE **Product**', value: '**' + product + '**', inline: true },
           { name: '\u23F0 **Duration**', value: '`' + duration.toUpperCase() + '`', inline: true },
           { name: '\uD83D\uDCB0 **Price**', value: '`' + priceUsd + ' ~' + priceXmr + '`', inline: true },
           { name: '\u200b', value: '\u200b', inline: false },
+          { name: '\uD83D\uDCC5 **Order Placed**', value: orderTime, inline: true },
+          { name: '\u2705 **Status**', value: '`Awaiting Payment`', inline: true },
+          { name: '\u200b', value: '\u200b', inline: false },
+          { name: '\uD83D\uDCA1 **How to Complete Your Order**', value: '``` \n'
+            + ' \u2460 Share your Discord User ID in this ticket \n'
+            + '   (Settings \u2192 Advanced \u2192 Enable Dev Mode \u2192 Right-click profile \u2192 Copy ID) \n'
+            + ' \u2461 Copy the XMR payment address below \n'
+            + ' \u2462 Send the EXACT amount from your personal XMR wallet \n'
+            + ' \u2463 Copy the Transaction ID (TXID) and paste it here \n'
+            + ' \u2464 Wait for staff to verify your payment on-chain \n'
+            + ' \u2465 Receive your license key \n'
+            + ' ```', inline: false },
+          { name: '\u200b', value: '\u200b', inline: false },
           { name: '\uD83D\uDCB3 **XMR Payment Address**', value: '```\n' + xmrAddress + '\n```', inline: false },
           { name: '\uD83D\uDCC3 **TXID / Status**', value: '`' + txHash + '`', inline: false },
           { name: '\u200b', value: '\u200b', inline: false },
-          { name: '\uD83D\uDCC5 **Order Placed**', value: orderTime, inline: true }
+          { name: '\u2757 **Important**', value: '\u2022 Send **only XMR** (Monero) to the address\n'
+            + '\u2022 Send the **exact amount** shown \u2014 overpayments cannot be refunded\n'
+            + '\u2022 If you don\'t have a TXID, type **"Paying in ticket"** and staff will verify\n'
+            + '\u2022 All sales are final \u2014 no refunds under any circumstances', inline: false }
         ],
         image: { url: 'https://ambrosia.ovh/og-image.png' },
-        footer: { text: 'Ambrosia.ovh \u2022 Send XMR in this ticket', icon_url: 'https://ambrosia.ovh/favicon.ico' },
+        thumbnail: { url: 'https://ambrosia.ovh/favicon.ico' },
+        footer: { text: 'Ambrosia.ovh \u2022 Ticket #' + ticketRef, icon_url: 'https://ambrosia.ovh/favicon.ico' },
         timestamp: new Date().toISOString()
       };
 
@@ -202,17 +232,60 @@ module.exports = async function handler(req, res) {
         ? '<@' + userId + '>' + (STAFF_ROLE_ID ? ' <@&' + STAFF_ROLE_ID + '>' : '')
         : (STAFF_ROLE_ID ? '<@&' + STAFF_ROLE_ID + '>' : '');
 
+      const productInfo = XMR_MAP[selectedValue] || { name: productName, game: null };
+
+      const isGeneral = selectedValue === 'general-support';
+
       const welcomeEmbed = {
-        title: '\uD83C\uDFAB Ticket #' + ticketRef,
+        title: '\uD83C\uDFAB **' + productInfo.name + '** \u2014 Ticket #' + ticketRef,
         color: 0x2563eb,
-        description: 'Welcome ' + (userId ? '<@' + userId + '>' : '**' + username + '**') + '!\n\n> A staff member will assist you shortly. Describe your request below.',
+        description: 'Welcome ' + (userId ? '<@' + userId + '>' : '**' + username + '**') + '!\n\n'
+          + '> Your private ticket has been created. A staff member will assist you shortly.\n'
+          + (isGeneral
+            ? '> Please describe what you need help with below.'
+            : '> Please follow the instructions below to complete your purchase.'),
         fields: [
-          { name: '\uD83C\uDFAE **Product**', value: '**' + productName + '**', inline: true },
+          { name: '\uD83C\uDFAE **Product**', value: '**' + productInfo.name + '**', inline: true },
           { name: '\u2705 **Status**', value: '`Awaiting Staff`', inline: true },
           { name: '\u200b', value: '\u200b', inline: false },
-          { name: '\uD83D\uDCCB **Next Steps**', value: '``` \n 1. Describe what you need help with \n 2. Wait for a staff member to respond \n 3. Send your XMR payment when ready \n 4. Receive your license key \n ```', inline: false }
+          ...(isGeneral
+            ? [
+                { name: '\uD83D\uDCCB **How It Works**', value: '``` \n'
+                  + ' \u2460 Describe your question or issue below \n'
+                  + ' \u2461 Wait for a staff member to respond \n'
+                  + ' \u2462 Staff will assist you with your request \n'
+                  + ' \u2463 Once resolved, staff will close this ticket \n'
+                  + ' ```', inline: false },
+                { name: '\u200b', value: '\u200b', inline: false },
+                { name: '\u26A0\ufe0F **Reminder**', value: '\u2022 Do NOT take screenshots or record videos of yourself cheating\n'
+                  + '\u2022 Do NOT share your license key with anyone\n'
+                  + '\u2022 Do NOT discuss drama, politics, or religion\n'
+                  + '\u2022 Do NOT impersonate staff, admins, or owners', inline: false }
+              ]
+            : [
+                { name: '\uD83D\uDCA1 **How to Complete Your Order**', value: '``` \n'
+                  + ' \u2460 Share your Discord User ID in this ticket \n'
+                  + '   (Settings \u2192 Advanced \u2192 Enable Dev Mode \u2192 Right-click profile \u2192 Copy ID) \n'
+                  + ' \u2461 Copy the XMR payment address from the product embed \n'
+                  + ' \u2462 Send the EXACT amount from your personal XMR wallet \n'
+                  + ' \u2463 Copy the Transaction ID (TXID) and paste it here \n'
+                  + ' \u2464 Wait for staff to verify your payment on-chain \n'
+                  + ' \u2465 Receive your license key \n'
+                  + ' ```', inline: false },
+                { name: '\u200b', value: '\u200b', inline: false },
+                { name: '\u2757 **Important**', value: '\u2022 Send **only XMR** (Monero) to the address\n'
+                  + '\u2022 Send the **exact amount** shown \u2014 overpayments cannot be refunded\n'
+                  + '\u2022 If you don\'t have a TXID, type **"Paying in ticket"** and staff will verify\n'
+                  + '\u2022 All sales are final \u2014 no refunds under any circumstances', inline: false }
+              ]),
+          { name: '\u200b', value: '\u200b', inline: false },
+          { name: '\uD83D\uDEE1\uFE0F **After Verification**', value: '\u2714\ufe0f You receive the **Verified Customer** role\n'
+            + '\u2714\ufe0f Access to **private product channels** with setup guides\n'
+            + '\u2714\ufe0f License key is tied to your hardware \u2014 do not share it\n'
+            + '\u2714\ufe0f Need help? Open a new General Support ticket', inline: false }
         ],
         image: { url: 'https://ambrosia.ovh/og-image.png' },
+        thumbnail: { url: 'https://ambrosia.ovh/favicon.ico' },
         footer: { text: 'Ambrosia.ovh \u2022 Ticket #' + ticketRef, icon_url: 'https://ambrosia.ovh/favicon.ico' },
         timestamp: new Date().toISOString()
       };
