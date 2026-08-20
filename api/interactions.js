@@ -9,7 +9,7 @@ const STAFF_ROLE_ID = process.env.DISCORD_STAFF_ROLE_ID || '1540131354715623514'
 const SELLER_ROLE_ID = process.env.DISCORD_SELLER_ROLE_ID || '1540131353947803809';
 const CUSTOMER_ROLE_ID = process.env.DISCORD_CUSTOMER_ROLE_ID || '1540131355285917817';
 const OWNER_ROLE_ID = process.env.DISCORD_OWNER_ROLE_ID || '1540131352194850818';
-const TICKET_SERVER_INVITE = 'https://discord.gg/jrnByjkNaw';
+const TICKET_SERVER_INVITE = 'https://discord.gg/zdkvpJCcVN';
 
 function getBotToken() {
   try { return atob(ENCODED_BOT_TOKEN); } catch { return ''; }

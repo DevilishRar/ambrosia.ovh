@@ -294,8 +294,9 @@ module.exports = async function handler(req, res) {
       color: 0x5865f2,
       fields: [
         { name: 'Product Server', value: 'https://discord.gg/bT9dpnerP4', inline: false },
-        { name: 'Support Server', value: 'https://discord.gg/jrnByjkNaw', inline: false },
-        { name: 'Website', value: 'https://ambrosia.ovh', inline: false }
+        { name: 'Support Server', value: 'https://discord.gg/zdkvpJCcVN', inline: false },
+        { name: 'Seller Website', value: 'https://ambrosiaovh.vercel.app/', inline: false },
+        { name: 'Official Website (Dashboard)', value: 'https://ambrosia.ovh', inline: false }
       ],
       footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' },
       timestamp: new Date().toISOString()

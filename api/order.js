@@ -1,7 +1,7 @@
 ﻿const ENCODED_BOT_TOKEN = 'TVRVek9UY3dNVFF6TlRJek56WTJNamd6TUEuR1pzd1I4LmE0cms4NHJvM2hmSjdFREYwMEltM18tVlh0MWlOVURQSndYdmV3';
 const NOTIFICATION_CHANNEL_ID = '1540131372201418792';
 const GUILD_ID = '1539404742055166045';
-const TICKET_SERVER_INVITE = 'https://discord.gg/jrnByjkNaw';
+const TICKET_SERVER_INVITE = 'https://discord.gg/zdkvpJCcVN';
 
 function getBotToken() {
   try { return atob(ENCODED_BOT_TOKEN); } catch { return ''; }
