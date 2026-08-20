@@ -264,7 +264,7 @@ module.exports = async function handler(req, res) {
       image: { url: 'https://ambrosia.ovh/og-image.png' },
       footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' },
       timestamp: new Date().toISOString()
-    }}]);
+    }]});
 
     await postMsg(ch.announcements, { embeds: [{
       title: '\uD83D\uDCE2 Welcome to Ambrosia',
@@ -278,7 +278,7 @@ module.exports = async function handler(req, res) {
       image: { url: 'https://ambrosia.ovh/og-image.png' },
       footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' },
       timestamp: new Date().toISOString()
-    }}]);
+    }]});
 
     await postMsg(ch.catalog, { embeds: [
       { title: '\uD83D\uDED2 Product Catalog', color: 0x2563eb, description: 'All Ambrosia products. Visit the website or open a ticket.', image: { url: 'https://ambrosia.ovh/og-image.png' }, footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' }, timestamp: new Date().toISOString() },
@@ -286,7 +286,7 @@ module.exports = async function handler(req, res) {
       { title: 'OW Pro', color: 0xf59e0b, fields: [{ name: 'Game', value: 'Overwatch 2', inline: true }, { name: 'Price', value: '$20/wk, $45/mo', inline: true }, { name: 'Features', value: 'Hero Scripting, Ult HUD, Dual Slots, Streamproof', inline: false }] },
       { title: 'CS2 Web Radar', color: 0x10b981, fields: [{ name: 'Game', value: 'Counter-Strike 2', inline: true }, { name: 'Price', value: '$5/wk, $15/mo', inline: true }, { name: 'Features', value: 'Triggerbot, RCS, Interactive 2D Tactical Radar', inline: false }] },
       { title: 'Ambrosia FN', color: 0xed4245, fields: [{ name: 'Game', value: 'Fortnite', inline: true }, { name: 'Price', value: '$20/wk, $45/mo', inline: true }, { name: 'Status', value: 'Under Development', inline: false }] }
-    ] });
+    ]});
 
     await postMsg(ch.links, { embeds: [{
       title: '\uD83D\uDD17 Official Links',
@@ -298,7 +298,7 @@ module.exports = async function handler(req, res) {
       ],
       footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' },
       timestamp: new Date().toISOString()
-    }}]);
+    }]});
 
     await postMsg(ch.ticketChannel, {
       embeds: [{
@@ -346,7 +346,7 @@ module.exports = async function handler(req, res) {
       description: 'New orders appear here with a **Create Ticket** button.',
       footer: { text: 'Ambrosia Order System', icon_url: 'https://ambrosia.ovh/favicon.ico' },
       timestamp: new Date().toISOString()
-    }] });
+    }]});
 
     var envVars = {
       DISCORD_GUILD_ID: gid,
