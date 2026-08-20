@@ -4,10 +4,11 @@ const ENCODED_BOT_TOKEN = 'TVRVek9UY3dNVFF6TlRJek56WTJNamd6TUEuR1pzd1I4LmE0cms4N
 
 const APPLICATION_PUBLIC_KEY = process.env.DISCORD_APPLICATION_PUBLIC_KEY || 'b9f4224b6bcc697b8d910f4095fb586c987552a63c2b53b945880f0ec5c29454';
 const GUILD_ID = process.env.DISCORD_GUILD_ID || '1539404742055166045';
-const CATEGORY_ID = process.env.DISCORD_TICKETS_CATEGORY_ID || '1539707872416636939';
-const STAFF_ROLE_ID = process.env.DISCORD_STAFF_ROLE_ID || '1539709640240005220';
+const CATEGORY_ID = process.env.DISCORD_TICKETS_CATEGORY_ID || '';
+const STAFF_ROLE_ID = process.env.DISCORD_STAFF_ROLE_ID || '';
 const SELLER_ROLE_ID = process.env.DISCORD_SELLER_ROLE_ID || '';
 const CUSTOMER_ROLE_ID = process.env.DISCORD_CUSTOMER_ROLE_ID || '';
+const OWNER_ROLE_ID = process.env.DISCORD_OWNER_ROLE_ID || '';
 const TICKET_SERVER_INVITE = 'https://discord.gg/fE4QFQVBfD';
 
 function getBotToken() {
@@ -125,6 +126,7 @@ async function isStaffOrSeller(token, guildId, userId) {
     if (!member.roles) return false;
     if (STAFF_ROLE_ID && member.roles.indexOf(STAFF_ROLE_ID) !== -1) return true;
     if (SELLER_ROLE_ID && member.roles.indexOf(SELLER_ROLE_ID) !== -1) return true;
+    if (OWNER_ROLE_ID && member.roles.indexOf(OWNER_ROLE_ID) !== -1) return true;
     return false;
   } catch (e) {
     return false;
@@ -207,6 +209,8 @@ module.exports = async function handler(req, res) {
 
   if (interactionType === 1) return res.json({ type: 1 });
 
+  console.log('[Ambrosia] CATEGORY_ID:', CATEGORY_ID, 'GUILD_ID:', GUILD_ID, 'STAFF_ROLE_ID:', STAFF_ROLE_ID);
+
   if (interactionType === 3 && data && data.custom_id) {
     var BOT_TOKEN = getBotToken();
     if (!BOT_TOKEN) return res.json({ type: 4, data: { content: 'Bot not configured.', flags: 64 } });
@@ -258,7 +262,7 @@ module.exports = async function handler(req, res) {
       if (!createRes.ok) {
         var err = await createRes.text();
         console.error('[Ambrosia] Channel creation failed:', createRes.status, err);
-        return res.json({ type: 4, data: { content: 'Failed to create channel.', flags: 64 } });
+        return res.json({ type: 4, data: { content: 'Failed to create channel. Error: ' + err.substring(0, 200), flags: 64 } });
       }
 
       var newChannel = await createRes.json();
@@ -330,7 +334,9 @@ module.exports = async function handler(req, res) {
         });
 
         if (!createRes2.ok) {
-          return res.json({ type: 4, data: { content: 'Failed to create channel.', flags: 64 } });
+          var err2 = await createRes2.text();
+          console.error('[Ambrosia] Channel creation failed:', createRes2.status, err2);
+          return res.json({ type: 4, data: { content: 'Failed to create channel. Error: ' + err2.substring(0, 200), flags: 64 } });
         }
 
         var newChannel2 = await createRes2.json();
@@ -401,10 +407,11 @@ module.exports = async function handler(req, res) {
       };
 
       return res.json({
-        type: 7,
+        type: 4,
         data: {
           embeds: [durationEmbed],
-          components: [durationDropdown]
+          components: [durationDropdown],
+          flags: 64
         }
       });
     }
@@ -463,7 +470,7 @@ module.exports = async function handler(req, res) {
       if (!createRes3.ok) {
         var err3 = await createRes3.text();
         console.error('[Ambrosia] Channel creation failed:', createRes3.status, err3);
-        return res.json({ type: 4, data: { content: 'Failed to create channel.', flags: 64 } });
+        return res.json({ type: 4, data: { content: 'Failed to create channel. Error: ' + err3.substring(0, 200), flags: 64 } });
       }
 
       var newChannel3 = await createRes3.json();
