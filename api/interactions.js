@@ -52,7 +52,7 @@ var PRODUCTS = {
   'ambrosia-fn': {
     name: 'Ambrosia FN',
     game: 'Fortnite',
-    features: 'Under Development and Maintenance. Updates will be announced in Discord.',
+    features: 'Aimbot, Box/Skeleton/China Hat/Rank ESP, Loot ESP, On Screen Radar, 10 Configs.',
     weeklyPrice: 20,
     monthlyPrice: 45,
     weeklyXmr: '~0.12',
