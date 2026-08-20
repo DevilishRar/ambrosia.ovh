@@ -32,14 +32,6 @@ function extractUsername(val) {
   return val.split('\n')[0].replace('@', '').trim() || 'unknown';
 }
 
-function editOriginal(BOT_TOKEN, applicationId, interactionToken, content) {
-  return fetch('https://discord.com/api/v10/webhooks/' + applicationId + '/' + interactionToken + '/messages/@original', {
-    method: 'PATCH',
-    headers: { Authorization: 'Bot ' + BOT_TOKEN, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ content: content })
-  }).catch(e => console.error('[Ambrosia] Failed to edit original:', e));
-}
-
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
@@ -160,13 +152,9 @@ module.exports = async function handler(req, res) {
     const BOT_TOKEN = getBotToken();
     if (!BOT_TOKEN) return res.json({ type: 4, data: { content: 'Bot not configured.', flags: 64 } });
 
-    const interactionToken = req.body.token;
-    const applicationId = req.body.application_id;
     const selectedValue = data.values && data.values[0] ? data.values[0] : 'general-support';
     const userId = (req.body.member && req.body.member.user) ? req.body.member.user.id : ((req.body.user && req.body.user.id) ? req.body.user.id : '');
     const username = (req.body.member && req.body.member.user) ? req.body.member.user.username : ((req.body.user && req.body.user.username) ? req.body.user.username : 'unknown');
-
-    res.json({ type: 6 });
 
     const productNames = {
       'ambrosia-ow-lite': 'Ambrosia OW Lite',
@@ -187,8 +175,7 @@ module.exports = async function handler(req, res) {
       if (!guildRes.ok) {
         const err = await guildRes.text();
         console.error('[Ambrosia] Guild fetch failed:', guildRes.status, err);
-        await editOriginal(BOT_TOKEN, applicationId, interactionToken, 'Failed to access guild. Check bot permissions.');
-        return;
+        return res.json({ type: 4, data: { content: 'Failed to access guild.', flags: 64 } });
       }
       const guild = await guildRes.json();
 
@@ -205,8 +192,7 @@ module.exports = async function handler(req, res) {
       if (!createRes.ok) {
         const err = await createRes.text();
         console.error('[Ambrosia] Channel creation failed:', createRes.status, err);
-        await editOriginal(BOT_TOKEN, applicationId, interactionToken, 'Failed to create channel. Error: ' + err.substring(0, 150));
-        return;
+        return res.json({ type: 4, data: { content: 'Failed to create channel.', flags: 64 } });
       }
 
       const newChannel = await createRes.json();
@@ -234,23 +220,18 @@ module.exports = async function handler(req, res) {
         components: [{ type: 2, custom_id: 'close_ticket', label: 'Close Ticket', style: 4, emoji: { name: '\uD83D\uDD12' } }]
       };
 
-      const msgRes = await fetch('https://discord.com/api/v10/channels/' + newChannel.id + '/messages', {
+      await fetch('https://discord.com/api/v10/channels/' + newChannel.id + '/messages', {
         method: 'POST',
         headers: { Authorization: 'Bot ' + BOT_TOKEN, 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: mentionStr, embeds: [welcomeEmbed], components: [closeRow] })
       });
-      if (!msgRes.ok) {
-        const err = await msgRes.text();
-        console.error('[Ambrosia] Welcome message failed:', msgRes.status, err);
-      }
 
-      await editOriginal(BOT_TOKEN, applicationId, interactionToken, 'Ticket created: <#' + newChannel.id + '>');
+      return res.json({ type: 4, data: { content: 'Ticket created: <#' + newChannel.id + '>', flags: 64 } });
 
     } catch (error) {
       console.error('[Ambrosia] select_ticket_product error:', error);
-      await editOriginal(BOT_TOKEN, applicationId, interactionToken, 'Error creating ticket. Please try again or contact staff.');
+      return res.json({ type: 4, data: { content: 'Error creating ticket.', flags: 64 } });
     }
-    return;
   }
 
   if (type === 3 && data && data.custom_id === 'close_ticket') {
