@@ -1,8 +1,4 @@
-// Ambrosia Ticket Panel Sender (Vercel Serverless Function)
-// Sends a beautiful embed with product dropdown to the "open your own ticket" channel
-// Called manually via console command or direct fetch
-
-const ENCODED_BOT_TOKEN = 'TVRVek9UY3dNVFF6TlRJek56WTJNamd6TUEuR1pzd1I4LmE0cms4NHJvM2hmSjdFREYwMEltM18tVlh0MWlOVURQSndYdmV3';
+﻿const ENCODED_BOT_TOKEN = 'TVRVek9UY3dNVFF6TlRJek56WTJNamd6TUEuR1pzd1I4LmE0cms4NHJvM2hmSjdFREYwMEltM18tVlh0MWlOVURQSndYdmV3';
 const TICKET_PANEL_CHANNEL_ID = '1539954048722010193';
 const GUILD_ID = '1539404742055166045';
 const TICKET_CATEGORY_ID = '1539707872416636939';

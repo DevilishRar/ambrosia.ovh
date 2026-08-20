@@ -1,13 +1,8 @@
-// Ambrosia.ovh Core Application Logic
-// Verified Products, Official Monero Addresses, 3D Cyber Matrix Canvas, Section Motion Blur, and Discord Sales Workflow
-
-// Base64-encoded Discord Webhook (decodes to a working webhook URL)
-// This is encoded to avoid showing the URL directly in plain text in the source code
+﻿
 const ENCODED_DISCORD_WEBHOOK = 'aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTUzOTQwNTE0NjAwNDUyOTE5My82UENXVFlsaUJ3M29oSkE1R0NBU01faTNGdTBldU00bjluVS1NcWM3VllxOEdELTh5Nk5ZYll3U3lHQ00zNDJoNHY4RQ==';
 
 const XMR_RATE_USD = 168.51;
 
-// Load the webhook securely from the encoded base64
 let DISCORD_WEBHOOK_URL = '';
 document.addEventListener('DOMContentLoaded', () => {
   try {
@@ -17,7 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Initialize on DOM Ready
 document.addEventListener('DOMContentLoaded', () => {
   initLucideIcons();
   initCyberMatrixBackground();
@@ -237,14 +231,11 @@ const PRODUCTS = {
   }
 };
 
-// Global App State
-let currentBillingCycle = 'weekly'; // 'weekly' or 'monthly'
+let currentBillingCycle = 'weekly'; 
 let selectedCheckoutProduct = 'ambrosia-ow-pro';
 let selectedCheckoutCycle = 'monthly';
 let selectedSpecsProduct = 'ambrosia-ow-pro';
 let activePlaygroundProduct = 'ambrosia-ow-pro';
-
-// Optional Webhook endpoint for Discord Bot
 
 function initLucideIcons() {
   if (window.lucide) {
@@ -252,8 +243,6 @@ function initLucideIcons() {
   }
 }
 
-// 3D CYBERNETIC PERSPECTIVE MATRIX & LIQUID ENERGY WAVES CANVAS
-// High tech 3D grid lines, flowing sapphire aurora plasma, drifting geometric holo-nodes & interactive mouse shockwave physics
 function initCyberMatrixBackground() {
   const canvas = document.getElementById('cyber-canvas');
   if (!canvas) return;
@@ -265,7 +254,6 @@ function initCyberMatrixBackground() {
   let prevMouseX = 0;
   let prevMouseY = 0;
 
-  // Floating geometric holo-nodes
   let nodes = [];
   const nodeCount = window.innerWidth < 768 ? 30 : 65;
 
@@ -303,7 +291,7 @@ function initCyberMatrixBackground() {
     reset(init = false) {
       this.x = Math.random() * width;
       this.y = init ? Math.random() * height : height + 20;
-      this.z = Math.random() * 0.8 + 0.2; // Depth
+      this.z = Math.random() * 0.8 + 0.2; 
       this.vx = (Math.random() - 0.5) * 0.4 * this.z;
       this.vy = -(Math.random() * 0.5 + 0.2) * this.z;
       this.size = (Math.random() * 2.5 + 1.2) * this.z;
@@ -314,10 +302,10 @@ function initCyberMatrixBackground() {
       this.type = Math.random() > 0.6 ? 'diamond' : 'circle';
 
       const hues = [
-        '59, 130, 246',   // Electric Sapphire
-        '6, 182, 212',    // Neon Cyan
-        '99, 102, 241',   // Deep Indigo
-        '139, 92, 246'    // Soft Violet
+        '59, 130, 246',   
+        '6, 182, 212',    
+        '99, 102, 241',   
+        '139, 92, 246'    
       ];
       this.color = hues[Math.floor(Math.random() * hues.length)];
     }
@@ -328,7 +316,6 @@ function initCyberMatrixBackground() {
 
       this.alpha = this.baseAlpha + Math.sin(time * this.pulseSpeed + this.pulseOffset) * 0.15;
 
-      // Mouse reactive flow
       if (mouse.x !== null && mouse.y !== null) {
         const dx = mouse.x - this.x;
         const dy = mouse.y - this.y;
@@ -378,7 +365,6 @@ function initCyberMatrixBackground() {
   function render() {
     time += 0.035;
 
-    // Smooth mouse interpolation
     if (mouse.targetX !== null) {
       if (mouse.x === null) {
         mouse.x = mouse.targetX;
@@ -394,7 +380,6 @@ function initCyberMatrixBackground() {
 
     ctx.clearRect(0, 0, width, height);
 
-    // 1. LIQUID PLASMA BACKGROUND GRADIENTS
     const plasma1X = width * 0.25 + Math.sin(time * 0.4) * 120;
     const plasma1Y = height * 0.35 + Math.cos(time * 0.3) * 80;
     const grad1 = ctx.createRadialGradient(plasma1X, plasma1Y, 20, plasma1X, plasma1Y, width * 0.45);
@@ -413,7 +398,6 @@ function initCyberMatrixBackground() {
     ctx.fillStyle = grad2;
     ctx.fillRect(0, 0, width, height);
 
-    // 2. 3D PERSPECTIVE CYBERNETIC GRID AT THE BOTTOM
     const horizonY = height * 0.62;
     const vanishX = width * 0.5 + (mouse.x !== null ? (mouse.x - width * 0.5) * 0.15 : 0);
     const gridLines = 18;
@@ -421,7 +405,6 @@ function initCyberMatrixBackground() {
     ctx.save();
     ctx.lineWidth = 0.8;
 
-    // Vertical perspective lines
     for (let i = -gridLines; i <= gridLines; i++) {
       const bottomX = width * 0.5 + (i * width * 0.075);
       const gradLine = ctx.createLinearGradient(vanishX, horizonY, bottomX, height);
@@ -436,7 +419,6 @@ function initCyberMatrixBackground() {
       ctx.stroke();
     }
 
-    // Horizontal grid wave rungs moving toward viewer
     const horizontalCount = 10;
     for (let j = 0; j < horizontalCount; j++) {
       const progress = ((j / horizontalCount) + (time * 0.15) % 1) % 1;
@@ -451,7 +433,6 @@ function initCyberMatrixBackground() {
     }
     ctx.restore();
 
-    // 3. MOUSE INTERACTIVE CYBERNETIC SHOCKWAVE HALO
     if (mouse.x !== null && mouse.y !== null) {
       const mouseHalo = ctx.createRadialGradient(mouse.x, mouse.y, 5, mouse.x, mouse.y, 220);
       mouseHalo.addColorStop(0, 'rgba(56, 189, 248, 0.14)');
@@ -461,7 +442,6 @@ function initCyberMatrixBackground() {
       ctx.fillRect(0, 0, width, height);
     }
 
-    // 4. NEURAL DATA PACKET LINKS BETWEEN NODES
     for (let i = 0; i < nodes.length; i++) {
       for (let j = i + 1; j < nodes.length; j++) {
         const dx = nodes[i].x - nodes[j].x;
@@ -480,7 +460,6 @@ function initCyberMatrixBackground() {
       }
     }
 
-    // 5. UPDATE AND DRAW HOLO-NODES
     nodes.forEach(n => {
       n.update();
       n.draw();
@@ -492,7 +471,6 @@ function initCyberMatrixBackground() {
   render();
 }
 
-// Section Motion Blur Scroll Reveals
 function initSectionMotionBlurReveals() {
   const reveals = document.querySelectorAll('.motion-reveal');
   if (!reveals.length) return;
@@ -511,7 +489,6 @@ function initSectionMotionBlurReveals() {
   reveals.forEach(el => observer.observe(el));
 }
 
-// Spotlight Cursor Follower on Cards
 function initSpotlightEffect() {
   const cards = document.querySelectorAll('.spotlight-card');
   cards.forEach(card => {
@@ -525,7 +502,6 @@ function initSpotlightEffect() {
   });
 }
 
-// Billing Cycle Toggle with Motion Blur Animation
 function initBillingToggle() {
   const weeklyBtn = document.getElementById('billing-weekly-btn');
   const monthlyBtn = document.getElementById('billing-monthly-btn');
@@ -558,7 +534,6 @@ function initBillingToggle() {
   monthlyBtn.addEventListener('click', () => updateToggleUI('monthly'));
 }
 
-// Motion Blur & Spring Price Transition
 function animatePriceChange() {
   const priceElements = document.querySelectorAll('.price-val');
 
@@ -598,7 +573,6 @@ function initPricingCards() {
   updatePricingCardDisplays();
 }
 
-// Custom Dropdown Component
 function initCustomSelects() {
   const wrappers = document.querySelectorAll('.custom-select-wrapper');
 
@@ -650,7 +624,6 @@ function initCustomSelects() {
   });
 }
 
-// Interactive Product Playground (Overview)
 function initProductPlayground() {
   const tabs = document.querySelectorAll('.playground-tab');
   tabs.forEach(tab => {
@@ -713,7 +686,6 @@ function renderPlaygroundContent(productId) {
   }
 }
 
-// Full Specs Modal
 function initSpecsModal() {
   const modal = document.getElementById('specs-modal');
   const closeBtn = document.getElementById('close-specs-btn');
@@ -802,7 +774,6 @@ function renderSpecsDetails() {
   }
 }
 
-// Server Rules & TOS Modal (Distinguishing Discord Community Rules vs Product Policies)
 function initRulesModal() {
   const modal = document.getElementById('rules-modal');
   const closeBtn = document.getElementById('close-rules-btn');
@@ -830,7 +801,6 @@ function initRulesModal() {
   });
 }
 
-// Monero (XMR) Checkout & Discord Webhook Ticket System
 function initCheckoutModal() {
   const modal = document.getElementById('checkout-modal');
   const closeBtn = document.getElementById('close-modal-btn');
@@ -851,7 +821,6 @@ function initCheckoutModal() {
     selectedCheckoutProduct = productId;
     selectedCheckoutCycle = cycle || currentBillingCycle;
 
-    // Update Custom Select Label
     const selectWrapper = document.getElementById('modal-product-custom-select');
     if (selectWrapper) {
       const label = selectWrapper.querySelector('.custom-select-label');
@@ -895,7 +864,6 @@ function initCheckoutModal() {
     });
   });
 
-  // Copy XMR address
   if (copyBtn) {
     copyBtn.addEventListener('click', () => {
       const addressText = document.getElementById('modal-xmr-address').textContent.trim();
@@ -914,7 +882,6 @@ function initCheckoutModal() {
     });
   }
 
-  // 1-Click Copy Ticket Format for Discord
   if (copyTicketBtn) {
     copyTicketBtn.addEventListener('click', () => {
       const discordInput = document.getElementById('modal-discord-input');
@@ -933,7 +900,6 @@ function initCheckoutModal() {
     });
   }
 
-  // Submit Discord Ticket — Show Confirmation First
   const submitTxBtn = document.getElementById('submit-tx-btn');
   if (submitTxBtn) {
     submitTxBtn.addEventListener('click', () => {
@@ -964,7 +930,6 @@ function initCheckoutModal() {
     });
   }
 
-  // Confirmation modal — Confirm button
   const confirmSubmitBtn = document.getElementById('confirm-submit-btn');
   if (confirmSubmitBtn) {
     confirmSubmitBtn.addEventListener('click', () => {
@@ -973,7 +938,6 @@ function initCheckoutModal() {
     });
   }
 
-  // Confirmation modal — Cancel button
   const confirmCancelBtn = document.getElementById('confirm-cancel-btn');
   if (confirmCancelBtn) {
     confirmCancelBtn.addEventListener('click', () => {
@@ -981,7 +945,6 @@ function initCheckoutModal() {
     });
   }
 
-  // Confirmation modal — Backdrop click to cancel
   const confirmBackdrop = document.getElementById('confirm-modal-backdrop');
   if (confirmBackdrop) {
     confirmBackdrop.addEventListener('click', () => {
@@ -1014,7 +977,6 @@ function renderCheckoutDetails() {
   if (xmrAmountEl) xmrAmountEl.textContent = `~ ${xmrAmount} XMR`;
   if (addressEl) addressEl.textContent = address;
 
-  // Generate QR Code
   if (qrContainer) {
     qrContainer.innerHTML = '';
     const moneroUri = `monero:${address}?tx_amount=${xmrAmount}&recipient_name=Ambrosia_Reseller`;
@@ -1040,7 +1002,6 @@ function renderCheckoutDetails() {
   }
 }
 
-// Handle Order Submission — sends to Vercel serverless function which posts via bot token
 async function handleOrderSubmission() {
   const discordInput = document.getElementById('modal-discord-input');
   const discordIdInput = document.getElementById('modal-discord-id-input');
@@ -1129,7 +1090,6 @@ async function handleOrderSubmission() {
   }, 1400);
 }
 
-// Toast Notification Utility
 function showToast(message, type = 'success') {
   let container = document.getElementById('toast-container');
   if (!container) {
@@ -1164,7 +1124,6 @@ function showToast(message, type = 'success') {
   }, 3500);
 }
 
-// FAQ Accordion
 function initFaqAccordion() {
   const items = document.querySelectorAll('.faq-item');
   items.forEach(item => {
@@ -1200,7 +1159,6 @@ function initFaqAccordion() {
   });
 }
 
-// Navbar Floating Glass Scroll Effect
 function initNavbarScroll() {
   const navbar = document.getElementById('main-navbar');
   if (!navbar) return;

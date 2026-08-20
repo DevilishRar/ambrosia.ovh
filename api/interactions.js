@@ -1,8 +1,4 @@
-// Ambrosia Discord Interactions Endpoint (Vercel Serverless Function)
-// Handles the "Create Ticket" button click from the webhook embed
-// Run: deploys automatically with Vercel when pushed to GitHub
-
-const nacl = require('tweetnacl');
+﻿const nacl = require('tweetnacl');
 
 const ENCODED_BOT_TOKEN = 'TVRVek9UY3dNVFF6TlRJek56WTJNamd6TUEuR1pzd1I4LmE0cms4NHJvM2hmSjdFREYwMEltM18tVlh0MWlOVURQSndYdmV3';
 
@@ -250,9 +246,14 @@ module.exports = async function handler(req, res) {
       return res.json({ type: 4, data: { content: 'Bot not configured.', flags: 64 } });
     }
 
+    const interactionToken = req.body.token;
+    const applicationId = req.body.application_id;
+
     const selectedValue = data.values ? data.values[0] : 'general-support';
     const userId = req.body.member && req.body.member.user ? req.body.member.user.id : (req.body.user ? req.body.user.id : '');
     const username = req.body.member && req.body.member.user ? req.body.member.user.username : (req.body.user ? req.body.user.username : 'unknown');
+
+    res.json({ type: 6 });
 
     const productNames = {
       'ambrosia-ow-lite': 'Ambrosia OW Lite',
@@ -271,7 +272,8 @@ module.exports = async function handler(req, res) {
         headers: { Authorization: 'Bot ' + BOT_TOKEN }
       });
       if (!guildRes.ok) {
-        return res.json({ type: 4, data: { content: 'Failed to access guild.', flags: 64 } });
+        console.error('[Ambrosia] Guild fetch failed:', guildRes.status);
+        return;
       }
       const guild = await guildRes.json();
 
@@ -306,7 +308,7 @@ module.exports = async function handler(req, res) {
         body: JSON.stringify({
           name: channelName,
           type: 0,
-          parent_id: TICKET_CATEGORY_ID || null,
+          parent_id: CATEGORY_ID || null,
           permission_overwrites: permissionOverwrites
         })
       });
@@ -314,7 +316,7 @@ module.exports = async function handler(req, res) {
       if (!createChannelRes.ok) {
         const errText = await createChannelRes.text();
         console.error('[Ambrosia] Ticket channel creation failed:', createChannelRes.status, errText);
-        return res.json({ type: 4, data: { content: 'Failed to create ticket channel. Please try again.', flags: 64 } });
+        return;
       }
 
       const newChannel = await createChannelRes.json();
@@ -361,17 +363,36 @@ module.exports = async function handler(req, res) {
         })
       });
 
-      return res.json({
-        type: 4,
-        data: {
-          content: '✅ Your ticket has been created: <#' + newChannel.id + '>',
-          flags: 64
-        }
+      await fetch('https://discord.com/api/v10/webhooks/' + applicationId + '/' + interactionToken + '/messages/@original', {
+        method: 'PATCH',
+        headers: {
+          Authorization: 'Bot ' + BOT_TOKEN,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          content: '✅ Your ticket has been created: <#' + newChannel.id + '>'
+        })
       });
+
+      return;
 
     } catch (error) {
       console.error('[Ambrosia] Error handling select_ticket_product:', error);
-      return res.json({ type: 4, data: { content: 'Error creating ticket. Please try again.', flags: 64 } });
+      try {
+        await fetch('https://discord.com/api/v10/webhooks/' + applicationId + '/' + interactionToken + '/messages/@original', {
+          method: 'PATCH',
+          headers: {
+            Authorization: 'Bot ' + BOT_TOKEN,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            content: '❌ Error creating ticket. Please try again or contact staff directly.'
+          })
+        });
+      } catch (e) {
+        console.error('[Ambrosia] Failed to send follow-up error:', e);
+      }
+      return;
     }
   }
 
