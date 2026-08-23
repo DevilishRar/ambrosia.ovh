@@ -283,10 +283,10 @@ module.exports = async function handler(req, res) {
 
     await postMsg(ch.catalog, { embeds: [
       { title: '\uD83D\uDED2 Product Catalog', color: 0x2563eb, description: 'All Ambrosia products. Visit the website or open a ticket.', image: { url: 'https://ambrosia.ovh/og-image.png' }, footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' }, timestamp: new Date().toISOString() },
-      { title: 'OW Lite', color: 0x5865f2, fields: [{ name: 'Game', value: 'Overwatch 2', inline: true }, { name: 'Price', value: '$5/wk, $10/mo', inline: true }, { name: 'Features', value: 'Aimbot, Triggerbot, Flickbot, Streamproof, 10 Configs', inline: false }] },
-      { title: 'OW Pro', color: 0xf59e0b, fields: [{ name: 'Game', value: 'Overwatch 2', inline: true }, { name: 'Price', value: '$20/wk, $45/mo', inline: true }, { name: 'Features', value: 'Hero Scripting, Ult HUD, Dual Slots, Streamproof', inline: false }] },
-      { title: 'CS2 Web Radar', color: 0x10b981, fields: [{ name: 'Game', value: 'Counter-Strike 2', inline: true }, { name: 'Price', value: '$5/wk, $15/mo', inline: true }, { name: 'Features', value: 'Triggerbot, RCS, Interactive 2D Tactical Radar', inline: false }] },
-      { title: 'Ambrosia FN', color: 0xed4245, fields: [{ name: 'Game', value: 'Fortnite', inline: true }, { name: 'Price', value: '$20/wk, $45/mo', inline: true }, { name: 'Features', value: 'Aimbot, Box/Skeleton ESP, Loot ESP, On Screen Radar, 10 Configs', inline: false }] }
+      { title: 'OW Lite', color: 0x5865f2, fields: [{ name: 'Game', value: 'Overwatch 2', inline: true }, { name: 'Price', value: '$5/wk, $10/mo, $100/yr', inline: true }, { name: 'Features', value: 'Aimbot, Triggerbot, Flickbot, Streamproof, 10 Configs', inline: false }] },
+      { title: 'OW Pro', color: 0xf59e0b, fields: [{ name: 'Game', value: 'Overwatch 2', inline: true }, { name: 'Price', value: '$20/wk, $45/mo, $450/yr', inline: true }, { name: 'Features', value: 'Hero Scripting, Ult HUD, Dual Slots, Streamproof', inline: false }] },
+      { title: 'CS2 Web Radar', color: 0x10b981, fields: [{ name: 'Game', value: 'Counter-Strike 2', inline: true }, { name: 'Price', value: '$5/wk, $15/mo, $150/yr', inline: true }, { name: 'Features', value: 'Triggerbot, RCS, Interactive 2D Tactical Radar', inline: false }] },
+      { title: 'Ambrosia FN', color: 0xed4245, fields: [{ name: 'Game', value: 'Fortnite', inline: true }, { name: 'Price', value: '$20/wk, $45/mo, $450/yr', inline: true }, { name: 'Features', value: 'Aimbot, Box/Skeleton ESP, Loot ESP, On Screen Radar, 10 Configs', inline: false }] }
     ]});
 
     await postMsg(ch.links, { embeds: [{
@@ -318,10 +318,10 @@ module.exports = async function handler(req, res) {
           placeholder: 'Select a product...',
           min_values: 1, max_values: 1,
           options: [
-            { label: 'Ambrosia OW Lite', description: 'Overwatch 2 | $5/wk | $10/mo', value: 'ambrosia-ow-lite', emoji: { name: '\uD83C\uDFAF' } },
-            { label: 'Ambrosia OW Pro', description: 'Overwatch 2 | $20/wk | $45/mo', value: 'ambrosia-ow-pro', emoji: { name: '\u26A1' } },
-            { label: 'CS2 Web Radar', description: 'Counter-Strike 2 | $5/wk | $15/mo', value: 'ambrosia-cs2-web', emoji: { name: '\uD83D\uDCE1' } },
-            { label: 'Ambrosia FN', description: 'Fortnite | $20/wk | $45/mo', value: 'ambrosia-fn', emoji: { name: '\uD83C\uDF96\uFE0F' } },
+            { label: 'Ambrosia OW Lite', description: 'Overwatch 2 | $5/wk | $10/mo | $100/yr', value: 'ambrosia-ow-lite', emoji: { name: '\uD83C\uDFAF' } },
+            { label: 'Ambrosia OW Pro', description: 'Overwatch 2 | $20/wk | $45/mo | $450/yr', value: 'ambrosia-ow-pro', emoji: { name: '\u26A1' } },
+            { label: 'CS2 Web Radar', description: 'Counter-Strike 2 | $5/wk | $15/mo | $150/yr', value: 'ambrosia-cs2-web', emoji: { name: '\uD83D\uDCE1' } },
+            { label: 'Ambrosia FN', description: 'Fortnite | $20/wk | $45/mo | $450/yr', value: 'ambrosia-fn', emoji: { name: '\uD83C\uDF96\uFE0F' } },
             { label: 'General Support', description: 'Questions or anything else', value: 'general-support', emoji: { name: '\uD83D\uDCAC' } }
           ]
         }]

@@ -38,6 +38,7 @@ const PRODUCTS = {
     tagline: 'Lightweight aimbot, triggerbot, flickbot, movement and streamproof visuals.',
     weeklyPrice: 5,
     monthlyPrice: 10,
+    yearlyPrice: 100,
     lifetimePrice: null,
     available: true,
     os: 'Windows 10 and 11',
@@ -45,7 +46,8 @@ const PRODUCTS = {
     notes: 'Lite version of the product with streamproof visuals and movement helpers.',
     addresses: {
       weekly: '89VPPCJ9qhEUnA53bDLPSFbdKm3zS7uxJ7Qewy9mAV23AFb7EnUBBDjfjwzKxE71yRjSADVb6Cs6t22DQ3vKtphnTRaBnZB',
-      monthly: '89aFGA5EWqvJUnNacSNW6RGPctm74XKx8Nvz5t45BDm8ZfDWdBH2xJgZsL4mFi47kHaamwu2PcQAT3E1vUJmpPhD15WjkiB'
+      monthly: '89aFGA5EWqvJUnNacSNW6RGPctm74XKx8Nvz5t45BDm8ZfDWdBH2xJgZsL4mFi47kHaamwu2PcQAT3E1vUJmpPhD15WjkiB',
+      yearly: '88N6VV7KHCnSpq8pKtNtRSfYjadqHUH5qUTHeToCbFW9jA9RnqvzDLE6Ev8HVeoYyhG7fa9NK5dL18WpvWFYSX1HJ8Cenhf'
     },
     featureHighlights: [
       'Aimbot, Triggerbot and Flickbot with Prediction',
@@ -91,6 +93,7 @@ const PRODUCTS = {
     tagline: 'Advanced combat suite with hero scripting, ult shower HUD, and deep customisation.',
     weeklyPrice: 20,
     monthlyPrice: 45,
+    yearlyPrice: 450,
     lifetimePrice: null,
     available: true,
     os: 'Windows 10 and 11',
@@ -98,7 +101,8 @@ const PRODUCTS = {
     notes: 'Full featured edition with hero action scripting, ally targeting, and HUD ult tracker.',
     addresses: {
       weekly: '88MtyMUqqrFbqAtg2g6M5Khi1dwEVyt6UCUi228VLpZNFqX4fepf6ixctZaPtERsP4dA1HSBnFteQhZsHnz8sMsp1Ld5YBH',
-      monthly: '8AGpdyaAkKyb8daJ3xksAr9m6y5L6ChND2KHthouN4YcEXMtm5cH72DghMc2ZeMHdP2ewXWxWWRPTUuoMefj1DSg7FVf8kU'
+      monthly: '8AGpdyaAkKyb8daJ3xksAr9m6y5L6ChND2KHthouN4YcEXMtm5cH72DghMc2ZeMHdP2ewXWxWWRPTUuoMefj1DSg7FVf8kU',
+      yearly: '4BE8WBPizoyfveG6Sbtd66V184WktCEoq8EQ2d3ayxKLQxhRiFB4shQDHSVU8f188diVst9thbTtWh4KmrGKZXwwRm6fvyL'
     },
     featureHighlights: [
       'Dual Aim and Trigger Slots with Independent Configs',
@@ -189,6 +193,7 @@ const PRODUCTS = {
     tagline: 'Triggerbot, RCS weapon recoil control and browser based tactical 2D radar.',
     weeklyPrice: 5,
     monthlyPrice: 15,
+    yearlyPrice: 150,
     lifetimePrice: null,
     available: true,
     os: 'Windows 10 and 11 (Android, iOS and Linux for Web Radar part)',
@@ -196,7 +201,8 @@ const PRODUCTS = {
     notes: 'Web radar can be opened on any second monitor, phone, or browser.',
     addresses: {
       weekly: '871MfSycgoc8mhZ7SpUZoZZ1dbS6d5Bq1cde9LmEvcVqUn8fpCgZTvMKN1V2tNGqzBeh4pjgwzQHUf42qAvR71YbEtc59Xz',
-      monthly: '8AVUcXxR3ircP1BhpUi3fhczeag4LQjCaJKBe2opbDrKCexzqYAwjk3U63uGeaU4Wk7ztyDtoYEuHXxQ46f27c4AR2c6mQf'
+      monthly: '8AVUcXxR3ircP1BhpUi3fhczeag4LQjCaJKBe2opbDrKCexzqYAwjk3U63uGeaU4Wk7ztyDtoYEuHXxQ46f27c4AR2c6mQf',
+      yearly: '8A9XWGLZPBPWNXGtwCHi3k9tukffTsyzj2Bry24aoDcEfEouHYoRQnt9CAVwPsgR5HAVGjyXLEt4rAm6hDkHuDGYLVPE6xn'
     },
     featureHighlights: [
       'Triggerbot with Custom Delay and Trigger Key',
@@ -239,6 +245,7 @@ const PRODUCTS = {
     tagline: 'Aimbot, visual ESP, loot distance, on screen radar, and 10 config slots.',
     weeklyPrice: 20,
     monthlyPrice: 45,
+    yearlyPrice: 450,
     lifetimePrice: null,
     available: true,
     os: 'Windows 11',
@@ -246,7 +253,8 @@ const PRODUCTS = {
     notes: 'Full Fortnite client with aimbot, ESP suite, radar and configs.',
     addresses: {
       weekly: '8BMLcSiK1rm7zZ11MPd2U1G4rMfkjTkZyQ9spnY6GAHEYSJVvWJ9wQQPKnNnZxHAmMazApZ2qJ6wKFAnbbR1LsaT5HAFSCK',
-      monthly: '84hxPfyebV85yHJi6BuBnnKxBjYRGc1dMURtmv4By4QjNF9Czaho5EPQzeGEeNtVfpCyX1v4dRLac2LWLEnSC4EK7BsKZKc'
+      monthly: '84hxPfyebV85yHJi6BuBnnKxBjYRGc1dMURtmv4By4QjNF9Czaho5EPQzeGEeNtVfpCyX1v4dRLac2LWLEnSC4EK7BsKZKc',
+      yearly: '88eiZUXkbAqDXETpFWV5EiEJA5xPsi7JreNQsMcSaXpGNucsmdt8mwcjKoin7B42PnVeDgscuPjh545L3yo7HfcRTVgQW2o'
     },
     featureHighlights: [
       'Aimbot with Prediction, Visible Check, Custom FOV, Aim Bone Selection',
@@ -555,26 +563,34 @@ function initSpotlightEffect() {
 function initBillingToggle() {
   const weeklyBtn = document.getElementById('billing-weekly-btn');
   const monthlyBtn = document.getElementById('billing-monthly-btn');
+  const yearlyBtn = document.getElementById('billing-yearly-btn');
   const pillSlider = document.getElementById('billing-pill-slider');
 
-  if (!weeklyBtn || !monthlyBtn || !pillSlider) return;
+  if (!weeklyBtn || !monthlyBtn || !yearlyBtn || !pillSlider) return;
 
   function updateToggleUI(cycle) {
     if (currentBillingCycle === cycle) return;
     currentBillingCycle = cycle;
 
+    weeklyBtn.classList.add('text-slate-400');
+    weeklyBtn.classList.remove('text-white');
+    monthlyBtn.classList.add('text-slate-400');
+    monthlyBtn.classList.remove('text-white');
+    yearlyBtn.classList.add('text-slate-400');
+    yearlyBtn.classList.remove('text-white');
+
     if (cycle === 'weekly') {
       weeklyBtn.classList.add('text-white');
       weeklyBtn.classList.remove('text-slate-400');
-      monthlyBtn.classList.add('text-slate-400');
-      monthlyBtn.classList.remove('text-white');
       pillSlider.style.transform = 'translateX(0%)';
-    } else {
+    } else if (cycle === 'monthly') {
       monthlyBtn.classList.add('text-white');
       monthlyBtn.classList.remove('text-slate-400');
-      weeklyBtn.classList.add('text-slate-400');
-      weeklyBtn.classList.remove('text-white');
       pillSlider.style.transform = 'translateX(100%)';
+    } else {
+      yearlyBtn.classList.add('text-white');
+      yearlyBtn.classList.remove('text-slate-400');
+      pillSlider.style.transform = 'translateX(200%)';
     }
 
     animatePriceChange();
@@ -582,6 +598,7 @@ function initBillingToggle() {
 
   weeklyBtn.addEventListener('click', () => updateToggleUI('weekly'));
   monthlyBtn.addEventListener('click', () => updateToggleUI('monthly'));
+  yearlyBtn.addEventListener('click', () => updateToggleUI('yearly'));
 }
 
 function animatePriceChange() {
@@ -601,6 +618,18 @@ function animatePriceChange() {
   }, 120);
 }
 
+function getPriceForCycle(product, cycle) {
+  if (cycle === 'weekly') return product.weeklyPrice;
+  if (cycle === 'yearly') return product.yearlyPrice;
+  return product.monthlyPrice;
+}
+
+function getCycleLabel(cycle) {
+  if (cycle === 'weekly') return '/ week';
+  if (cycle === 'yearly') return '/ year';
+  return '/ month';
+}
+
 function updatePricingCardDisplays() {
   Object.keys(PRODUCTS).forEach(key => {
     const product = PRODUCTS[key];
@@ -611,9 +640,9 @@ function updatePricingCardDisplays() {
         priceEl.textContent = 'Unavailable';
         cycleEl.textContent = '';
       } else {
-        const price = currentBillingCycle === 'weekly' ? product.weeklyPrice : product.monthlyPrice;
+        const price = getPriceForCycle(product, currentBillingCycle);
         priceEl.textContent = `$${price}`;
-        cycleEl.textContent = currentBillingCycle === 'weekly' ? '/ week' : '/ month';
+        cycleEl.textContent = getCycleLabel(currentBillingCycle);
       }
     }
   });
@@ -937,7 +966,7 @@ function initCheckoutModal() {
       const discordInput = document.getElementById('modal-discord-input');
       const discordTag = discordInput ? discordInput.value.trim() : 'Anonymous';
       const product = PRODUCTS[selectedCheckoutProduct] || PRODUCTS['ambrosia-ow-pro'];
-      const price = selectedCheckoutCycle === 'weekly' ? product.weeklyPrice : product.monthlyPrice;
+      const price = getPriceForCycle(product, selectedCheckoutCycle);
       const address = product.addresses[selectedCheckoutCycle];
       const xmrAmount = (price / XMR_RATE_USD).toFixed(5);
       const ticketRef = 'AMB-' + Math.floor(1000 + Math.random() * 9000);
@@ -963,7 +992,7 @@ function initCheckoutModal() {
       }
 
       const product = PRODUCTS[selectedCheckoutProduct] || PRODUCTS['ambrosia-ow-pro'];
-      const price = selectedCheckoutCycle === 'weekly' ? product.weeklyPrice : product.monthlyPrice;
+      const price = getPriceForCycle(product, selectedCheckoutCycle);
       const xmrAmount = (price / XMR_RATE_USD).toFixed(5);
 
       document.getElementById('confirm-product').textContent = product.name;
@@ -1010,7 +1039,7 @@ function renderCheckoutDetails() {
     return;
   }
 
-  const price = selectedCheckoutCycle === 'weekly' ? product.weeklyPrice : product.monthlyPrice;
+  const price = getPriceForCycle(product, selectedCheckoutCycle);
   const address = product.addresses[selectedCheckoutCycle] || product.addresses['monthly'];
   const xmrAmount = (price / XMR_RATE_USD).toFixed(5);
 
@@ -1063,7 +1092,7 @@ async function handleOrderSubmission() {
   }
 
   const product = PRODUCTS[selectedCheckoutProduct] || PRODUCTS['ambrosia-ow-pro'];
-  const price = selectedCheckoutCycle === 'weekly' ? product.weeklyPrice : product.monthlyPrice;
+  const price = getPriceForCycle(product, selectedCheckoutCycle);
   const address = product.addresses[selectedCheckoutCycle];
   const ticketRef = 'AMB-' + Math.floor(1000 + Math.random() * 9000);
   const xmrAmount = (price / XMR_RATE_USD).toFixed(5);

@@ -22,10 +22,13 @@ var PRODUCTS = {
     features: 'Aimbot, Triggerbot, Flickbot with Prediction, Multipoint Visualisation, Hitbox Customisation, Auto Bunnyhop, Null Binding (SnapTap), Streamproof, 10 Configs',
     weeklyPrice: 5,
     monthlyPrice: 10,
+    yearlyPrice: 100,
     weeklyXmr: '~0.03',
     monthlyXmr: '~0.06',
+    yearlyXmr: '~0.59',
     weeklyAddr: '89VPPCJ9qhEUnA53bDLPSFbdKm3zS7uxJ7Qewy9mAV23AFb7EnUBBDjfjwzKxE71yRjSADVb6Cs6t22DQ3vKtphnTRaBnZB',
-    monthlyAddr: '89aFGA5EWqvJUnNacSNW6RGPctm74XKx8Nvz5t45BDm8ZfDWdBH2xJgZsL4mFi47kHaamwu2PcQAT3E1vUJmpPhD15WjkiB'
+    monthlyAddr: '89aFGA5EWqvJUnNacSNW6RGPctm74XKx8Nvz5t45BDm8ZfDWdBH2xJgZsL4mFi47kHaamwu2PcQAT3E1vUJmpPhD15WjkiB',
+    yearlyAddr: '88N6VV7KHCnSpq8pKtNtRSfYjadqHUH5qUTHeToCbFW9jA9RnqvzDLE6Ev8HVeoYyhG7fa9NK5dL18WpvWFYSX1HJ8Cenhf'
   },
   'ambrosia-ow-pro': {
     name: 'Ambrosia OW Pro',
@@ -33,10 +36,13 @@ var PRODUCTS = {
     features: 'Dual Aim and Trigger Slots, Hero Action Scripting (10 scripts), Ult Shower HUD, Ability Cooldown Panel, Player Outline ESP, Skeleton Hitbox Visuals, FOV Changer, Third Person, Streamproof',
     weeklyPrice: 20,
     monthlyPrice: 45,
+    yearlyPrice: 450,
     weeklyXmr: '~0.12',
     monthlyXmr: '~0.27',
+    yearlyXmr: '~2.67',
     weeklyAddr: '88MtyMUqqrFbqAtg2g6M5Khi1dwEVyt6UCUi228VLpZNFqX4fepf6ixctZaPtERsP4dA1HSBnFteQhZsHnz8sMsp1Ld5YBH',
-    monthlyAddr: '8AGpdyaAkKyb8daJ3xksAr9m6y5L6ChND2KHthouN4YcEXMtm5cH72DghMc2ZeMHdP2ewXWxWWRPTUuoMefj1DSg7FVf8kU'
+    monthlyAddr: '8AGpdyaAkKyb8daJ3xksAr9m6y5L6ChND2KHthouN4YcEXMtm5cH72DghMc2ZeMHdP2ewXWxWWRPTUuoMefj1DSg7FVf8kU',
+    yearlyAddr: '4BE8WBPizoyfveG6Sbtd66V184WktCEoq8EQ2d3ayxKLQxhRiFB4shQDHSVU8f188diVst9thbTtWh4KmrGKZXwwRm6fvyL'
   },
   'ambrosia-cs2-web': {
     name: 'CS2 Web Radar',
@@ -44,10 +50,13 @@ var PRODUCTS = {
     features: 'Triggerbot with Custom Delay, RCS Recoil Control, Interactive 2D Tactical Web Radar, Bomb Carrier/Defusing/Flashed/Grenades Display, Players Info: Name, Health, Teams, Weapons',
     weeklyPrice: 5,
     monthlyPrice: 15,
+    yearlyPrice: 150,
     weeklyXmr: '~0.03',
     monthlyXmr: '~0.09',
+    yearlyXmr: '~0.89',
     weeklyAddr: '871MfSycgoc8mhZ7SpUZoZZ1dbS6d5Bq1cde9LmEvcVqUn8fpCgZTvMKN1V2tNGqzBeh4pjgwzQHUf42qAvR71YbEtc59Xz',
-    monthlyAddr: '8AVUcXxR3ircP1BhpUi3fhczeag4LQjCaJKBe2opbDrKCexzqYAwjk3U63uGeaU4Wk7ztyDtoYEuHXxQ46f27c4AR2c6mQf'
+    monthlyAddr: '8AVUcXxR3ircP1BhpUi3fhczeag4LQjCaJKBe2opbDrKCexzqYAwjk3U63uGeaU4Wk7ztyDtoYEuHXxQ46f27c4AR2c6mQf',
+    yearlyAddr: '8A9XWGLZPBPWNXGtwCHi3k9tukffTsyzj2Bry24aoDcEfEouHYoRQnt9CAVwPsgR5HAVGjyXLEt4rAm6hDkHuDGYLVPE6xn'
   },
   'ambrosia-fn': {
     name: 'Ambrosia FN',
@@ -55,29 +64,38 @@ var PRODUCTS = {
     features: 'Aimbot, Box/Skeleton/China Hat/Rank ESP, Loot ESP, On Screen Radar, 10 Configs.',
     weeklyPrice: 20,
     monthlyPrice: 45,
+    yearlyPrice: 450,
     weeklyXmr: '~0.12',
     monthlyXmr: '~0.27',
+    yearlyXmr: '~2.67',
     weeklyAddr: '8BMLcSiK1rm7zZ11MPd2U1G4rMfkjTkZyQ9spnY6GAHEYSJVvWJ9wQQPKnNnZxHAmMazApZ2qJ6wKFAnbbR1LsaT5HAFSCK',
-    monthlyAddr: '84hxPfyebV85yHJi6BuBnnKxBjYRGc1dMURtmv4By4QjNF9Czaho5EPQzeGEeNtVfpCyX1v4dRLac2LWLEnSC4EK7BsKZKc'
+    monthlyAddr: '84hxPfyebV85yHJi6BuBnnKxBjYRGc1dMURtmv4By4QjNF9Czaho5EPQzeGEeNtVfpCyX1v4dRLac2LWLEnSC4EK7BsKZKc',
+    yearlyAddr: '88eiZUXkbAqDXETpFWV5EiEJA5xPsi7JreNQsMcSaXpGNucsmdt8mwcjKoin7B42PnVeDgscuPjh545L3yo7HfcRTVgQW2o'
   }
 };
 
 function getAddress(productKey, duration) {
   var p = PRODUCTS[productKey];
   if (!p) return null;
-  return duration === 'weekly' ? p.weeklyAddr : p.monthlyAddr;
+  if (duration === 'weekly') return p.weeklyAddr;
+  if (duration === 'yearly') return p.yearlyAddr;
+  return p.monthlyAddr;
 }
 
 function getPriceUsd(productKey, duration) {
   var p = PRODUCTS[productKey];
   if (!p) return 0;
-  return duration === 'weekly' ? p.weeklyPrice : p.monthlyPrice;
+  if (duration === 'weekly') return p.weeklyPrice;
+  if (duration === 'yearly') return p.yearlyPrice;
+  return p.monthlyPrice;
 }
 
 function getPriceXmr(productKey, duration) {
   var p = PRODUCTS[productKey];
   if (!p) return 'TBD';
-  return duration === 'weekly' ? p.weeklyXmr : p.monthlyXmr;
+  if (duration === 'weekly') return p.weeklyXmr;
+  if (duration === 'yearly') return p.yearlyXmr;
+  return p.monthlyXmr;
 }
 
 function parseField(fields, name) {
@@ -382,7 +400,8 @@ module.exports = async function handler(req, res) {
         description: productInfo.game + '\n\n' + productInfo.features,
         fields: [
           { name: 'Weekly', value: '$' + productInfo.weeklyPrice + ' USD (~' + productInfo.weeklyXmr + ' XMR)', inline: true },
-          { name: 'Monthly', value: '$' + productInfo.monthlyPrice + ' USD (~' + productInfo.monthlyXmr + ' XMR)', inline: true }
+          { name: 'Monthly', value: '$' + productInfo.monthlyPrice + ' USD (~' + productInfo.monthlyXmr + ' XMR)', inline: true },
+          { name: 'Yearly', value: '$' + productInfo.yearlyPrice + ' USD (~' + productInfo.yearlyXmr + ' XMR)', inline: true }
         ],
         image: { url: 'https://ambrosia.ovh/og-image.png' },
         footer: { text: 'Select a duration below to open your ticket', icon_url: 'https://ambrosia.ovh/favicon.ico' },
@@ -395,12 +414,13 @@ module.exports = async function handler(req, res) {
           {
             type: 3,
             custom_id: 'select_ticket_duration_' + selectedProduct,
-            placeholder: 'Choose weekly or monthly...',
+            placeholder: 'Choose weekly, monthly, or yearly...',
             min_values: 1,
             max_values: 1,
             options: [
               { label: 'Weekly', description: '$' + productInfo.weeklyPrice + ' USD (~' + productInfo.weeklyXmr + ' XMR)', value: 'weekly', emoji: { name: '\uD83D\uDCB0' } },
-              { label: 'Monthly', description: '$' + productInfo.monthlyPrice + ' USD (~' + productInfo.monthlyXmr + ' XMR)', value: 'monthly', emoji: { name: '\uD83D\uDCB3' } }
+              { label: 'Monthly', description: '$' + productInfo.monthlyPrice + ' USD (~' + productInfo.monthlyXmr + ' XMR)', value: 'monthly', emoji: { name: '\uD83D\uDCB3' } },
+              { label: 'Yearly', description: '$' + productInfo.yearlyPrice + ' USD (~' + productInfo.yearlyXmr + ' XMR)', value: 'yearly', emoji: { name: '\uD83C\uDF1F' } }
             ]
           }
         ]
