@@ -1,5 +1,5 @@
 ﻿const ENCODED_BOT_TOKEN = 'TVRVek9UY3dNVFF6TlRJek56WTJNamd6TUEuR1pzd1I4LmE0cms4NHJvM2hmSjdFREYwMEltM18tVlh0MWlOVURQSndYdmV3';
-const LINKS_CHANNEL_ID = process.env.DISCORD_LINKS_CHANNEL_ID || '1540131362315436076';
+const LINKS_CHANNEL_ID = process.env.DISCORD_LINKS_CHANNEL_ID;
 const SECRET = 'ambrosia-update-links-2026';
 
 function getBotToken() {
@@ -15,6 +15,7 @@ module.exports = async function handler(req, res) {
 
   var BT = getBotToken();
   if (!BT) return res.status(500).json({ error: 'No bot token' });
+  if (!LINKS_CHANNEL_ID) return res.status(500).json({ error: 'DISCORD_LINKS_CHANNEL_ID not set in env' });
   if (!req.body || req.body.secret !== SECRET) return res.status(403).json({ error: 'Bad secret' });
 
   var inviteUrl = req.body.inviteUrl || 'https://discord.gg/zdkvpJCcVN';

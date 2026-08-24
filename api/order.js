@@ -1,10 +1,10 @@
 ﻿const ENCODED_BOT_TOKEN = 'TVRVek9UY3dNVFF6TlRJek56WTJNamd6TUEuR1pzd1I4LmE0cms4NHJvM2hmSjdFREYwMEltM18tVlh0MWlOVURQSndYdmV3';
-const NOTIFICATION_CHANNEL_ID = '1540131372201418792';
-const GUILD_ID = '1539404742055166045';
+const NOTIFICATION_CHANNEL_ID = process.env.DISCORD_ORDER_NOTIFICATION_CHANNEL_ID;
+const GUILD_ID = process.env.DISCORD_GUILD_ID;
 const TICKET_SERVER_INVITE = 'https://discord.gg/zdkvpJCcVN';
 
 function getBotToken() {
-  try { return atob(ENCODED_BOT_TOKEN); } catch { return ''; }
+  try { return Buffer.from(ENCODED_BOT_TOKEN, 'base64').toString('utf8'); } catch { return ''; }
 }
 
 module.exports = async function handler(req, res) {
@@ -17,6 +17,8 @@ module.exports = async function handler(req, res) {
 
   var BOT_TOKEN = getBotToken();
   if (!BOT_TOKEN) return res.status(500).json({ error: 'Bot token not configured' });
+  if (!NOTIFICATION_CHANNEL_ID) return res.status(500).json({ error: 'DISCORD_ORDER_NOTIFICATION_CHANNEL_ID not set in env' });
+  if (!GUILD_ID) return res.status(500).json({ error: 'DISCORD_GUILD_ID not set in env' });
 
   var body = req.body || {};
   var discordUserId = body.discordUserId;

@@ -1,6 +1,6 @@
 ﻿const ENCODED_BOT_TOKEN = 'TVRVek9UY3dNVFF6TlRJek56WTJNamd6TUEuR1pzd1I4LmE0cms4NHJvM2hmSjdFREYwMEltM18tVlh0MWlOVURQSndYdmV3';
-const CATALOG_CHANNEL_ID = process.env.DISCORD_PRODUCT_CATALOG_CHANNEL_ID || '1540131361417859132';
-const TICKET_CHANNEL_ID = process.env.DISCORD_TICKET_PANEL_CHANNEL_ID || '1540131367151734784';
+const CATALOG_CHANNEL_ID = process.env.DISCORD_PRODUCT_CATALOG_CHANNEL_ID;
+const TICKET_CHANNEL_ID = process.env.DISCORD_TICKET_PANEL_CHANNEL_ID;
 const SECRET = 'ambrosia-update-pricing-2026';
 
 function getBotToken() {
@@ -35,6 +35,8 @@ module.exports = async function handler(req, res) {
 
   var BT = getBotToken();
   if (!BT) return res.status(500).json({ error: 'No bot token' });
+  if (!CATALOG_CHANNEL_ID) return res.status(500).json({ error: 'DISCORD_PRODUCT_CATALOG_CHANNEL_ID not set in env' });
+  if (!TICKET_CHANNEL_ID) return res.status(500).json({ error: 'DISCORD_TICKET_PANEL_CHANNEL_ID not set in env' });
   if (!req.body || req.body.secret !== SECRET) return res.status(403).json({ error: 'Bad secret' });
 
   var log = [];

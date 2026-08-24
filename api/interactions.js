@@ -2,17 +2,20 @@
 
 const ENCODED_BOT_TOKEN = 'TVRVek9UY3dNVFF6TlRJek56WTJNamd6TUEuR1pzd1I4LmE0cms4NHJvM2hmSjdFREYwMEltM18tVlh0MWlOVURQSndYdmV3';
 
-const APPLICATION_PUBLIC_KEY = process.env.DISCORD_APPLICATION_PUBLIC_KEY || 'b9f4224b6bcc697b8d910f4095fb586c987552a63c2b53b945880f0ec5c29454';
-const GUILD_ID = process.env.DISCORD_GUILD_ID || '1539404742055166045';
-const CATEGORY_ID = process.env.DISCORD_TICKETS_CATEGORY_ID || '1540131365763158076';
-const STAFF_ROLE_ID = process.env.DISCORD_STAFF_ROLE_ID || '1540131354715623514';
-const SELLER_ROLE_ID = process.env.DISCORD_SELLER_ROLE_ID || '1540131353947803809';
-const CUSTOMER_ROLE_ID = process.env.DISCORD_CUSTOMER_ROLE_ID || '1540131355285917817';
-const OWNER_ROLE_ID = process.env.DISCORD_OWNER_ROLE_ID || '1540131352194850818';
+const APPLICATION_PUBLIC_KEY = process.env.DISCORD_APPLICATION_PUBLIC_KEY;
+const GUILD_ID = process.env.DISCORD_GUILD_ID;
+const CATEGORY_ID = process.env.DISCORD_TICKETS_CATEGORY_ID;
+const STAFF_ROLE_ID = process.env.DISCORD_STAFF_ROLE_ID;
+const SELLER_ROLE_ID = process.env.DISCORD_SELLER_ROLE_ID;
+const CUSTOMER_ROLE_ID = process.env.DISCORD_CUSTOMER_ROLE_ID;
+const OWNER_ROLE_ID = process.env.DISCORD_OWNER_ROLE_ID;
+const TICKET_PANEL_CHANNEL_ID = process.env.DISCORD_TICKET_PANEL_CHANNEL_ID;
+const TICKET_LOG_CHANNEL_ID = process.env.DISCORD_TICKET_LOG_CHANNEL_ID;
+const ORDER_NOTIFICATION_CHANNEL_ID = process.env.DISCORD_ORDER_NOTIFICATION_CHANNEL_ID;
 const TICKET_SERVER_INVITE = 'https://discord.gg/zdkvpJCcVN';
 
 function getBotToken() {
-  try { return atob(ENCODED_BOT_TOKEN); } catch { return ''; }
+  try { return Buffer.from(ENCODED_BOT_TOKEN, 'base64').toString('utf8'); } catch { return ''; }
 }
 
 var PRODUCTS = {
@@ -220,6 +223,18 @@ module.exports = async function handler(req, res) {
   );
 
   if (!isValid) return res.status(401).json({ error: 'Invalid request signature' });
+
+  var missing = [];
+  if (!GUILD_ID) missing.push('DISCORD_GUILD_ID');
+  if (!CATEGORY_ID) missing.push('DISCORD_TICKETS_CATEGORY_ID');
+  if (!STAFF_ROLE_ID) missing.push('DISCORD_STAFF_ROLE_ID');
+  if (!SELLER_ROLE_ID) missing.push('DISCORD_SELLER_ROLE_ID');
+  if (!CUSTOMER_ROLE_ID) missing.push('DISCORD_CUSTOMER_ROLE_ID');
+  if (!OWNER_ROLE_ID) missing.push('DISCORD_OWNER_ROLE_ID');
+  if (missing.length > 0) {
+    console.error('[Ambrosia] Missing env vars:', missing.join(', '));
+    return res.status(500).json({ error: 'Missing env vars: ' + missing.join(', ') });
+  }
 
   var interactionType = req.body.type;
   var data = req.body.data;

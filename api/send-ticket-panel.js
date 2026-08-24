@@ -1,8 +1,8 @@
 ﻿const ENCODED_BOT_TOKEN = 'TVRVek9UY3dNVFF6TlRJek56WTJNamd6TUEuR1pzd1I4LmE0cms4NHJvM2hmSjdFREYwMEltM18tVlh0MWlOVURQSndYdmV3';
-const TICKET_PANEL_CHANNEL_ID = '1540131367151734784';
+const TICKET_PANEL_CHANNEL_ID = process.env.DISCORD_TICKET_PANEL_CHANNEL_ID;
 
 function getBotToken() {
-  try { return atob(ENCODED_BOT_TOKEN); } catch { return ''; }
+  try { return Buffer.from(ENCODED_BOT_TOKEN, 'base64').toString('utf8'); } catch { return ''; }
 }
 
 module.exports = async function handler(req, res) {
@@ -15,6 +15,7 @@ module.exports = async function handler(req, res) {
 
   const BOT_TOKEN = getBotToken();
   if (!BOT_TOKEN) return res.status(500).json({ error: 'Bot token not configured' });
+  if (!TICKET_PANEL_CHANNEL_ID) return res.status(500).json({ error: 'DISCORD_TICKET_PANEL_CHANNEL_ID not set in env' });
 
   const { secret } = req.body || {};
   if (secret !== 'ambrosia-send-panel-2026') {
