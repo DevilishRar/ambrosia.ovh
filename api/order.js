@@ -1,7 +1,7 @@
 ﻿const ENCODED_BOT_TOKEN = 'TVRVek9UY3dNVFF6TlRJek56WTJNamd6TUEuR1pzd1I4LmE0cms4NHJvM2hmSjdFREYwMEltM18tVlh0MWlOVURQSndYdmV3';
 const NOTIFICATION_CHANNEL_ID = process.env.DISCORD_ORDER_NOTIFICATION_CHANNEL_ID;
 const GUILD_ID = process.env.DISCORD_GUILD_ID;
-const TICKET_SERVER_INVITE = 'https://discord.gg/zdkvpJCcVN';
+const TICKET_SERVER_INVITE = 'https://discord.gg/V5hcFpehb5';
 
 function getBotToken() {
   try { return Buffer.from(ENCODED_BOT_TOKEN, 'base64').toString('utf8'); } catch { return ''; }

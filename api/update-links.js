@@ -18,7 +18,7 @@ module.exports = async function handler(req, res) {
   if (!LINKS_CHANNEL_ID) return res.status(500).json({ error: 'DISCORD_LINKS_CHANNEL_ID not set in env' });
   if (!req.body || req.body.secret !== SECRET) return res.status(403).json({ error: 'Bad secret' });
 
-  var inviteUrl = req.body.inviteUrl || 'https://discord.gg/zdkvpJCcVN';
+  var inviteUrl = req.body.inviteUrl || 'https://discord.gg/V5hcFpehb5';
 
   try {
     var msgsRes = await fetch('https://discord.com/api/v10/channels/' + LINKS_CHANNEL_ID + '/messages?limit=10', {

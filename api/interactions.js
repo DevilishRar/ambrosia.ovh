@@ -12,7 +12,7 @@ const OWNER_ROLE_ID = process.env.DISCORD_OWNER_ROLE_ID;
 const TICKET_PANEL_CHANNEL_ID = process.env.DISCORD_TICKET_PANEL_CHANNEL_ID;
 const TICKET_LOG_CHANNEL_ID = process.env.DISCORD_TICKET_LOG_CHANNEL_ID;
 const ORDER_NOTIFICATION_CHANNEL_ID = process.env.DISCORD_ORDER_NOTIFICATION_CHANNEL_ID;
-const TICKET_SERVER_INVITE = 'https://discord.gg/zdkvpJCcVN';
+const TICKET_SERVER_INVITE = 'https://discord.gg/V5hcFpehb5';
 
 function getBotToken() {
   try { return Buffer.from(ENCODED_BOT_TOKEN, 'base64').toString('utf8'); } catch { return ''; }
