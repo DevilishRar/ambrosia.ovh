@@ -1093,37 +1093,52 @@ async function renderCheckoutDetails() {
       body: JSON.stringify({
         discordUserId: discordUserId,
         product: productKey,
-        duration: selectedCheckoutCycle,
-        preview: true
+        duration: selectedCheckoutCycle
       })
     });
-    if (checkoutResp.ok) {
-      const checkoutData = await checkoutResp.json();
-      if (checkoutData.address) {
-        generatedAddress = checkoutData.address;
-        generatedTicketRef = checkoutData.ticketRef;
-        generatedPriceUsd = checkoutData.priceUsd;
-        generatedPriceXmr = checkoutData.priceXmr;
-        if (addressEl) addressEl.textContent = checkoutData.address;
-        if (xmrAmountEl) xmrAmountEl.textContent = `~ ${checkoutData.priceXmr} XMR`;
-        if (priceEl) priceEl.textContent = `$${checkoutData.priceUsd}.00 USD`;
 
-        if (qrContainer) {
-          qrContainer.innerHTML = '';
-          const moneroUri = `monero:${checkoutData.address}?tx_amount=${checkoutData.priceXmr}&recipient_name=Ambrosia_Reseller`;
-          if (window.QRCode) {
-            new QRCode(qrContainer, {
-              text: moneroUri,
-              width: 140,
-              height: 140,
-              colorDark: '#000000',
-              colorLight: '#ffffff',
-              correctLevel: QRCode.CorrectLevel.M
-            });
-          }
-        }
-        return;
+    const checkoutData = await checkoutResp.json().catch(() => ({}));
+
+    if (checkoutResp.status === 403 && checkoutData.error === 'not_member') {
+      if (addressEl) addressEl.innerHTML = '';
+      if (qrContainer) qrContainer.innerHTML = '';
+      const warnEl = document.getElementById('modal-xmr-amount');
+      if (warnEl) warnEl.innerHTML = '<span style="color:#ef4444">You must join our Discord server first!</span>';
+      if (addressEl) {
+        addressEl.innerHTML = '<div style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:12px 16px;text-align:center;font-size:13px;line-height:1.6;">' +
+          '<div style="font-weight:600;color:#f87171;margin-bottom:6px;">Join our Discord server to purchase</div>' +
+          '<div style="color:#94a3b8;margin-bottom:10px;">You must be a member to verify payments and receive your license.</div>' +
+          '<a href="https://discord.gg/V5hcFpehb5" target="_blank" rel="noopener" style="display:inline-block;background:#5865f2;color:#fff;padding:8px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:13px;">Join Discord Server</a>' +
+          '</div>';
       }
+      generatedAddress = null;
+      return;
+    }
+
+    if (checkoutResp.ok && checkoutData.address) {
+      generatedAddress = checkoutData.address;
+      generatedTicketRef = checkoutData.ticketRef;
+      generatedPriceUsd = checkoutData.priceUsd;
+      generatedPriceXmr = checkoutData.priceXmr;
+      if (addressEl) addressEl.textContent = checkoutData.address;
+      if (xmrAmountEl) xmrAmountEl.textContent = `~ ${checkoutData.priceXmr} XMR`;
+      if (priceEl) priceEl.textContent = `$${checkoutData.priceUsd}.00 USD`;
+
+      if (qrContainer) {
+        qrContainer.innerHTML = '';
+        const moneroUri = `monero:${checkoutData.address}?tx_amount=${checkoutData.priceXmr}&recipient_name=Ambrosia_Reseller`;
+        if (window.QRCode) {
+          new QRCode(qrContainer, {
+            text: moneroUri,
+            width: 140,
+            height: 140,
+            colorDark: '#000000',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.M
+          });
+        }
+      }
+      return;
     }
   } catch (e) {
     console.warn('[Checkout] Unique address generation failed:', e);
