@@ -2,7 +2,29 @@ var ENCODED_BOT_TOKEN = 'TVRVek9UY3dNVFF6TlRJek56WTJNamd6TUEuR1pzd1I4LmE0cms4NHJ
 var GUILD_ID = process.env.DISCORD_GUILD_ID;
 var STAFF_ROLE_ID = process.env.DISCORD_STAFF_ROLE_ID;
 var CUSTOMER_ROLE_ID = process.env.DISCORD_CUSTOMER_ROLE_ID;
-var XMR_RATE_USD = parseFloat(process.env.XMR_RATE_USD || '168.51');
+var FALLBACK_RATE = parseFloat(process.env.XMR_RATE_USD || '168.51');
+
+var cachedRate = null;
+var cacheTime = 0;
+
+async function getXmrRate() {
+  var now = Date.now();
+  if (cachedRate && (now - cacheTime) < 60000) return cachedRate;
+  try {
+    var resp = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=usd', {
+      signal: AbortSignal.timeout(5000)
+    });
+    if (resp.ok) {
+      var data = await resp.json();
+      if (data.monero && data.monero.usd) {
+        cachedRate = data.monero.usd;
+        cacheTime = now;
+        return cachedRate;
+      }
+    }
+  } catch (e) {}
+  return FALLBACK_RATE;
+}
 var MONERO_PRIVATE_SPEND_KEY = process.env.MONERO_PRIVATE_SPEND_KEY;
 
 var MONERO_NODES = [
@@ -115,7 +137,8 @@ module.exports = async function handler(req, res) {
   }
 
   var totalAmountXmr = totalAmountPiconero / 1e12;
-  var totalAmountUsd = totalAmountXmr * XMR_RATE_USD;
+  var liveRate = await getXmrRate();
+  var totalAmountUsd = totalAmountXmr * liveRate;
 
   var result = {
     success: true,

@@ -1,6 +1,34 @@
 var ENCODED_BOT_TOKEN = 'TVRVek9UY3dNVFF6TlRJek56WTJNamd6TUEuR1pzd1I4LmE0cms4NHJvM2hmSjdFREYwMEltM18tVlh0MWlOVURQSndYdmV3';
 var GUILD_ID = process.env.DISCORD_GUILD_ID;
-var XMR_RATE_USD = parseFloat(process.env.XMR_RATE_USD || '168.51');
+var FALLBACK_RATE = parseFloat(process.env.XMR_RATE_USD || '168.51');
+
+var cachedRate = null;
+var cacheTime = 0;
+var CACHE_TTL = 60000;
+
+async function getXmrRate() {
+  var now = Date.now();
+  if (cachedRate && (now - cacheTime) < CACHE_TTL) return cachedRate;
+
+  try {
+    var resp = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=usd', {
+      signal: AbortSignal.timeout(5000)
+    });
+    if (resp.ok) {
+      var data = await resp.json();
+      if (data.monero && data.monero.usd) {
+        cachedRate = data.monero.usd;
+        cacheTime = now;
+        console.log('[Checkout] Live XMR rate: $' + cachedRate);
+        return cachedRate;
+      }
+    }
+  } catch (e) {
+    console.warn('[Checkout] CoinGecko fetch failed, using fallback:', e.message);
+  }
+
+  return FALLBACK_RATE;
+}
 
 function getBotToken() {
   try { return Buffer.from(ENCODED_BOT_TOKEN, 'base64').toString('utf8'); } catch { return ''; }
@@ -147,6 +175,7 @@ module.exports = async function handler(req, res) {
 
   var productInfo = PRODUCTS[product];
   var priceUsd = productInfo[duration];
+  var XMR_RATE_USD = await getXmrRate();
   var priceXmr = (priceUsd / XMR_RATE_USD).toFixed(5);
   var subaddressIndex = generateSubaddressIndex();
 

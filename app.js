@@ -1,7 +1,19 @@
 ﻿
 const ENCODED_DISCORD_WEBHOOK = 'aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTUzOTQwNTE0NjAwNDUyOTE5My82UENXVFlsaUJ3M29oSkE1R0NBU01faTNGdTBldU00bjluVS1NcWM3VllxOEdELTh5Nk5ZYll3U3lHQ00zNDJoNHY4RQ==';
 
-const XMR_RATE_USD = 168.51;
+let XMR_RATE_USD = 168.51;
+
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('/api/price')
+    .then(r => r.json())
+    .then(data => {
+      if (data.rate) {
+        XMR_RATE_USD = data.rate;
+        console.log('[Ambrosia] Live XMR rate: $' + XMR_RATE_USD);
+      }
+    })
+    .catch(e => console.warn('[Ambrosia] Failed to fetch live XMR rate:', e));
+});
 
 let DISCORD_WEBHOOK_URL = '';
 document.addEventListener('DOMContentLoaded', () => {

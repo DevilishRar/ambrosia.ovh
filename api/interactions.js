@@ -21,6 +21,29 @@ const MONERO_NODES = [
   'http://node.xmr.life:18081'
 ];
 
+var cachedXmrRate = null;
+var xmrCacheTime = 0;
+var XMR_CACHE_TTL = 60000;
+
+async function getXmrRate() {
+  var now = Date.now();
+  if (cachedXmrRate && (now - xmrCacheTime) < XMR_CACHE_TTL) return cachedXmrRate;
+  try {
+    var resp = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=usd', {
+      signal: AbortSignal.timeout(5000)
+    });
+    if (resp.ok) {
+      var data = await resp.json();
+      if (data.monero && data.monero.usd) {
+        cachedXmrRate = data.monero.usd;
+        xmrCacheTime = now;
+        return cachedXmrRate;
+      }
+    }
+  } catch (e) {}
+  return XMR_RATE_USD;
+}
+
 function getBotToken() {
   try { return Buffer.from(ENCODED_BOT_TOKEN, 'base64').toString('utf8'); } catch { return ''; }
 }
@@ -641,7 +664,8 @@ module.exports = async function handler(req, res) {
         }
       }
       var totalXmr = totalPiconero / 1e12;
-      var totalUsd = totalXmr * XMR_RATE_USD;
+      var liveRate = await getXmrRate();
+      var totalUsd = totalXmr * liveRate;
 
       var channelId2 = message ? message.channel_id : null;
       if (channelId2) {
