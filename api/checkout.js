@@ -76,7 +76,7 @@ async function getSubaddress(privateSpendKeyHex, major, minor) {
   var H = G.multiply(hScalar);
   var A = H.add(BPoint);
 
-  var ABytes = A.toRawBytes();
+  var ABytes = A.toBytes();
   var spendKey32 = ABytes.slice(0, 32);
 
   var networkByte = Buffer.from([0x2a]);
