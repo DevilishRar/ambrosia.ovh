@@ -1108,7 +1108,7 @@ async function renderCheckoutDetails() {
         addressEl.innerHTML = '<div style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:12px 16px;text-align:center;font-size:13px;line-height:1.6;">' +
           '<div style="font-weight:600;color:#f87171;margin-bottom:6px;">Join our Discord server to purchase</div>' +
           '<div style="color:#94a3b8;margin-bottom:10px;">You must be a member to verify payments and receive your license.</div>' +
-          '<a href="https://discord.gg/V5hcFpehb5" target="_blank" rel="noopener" style="display:inline-block;background:#5865f2;color:#fff;padding:8px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:13px;">Join Discord Server</a>' +
+          '<a href="https://discord.gg/UwYWZZ4Z6c" target="_blank" rel="noopener" style="display:inline-block;background:#5865f2;color:#fff;padding:8px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:13px;">Join Discord Server</a>' +
           '</div>';
       }
       generatedAddress = null;
@@ -1201,7 +1201,7 @@ async function handleOrderSubmission() {
           showToast('You must join our Discord server first. Redirecting...', 'error');
           setTimeout(() => {
             closeCheckoutModal();
-            window.open('https://discord.gg/V5hcFpehb5', '_blank');
+            window.open('https://discord.gg/UwYWZZ4Z6c', '_blank');
           }, 2000);
         } else {
           showToast('Checkout failed: ' + (checkoutResult.error || 'Unknown error'), 'error');
@@ -1276,7 +1276,7 @@ async function handleOrderSubmission() {
 
   setTimeout(() => {
     closeCheckoutModal();
-    window.open('https://discord.gg/V5hcFpehb5', '_blank');
+    window.open('https://discord.gg/UwYWZZ4Z6c', '_blank');
   }, 1400);
 }
 

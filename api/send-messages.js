@@ -7,7 +7,7 @@ const ORDER_NOTIFICATION_CHANNEL_ID = process.env.DISCORD_ORDER_NOTIFICATION_CHA
 const XMR_ADDRESSES_CHANNEL_ID = process.env.DISCORD_XMR_ADDRESSES_CHANNEL_ID;
 const TICKET_PANEL_CHANNEL_ID = process.env.DISCORD_TICKET_PANEL_CHANNEL_ID;
 
-const TICKET_SERVER_INVITE = 'https://discord.gg/V5hcFpehb5';
+const TICKET_SERVER_INVITE = 'https://discord.gg/UwYWZZ4Z6c';
 const PRODUCT_SERVER_INVITE = 'https://discord.gg/bT9dpnerP4';
 const SELLER_WEBSITE = 'https://ambrosiaovh.vercel.app';
 const OFFICIAL_WEBSITE = 'https://ambrosia.ovh';

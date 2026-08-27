@@ -1,7 +1,8 @@
 ﻿const ENCODED_BOT_TOKEN = 'TVRVek9UY3dNVFF6TlRJek56WTJNamd6TUEuR1pzd1I4LmE0cms4NHJvM2hmSjdFREYwMEltM18tVlh0MWlOVURQSndYdmV3';
 const NOTIFICATION_CHANNEL_ID = process.env.DISCORD_ORDER_NOTIFICATION_CHANNEL_ID;
 const GUILD_ID = process.env.DISCORD_GUILD_ID;
-const TICKET_SERVER_INVITE = 'https://discord.gg/V5hcFpehb5';
+const TICKET_SERVER_INVITE = 'https://discord.gg/UwYWZZ4Z6c';
+var pendingOrders = require('../lib/pending-orders.js');
 
 function getBotToken() {
   try { return Buffer.from(ENCODED_BOT_TOKEN, 'base64').toString('utf8'); } catch { return ''; }
@@ -71,7 +72,7 @@ module.exports = async function handler(req, res) {
   var ticketEmbed = {
     title: 'Ticket #' + ticketRef,
     color: 0x2563eb,
-    description: 'Welcome ' + mentionText + '.\n\nA staff member will assist you shortly. Please follow the instructions below to complete your purchase.',
+    description: 'Welcome ' + mentionText + '.\n\nA staff member will assist you shortly. **Click Create Ticket below to begin.** If staff does not respond within 90 seconds, a ticket will be opened automatically.\n\n\u26A0\uFE0F **Do NOT send XMR until the ticket is open.** Your TX Hash is mandatory for verification.',
     fields: [
       { name: 'Product', value: '**' + product + '**', inline: true },
       { name: 'Duration', value: '`' + duration + '`', inline: true },
@@ -91,16 +92,15 @@ module.exports = async function handler(req, res) {
   };
 
   var instructionsEmbed = {
-    title: 'How to Get Verified',
-    color: 0x065f46,
-    description: 'Follow these steps to complete your purchase and receive your license key.',
+    title: '\uD83D\uDEA8 How to Complete Your Purchase',
+    color: 0xdc2626,
+    description: 'You **MUST** follow these steps in order. Do NOT send payment before a ticket is open.',
     fields: [
-      { name: 'Step 1', value: 'Send your Discord User ID in this ticket. Right click your profile in Discord and click "Copy User ID".', inline: false },
-      { name: 'Step 2', value: 'Send the correct XMR amount to the payment address shown above. Make sure you send the exact amount.', inline: false },
-      { name: 'Step 3', value: 'Paste your transaction hash (TXID) in this ticket as proof of payment.', inline: false },
-      { name: 'Step 4', value: 'Wait for a staff member to verify your payment on the blockchain. This usually takes a few minutes.', inline: false },
-      { name: 'Step 5', value: 'Once verified, you will receive your license key in this ticket.', inline: false },
-      { name: '\u26A0\uFE0F Important', value: 'Do not send XMR to any address other than the one shown in this ticket. Always verify the address matches exactly.', inline: false }
+      { name: '\u2757 Step 1 — Open the Ticket', value: 'Click **Create Ticket** below to open a private channel with staff. If staff does not open it within 90 seconds, it will be opened automatically.', inline: false },
+      { name: '\u2757 Step 2 — Pay Inside Discord', value: 'Send the **exact XMR amount** shown above to the payment address **inside the ticket**. Do NOT pay before the ticket is open.', inline: false },
+      { name: '\u2757 Step 3 — Submit TX Hash (MANDATORY)', value: 'After sending XMR, paste your **Transaction Hash (TXID)** in the ticket. This is the **only way** we can verify your payment. Without it, your order cannot be processed.', inline: false },
+      { name: '\u2757 Step 4 — Wait for Verification', value: 'A staff member or bot will verify your TX on the blockchain. Once confirmed, you will receive your license key.', inline: false },
+      { name: '\u26A0\uFE0F Warning', value: '**Do NOT send XMR before opening a ticket.** Do NOT send XMR to any address other than the one shown in this ticket. Always verify the address matches exactly.', inline: false }
     ],
     footer: { text: 'Ambrosia Payment System', icon_url: 'https://ambrosia.ovh/favicon.ico' },
     timestamp: new Date().toISOString()
@@ -138,6 +138,22 @@ module.exports = async function handler(req, res) {
       console.error('[Ambrosia] Discord API error ' + resp.status + ': ' + err);
       return res.status(502).json({ error: 'Discord API error: ' + resp.status });
     }
+
+    var postedMsg = await resp.json().catch(function() { return {}; });
+
+    pendingOrders.addPendingOrder({
+      messageId: postedMsg.id || null,
+      channelId: NOTIFICATION_CHANNEL_ID,
+      guildId: GUILD_ID,
+      discordUserId: discordUserId,
+      product: product,
+      duration: duration,
+      price: price,
+      xmrAmount: xmrAmount,
+      address: address,
+      txHash: txHash,
+      ticketRef: ticketRef
+    });
 
     return res.status(200).json({ success: true, ticketRef: ticketRef, username: username });
   } catch (e) {

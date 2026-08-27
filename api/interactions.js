@@ -1,6 +1,7 @@
 ﻿const nacl = require('tweetnacl');
 const tracking = require('../lib/tracking-store.js');
 const checkoutLogic = require('../lib/checkout-logic.js');
+const pendingOrders = require('../lib/pending-orders.js');
 
 const ENCODED_BOT_TOKEN = 'TVRVek9UY3dNVFF6TlRJek56WTJNamd6TUEuR1pzd1I4LmE0cms4NHJvM2hmSjdFREYwMEltM18tVlh0MWlOVURQSndYdmV3';
 
@@ -15,7 +16,7 @@ const OWNER_ROLE_ID = process.env.DISCORD_OWNER_ROLE_ID;
 const TICKET_PANEL_CHANNEL_ID = process.env.DISCORD_TICKET_PANEL_CHANNEL_ID;
 const TICKET_LOG_CHANNEL_ID = process.env.DISCORD_TICKET_LOG_CHANNEL_ID;
 const ORDER_NOTIFICATION_CHANNEL_ID = process.env.DISCORD_ORDER_NOTIFICATION_CHANNEL_ID;
-const TICKET_SERVER_INVITE = 'https://discord.gg/V5hcFpehb5';
+const TICKET_SERVER_INVITE = 'https://discord.gg/UwYWZZ4Z6c';
 var FALLBACK_RATE = parseFloat(process.env.XMR_RATE_USD || '168.51');
 
 const MONERO_NODES = [
@@ -364,6 +365,14 @@ module.exports = async function handler(req, res) {
 
       if (xmrAddress) {
         trackAddress(xmrAddress, customerId, ticketRef, product, duration, priceUsd, priceXmr, newChannel.id);
+      }
+
+      var pending = pendingOrders.getPendingOrders();
+      for (var pi = 0; pi < pending.length; pi++) {
+        if (pending[pi].ticketRef === ticketRef || (message && pending[pi].messageId === message.id)) {
+          pendingOrders.markProcessedByTicketRef(pending[pi].ticketRef);
+          break;
+        }
       }
 
       return res.json({ type: 4, data: { content: 'Ticket channel created: <#' + newChannel.id + '>', flags: 64 } });
