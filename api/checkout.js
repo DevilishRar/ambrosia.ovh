@@ -1,6 +1,3 @@
-var { ed25519 } = require('@noble/curves/ed25519');
-var { sha3_256 } = require('@noble/hashes/sha3');
-
 var ENCODED_BOT_TOKEN = 'TVRVek9UY3dNVFF6TlRJek56WTJNamd6TUEuR1pzd1I4LmE0cms4NHJvM2hmSjdFREYwMEltM18tVlh0MWlOVURQSndYdmV3';
 var GUILD_ID = process.env.DISCORD_GUILD_ID;
 var XMR_RATE_USD = parseFloat(process.env.XMR_RATE_USD || '168.51');
@@ -23,16 +20,16 @@ function encodeVarint(n) {
   return Buffer.from(buf);
 }
 
+function bytesToHex(bytes) {
+  return Array.from(bytes).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+}
+
 function hexToBytes(hex) {
   var bytes = new Uint8Array(hex.length / 2);
   for (var i = 0; i < hex.length; i += 2) {
     bytes[i / 2] = parseInt(hex.substr(i, 2), 16);
   }
   return bytes;
-}
-
-function bytesToHex(bytes) {
-  return Array.from(bytes).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
 }
 
 var BASE58_CHARS = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
@@ -51,7 +48,12 @@ function base58Encode(buffer) {
   return result;
 }
 
-function getSubaddress(privateSpendKeyHex, major, minor) {
+async function getSubaddress(privateSpendKeyHex, major, minor) {
+  var ed25519Module = await import('@noble/curves/ed25519.js');
+  var ed25519 = ed25519Module.ed25519;
+  var sha3Module = await import('@noble/hashes/sha3.js');
+  var sha3_256 = sha3Module.sha3_256;
+
   var a = hexToBytes(privateSpendKeyHex);
   var B = ed25519.getPublicKey(a);
 
@@ -67,12 +69,11 @@ function getSubaddress(privateSpendKeyHex, major, minor) {
   hClamped[31] &= 0x7f;
   hClamped[31] |= 0x40;
 
-  var hPoint = ed25519.utils.normPrivateKeyToScalar(hClamped);
-
   var G = ed25519.CURVE.G;
   var BPoint = ed25519.Point.fromHex(B);
 
-  var H = G.multiply(hPoint);
+  var hScalar = ed25519.utils.normPrivateKeyToScalar(hClamped);
+  var H = G.multiply(hScalar);
   var A = H.add(BPoint);
 
   var ABytes = A.toRawBytes();
@@ -152,10 +153,10 @@ module.exports = async function handler(req, res) {
 
   var address;
   try {
-    address = getSubaddress(privateSpendKey, 0, subaddressIndex);
+    address = await getSubaddress(privateSpendKey, 0, subaddressIndex);
   } catch (e) {
     console.error('[Checkout] Subaddress generation failed:', e);
-    return res.status(500).json({ error: 'Failed to generate payment address' });
+    return res.status(500).json({ error: 'Failed to generate payment address: ' + e.message });
   }
 
   var ticketRef = 'AMB-' + Math.floor(1000 + Math.random() * 9000);
