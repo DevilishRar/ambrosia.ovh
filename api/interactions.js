@@ -698,7 +698,7 @@ module.exports = async function handler(req, res) {
 
       res.json({ type: 5, data: { content: '\u23F3 Verifying transaction `' + txHash.substring(0, 16) + '...` on Monero blockchain...' } });
 
-      var interactionToken = body.token;
+      var interactionToken = req.body.token;
 
       try {
         var verified = false;
