@@ -56,11 +56,6 @@ const PRODUCTS = {
     os: 'Windows 10 and 11',
     cpu: 'INTEL / AMD',
     notes: 'Lite version of the product with streamproof visuals and movement helpers.',
-    addresses: {
-      weekly: '89VPPCJ9qhEUnA53bDLPSFbdKm3zS7uxJ7Qewy9mAV23AFb7EnUBBDjfjwzKxE71yRjSADVb6Cs6t22DQ3vKtphnTRaBnZB',
-      monthly: '89aFGA5EWqvJUnNacSNW6RGPctm74XKx8Nvz5t45BDm8ZfDWdBH2xJgZsL4mFi47kHaamwu2PcQAT3E1vUJmpPhD15WjkiB',
-      yearly: '88N6VV7KHCnSpq8pKtNtRSfYjadqHUH5qUTHeToCbFW9jA9RnqvzDLE6Ev8HVeoYyhG7fa9NK5dL18WpvWFYSX1HJ8Cenhf'
-    },
     featureHighlights: [
       'Aimbot, Triggerbot and Flickbot with Prediction',
       'Multipoint Visualisation and Hitbox Customisation',
@@ -111,11 +106,6 @@ const PRODUCTS = {
     os: 'Windows 10 and 11',
     cpu: 'INTEL / AMD',
     notes: 'Full featured edition with hero action scripting, ally targeting, and HUD ult tracker.',
-    addresses: {
-      weekly: '88MtyMUqqrFbqAtg2g6M5Khi1dwEVyt6UCUi228VLpZNFqX4fepf6ixctZaPtERsP4dA1HSBnFteQhZsHnz8sMsp1Ld5YBH',
-      monthly: '8AGpdyaAkKyb8daJ3xksAr9m6y5L6ChND2KHthouN4YcEXMtm5cH72DghMc2ZeMHdP2ewXWxWWRPTUuoMefj1DSg7FVf8kU',
-      yearly: '4BE8WBPizoyfveG6Sbtd66V184WktCEoq8EQ2d3ayxKLQxhRiFB4shQDHSVU8f188diVst9thbTtWh4KmrGKZXwwRm6fvyL'
-    },
     featureHighlights: [
       'Dual Aim and Trigger Slots with Independent Configs',
       'Hero Action Scripting (Up to 10 simultaneous scripts)',
@@ -179,10 +169,6 @@ const PRODUCTS = {
     os: 'To Be Announced',
     cpu: 'To Be Announced',
     notes: 'NOT AVAILABLE AT THE MOMENT. Will be enabled once the developer releases details.',
-    addresses: {
-      weekly: null,
-      monthly: null
-    },
     featureHighlights: [
       'Status: Under Development and Maintenance',
       'Unpurchasable until official release',
@@ -211,11 +197,6 @@ const PRODUCTS = {
     os: 'Windows 10 and 11 (Android, iOS and Linux for Web Radar part)',
     cpu: 'INTEL / AMD',
     notes: 'Web radar can be opened on any second monitor, phone, or browser.',
-    addresses: {
-      weekly: '871MfSycgoc8mhZ7SpUZoZZ1dbS6d5Bq1cde9LmEvcVqUn8fpCgZTvMKN1V2tNGqzBeh4pjgwzQHUf42qAvR71YbEtc59Xz',
-      monthly: '8AVUcXxR3ircP1BhpUi3fhczeag4LQjCaJKBe2opbDrKCexzqYAwjk3U63uGeaU4Wk7ztyDtoYEuHXxQ46f27c4AR2c6mQf',
-      yearly: '8A9XWGLZPBPWNXGtwCHi3k9tukffTsyzj2Bry24aoDcEfEouHYoRQnt9CAVwPsgR5HAVGjyXLEt4rAm6hDkHuDGYLVPE6xn'
-    },
     featureHighlights: [
       'Triggerbot with Custom Delay and Trigger Key',
       'RCS Recoil Control (Weapon Profiles, Humanize, Pattern Preview)',
@@ -263,11 +244,6 @@ const PRODUCTS = {
     os: 'Windows 11',
     cpu: 'INTEL / AMD',
     notes: 'Full Fortnite client with aimbot, ESP suite, radar and configs.',
-    addresses: {
-      weekly: '8BMLcSiK1rm7zZ11MPd2U1G4rMfkjTkZyQ9spnY6GAHEYSJVvWJ9wQQPKnNnZxHAmMazApZ2qJ6wKFAnbbR1LsaT5HAFSCK',
-      monthly: '84hxPfyebV85yHJi6BuBnnKxBjYRGc1dMURtmv4By4QjNF9Czaho5EPQzeGEeNtVfpCyX1v4dRLac2LWLEnSC4EK7BsKZKc',
-      yearly: '88eiZUXkbAqDXETpFWV5EiEJA5xPsi7JreNQsMcSaXpGNucsmdt8mwcjKoin7B42PnVeDgscuPjh545L3yo7HfcRTVgQW2o'
-    },
     featureHighlights: [
       'Aimbot with Prediction, Visible Check, Custom FOV, Aim Bone Selection',
       'Box, Skeleton, China Hat, Rank, Distance, Ammo, Kills ESP',
@@ -1000,7 +976,7 @@ function initCheckoutModal() {
       const discordId = discordInput ? discordInput.value.trim() : '';
       const product = PRODUCTS[selectedCheckoutProduct] || PRODUCTS['ambrosia-ow-pro'];
       const price = generatedPriceUsd || getPriceForCycle(product, selectedCheckoutCycle);
-      const address = generatedAddress || product.addresses[selectedCheckoutCycle];
+      const address = generatedAddress;
       const xmrAmount = generatedPriceXmr || (price / XMR_RATE_USD).toFixed(5);
       const ticketRef = generatedTicketRef || 'AMB-' + Math.floor(1000 + Math.random() * 9000);
 
@@ -1073,7 +1049,6 @@ async function renderCheckoutDetails() {
   }
 
   const price = getPriceForCycle(product, selectedCheckoutCycle);
-  const fallbackAddress = product.addresses[selectedCheckoutCycle] || product.addresses['monthly'];
   const xmrAmount = (price / XMR_RATE_USD).toFixed(5);
 
   const titleEl = document.getElementById('modal-title');
@@ -1085,7 +1060,6 @@ async function renderCheckoutDetails() {
   if (titleEl) titleEl.textContent = `${product.name} (${selectedCheckoutCycle.toUpperCase()})`;
   if (priceEl) priceEl.textContent = `$${price}.00 USD`;
   if (xmrAmountEl) xmrAmountEl.textContent = `~ ${xmrAmount} XMR`;
-  if (addressEl) addressEl.textContent = 'Generating unique address...';
 
   const productKeyMap = {
     'ambrosia-ow-lite': 'ow-lite',
@@ -1095,7 +1069,6 @@ async function renderCheckoutDetails() {
   };
   const productKey = productKeyMap[selectedCheckoutProduct] || 'ow-pro';
 
-  let address = fallbackAddress;
   generatedAddress = null;
   generatedTicketRef = null;
   generatedPriceUsd = null;
@@ -1104,60 +1077,60 @@ async function renderCheckoutDetails() {
   const discordIdInput = document.getElementById('modal-discord-id-input');
   const discordUserId = discordIdInput ? discordIdInput.value.trim() : '';
 
-  if (discordUserId && /^\d{17,19}$/.test(discordUserId)) {
-    try {
-      const checkoutResp = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          discordUserId: discordUserId,
-          product: productKey,
-          duration: selectedCheckoutCycle,
-          preview: true
-        })
-      });
-      if (checkoutResp.ok) {
-        const checkoutData = await checkoutResp.json();
-        if (checkoutData.address) {
-          address = checkoutData.address;
-          generatedAddress = checkoutData.address;
-          generatedTicketRef = checkoutData.ticketRef;
-          generatedPriceUsd = checkoutData.priceUsd;
-          generatedPriceXmr = checkoutData.priceXmr;
-          if (xmrAmountEl) xmrAmountEl.textContent = `~ ${checkoutData.priceXmr} XMR`;
-          if (priceEl) priceEl.textContent = `$${checkoutData.priceUsd}.00 USD`;
+  if (!discordUserId || !/^\d{17,19}$/.test(discordUserId)) {
+    if (addressEl) addressEl.textContent = 'Enter your Discord User ID to generate a unique payment address';
+    if (qrContainer) qrContainer.innerHTML = '<div class="w-full h-full flex flex-col items-center justify-center bg-white/10 rounded-lg p-2 text-center text-xs font-mono text-slate-400"><i data-lucide="qr-code" class="w-12 h-12 text-slate-500 mb-1"></i><span>Enter Discord ID first</span></div>';
+    initLucideIcons();
+    return;
+  }
+
+  if (addressEl) addressEl.textContent = 'Generating unique address...';
+
+  try {
+    const checkoutResp = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        discordUserId: discordUserId,
+        product: productKey,
+        duration: selectedCheckoutCycle,
+        preview: true
+      })
+    });
+    if (checkoutResp.ok) {
+      const checkoutData = await checkoutResp.json();
+      if (checkoutData.address) {
+        generatedAddress = checkoutData.address;
+        generatedTicketRef = checkoutData.ticketRef;
+        generatedPriceUsd = checkoutData.priceUsd;
+        generatedPriceXmr = checkoutData.priceXmr;
+        if (addressEl) addressEl.textContent = checkoutData.address;
+        if (xmrAmountEl) xmrAmountEl.textContent = `~ ${checkoutData.priceXmr} XMR`;
+        if (priceEl) priceEl.textContent = `$${checkoutData.priceUsd}.00 USD`;
+
+        if (qrContainer) {
+          qrContainer.innerHTML = '';
+          const moneroUri = `monero:${checkoutData.address}?tx_amount=${checkoutData.priceXmr}&recipient_name=Ambrosia_Reseller`;
+          if (window.QRCode) {
+            new QRCode(qrContainer, {
+              text: moneroUri,
+              width: 140,
+              height: 140,
+              colorDark: '#000000',
+              colorLight: '#ffffff',
+              correctLevel: QRCode.CorrectLevel.M
+            });
+          }
         }
+        return;
       }
-    } catch (e) {
-      console.warn('[Checkout] Unique address generation failed, using fallback:', e);
     }
+  } catch (e) {
+    console.warn('[Checkout] Unique address generation failed:', e);
   }
 
-  if (addressEl) addressEl.textContent = address;
-
-  if (qrContainer) {
-    qrContainer.innerHTML = '';
-    const moneroUri = `monero:${address}?tx_amount=${xmrAmount}&recipient_name=Ambrosia_Reseller`;
-
-    if (window.QRCode) {
-      new QRCode(qrContainer, {
-        text: moneroUri,
-        width: 140,
-        height: 140,
-        colorDark: '#000000',
-        colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.M
-      });
-    } else {
-      qrContainer.innerHTML = `
-        <div class="w-full h-full flex flex-col items-center justify-center bg-white/10 rounded-lg p-2 text-center text-xs font-mono text-slate-300">
-          <i data-lucide="qr-code" class="w-12 h-12 text-blue-400 mb-1"></i>
-          <span>XMR Scan Ready</span>
-        </div>
-      `;
-      initLucideIcons();
-    }
-  }
+  if (addressEl) addressEl.textContent = 'Failed to generate address. Please try again.';
+  if (qrContainer) qrContainer.innerHTML = '';
 }
 
 async function handleOrderSubmission() {
