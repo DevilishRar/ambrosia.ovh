@@ -13,7 +13,7 @@ const TICKET_PANEL_CHANNEL_ID = process.env.DISCORD_TICKET_PANEL_CHANNEL_ID;
 const TICKET_LOG_CHANNEL_ID = process.env.DISCORD_TICKET_LOG_CHANNEL_ID;
 const ORDER_NOTIFICATION_CHANNEL_ID = process.env.DISCORD_ORDER_NOTIFICATION_CHANNEL_ID;
 const TICKET_SERVER_INVITE = 'https://discord.gg/V5hcFpehb5';
-const XMR_RATE_USD = parseFloat(process.env.XMR_RATE_USD || '168.51');
+var FALLBACK_RATE = parseFloat(process.env.XMR_RATE_USD || '168.51');
 
 const MONERO_NODES = [
   'https://node.moneroworld.com:18082',
@@ -41,7 +41,47 @@ async function getXmrRate() {
       }
     }
   } catch (e) {}
-  return XMR_RATE_USD;
+  return FALLBACK_RATE;
+}
+
+var trackedAddresses = {};
+
+function trackAddress(address, userId, ticketRef, product, duration, priceUsd, priceXmr, channelId) {
+  trackedAddresses[address] = {
+    userId: userId,
+    ticketRef: ticketRef,
+    product: product,
+    duration: duration,
+    priceUsd: priceUsd,
+    priceXmr: priceXmr,
+    channelId: channelId,
+    status: 'active',
+    createdAt: new Date().toISOString()
+  };
+  console.log('[Tracking] Registered address for user ' + userId + ': ' + address.substring(0, 20) + '...');
+}
+
+function closeTicketTracking(channelId) {
+  var count = 0;
+  for (var addr in trackedAddresses) {
+    if (trackedAddresses[addr].channelId === channelId && trackedAddresses[addr].status === 'active') {
+      trackedAddresses[addr].status = 'closed';
+      trackedAddresses[addr].closedAt = new Date().toISOString();
+      count++;
+    }
+  }
+  console.log('[Tracking] Closed ' + count + ' address(es) for channel ' + channelId);
+  return count;
+}
+
+function getActiveTracking() {
+  var active = {};
+  for (var addr in trackedAddresses) {
+    if (trackedAddresses[addr].status === 'active') {
+      active[addr] = trackedAddresses[addr];
+    }
+  }
+  return active;
 }
 
 function getBotToken() {
@@ -55,13 +95,7 @@ var PRODUCTS = {
     features: 'Aimbot, Triggerbot, Flickbot with Prediction, Multipoint Visualisation, Hitbox Customisation, Auto Bunnyhop, Null Binding (SnapTap), Streamproof, 10 Configs',
     weeklyPrice: 5,
     monthlyPrice: 10,
-    yearlyPrice: 100,
-    weeklyXmr: '~0.03',
-    monthlyXmr: '~0.06',
-    yearlyXmr: '~0.59',
-    weeklyAddr: '89VPPCJ9qhEUnA53bDLPSFbdKm3zS7uxJ7Qewy9mAV23AFb7EnUBBDjfjwzKxE71yRjSADVb6Cs6t22DQ3vKtphnTRaBnZB',
-    monthlyAddr: '89aFGA5EWqvJUnNacSNW6RGPctm74XKx8Nvz5t45BDm8ZfDWdBH2xJgZsL4mFi47kHaamwu2PcQAT3E1vUJmpPhD15WjkiB',
-    yearlyAddr: '88N6VV7KHCnSpq8pKtNtRSfYjadqHUH5qUTHeToCbFW9jA9RnqvzDLE6Ev8HVeoYyhG7fa9NK5dL18WpvWFYSX1HJ8Cenhf'
+    yearlyPrice: 100
   },
   'ambrosia-ow-pro': {
     name: 'Ambrosia OW Pro',
@@ -69,13 +103,7 @@ var PRODUCTS = {
     features: 'Dual Aim and Trigger Slots, Hero Action Scripting (10 scripts), Ult Shower HUD, Ability Cooldown Panel, Player Outline ESP, Skeleton Hitbox Visuals, FOV Changer, Third Person, Streamproof',
     weeklyPrice: 20,
     monthlyPrice: 45,
-    yearlyPrice: 450,
-    weeklyXmr: '~0.12',
-    monthlyXmr: '~0.27',
-    yearlyXmr: '~2.67',
-    weeklyAddr: '88MtyMUqqrFbqAtg2g6M5Khi1dwEVyt6UCUi228VLpZNFqX4fepf6ixctZaPtERsP4dA1HSBnFteQhZsHnz8sMsp1Ld5YBH',
-    monthlyAddr: '8AGpdyaAkKyb8daJ3xksAr9m6y5L6ChND2KHthouN4YcEXMtm5cH72DghMc2ZeMHdP2ewXWxWWRPTUuoMefj1DSg7FVf8kU',
-    yearlyAddr: '4BE8WBPizoyfveG6Sbtd66V184WktCEoq8EQ2d3ayxKLQxhRiFB4shQDHSVU8f188diVst9thbTtWh4KmrGKZXwwRm6fvyL'
+    yearlyPrice: 450
   },
   'ambrosia-cs2-web': {
     name: 'CS2 Web Radar',
@@ -83,13 +111,7 @@ var PRODUCTS = {
     features: 'Triggerbot with Custom Delay, RCS Recoil Control, Interactive 2D Tactical Web Radar, Bomb Carrier/Defusing/Flashed/Grenades Display, Players Info: Name, Health, Teams, Weapons',
     weeklyPrice: 5,
     monthlyPrice: 15,
-    yearlyPrice: 150,
-    weeklyXmr: '~0.03',
-    monthlyXmr: '~0.09',
-    yearlyXmr: '~0.89',
-    weeklyAddr: '871MfSycgoc8mhZ7SpUZoZZ1dbS6d5Bq1cde9LmEvcVqUn8fpCgZTvMKN1V2tNGqzBeh4pjgwzQHUf42qAvR71YbEtc59Xz',
-    monthlyAddr: '8AVUcXxR3ircP1BhpUi3fhczeag4LQjCaJKBe2opbDrKCexzqYAwjk3U63uGeaU4Wk7ztyDtoYEuHXxQ46f27c4AR2c6mQf',
-    yearlyAddr: '8A9XWGLZPBPWNXGtwCHi3k9tukffTsyzj2Bry24aoDcEfEouHYoRQnt9CAVwPsgR5HAVGjyXLEt4rAm6hDkHuDGYLVPE6xn'
+    yearlyPrice: 150
   },
   'ambrosia-fn': {
     name: 'Ambrosia FN',
@@ -97,23 +119,9 @@ var PRODUCTS = {
     features: 'Aimbot, Box/Skeleton/China Hat/Rank ESP, Loot ESP, On Screen Radar, 10 Configs.',
     weeklyPrice: 20,
     monthlyPrice: 45,
-    yearlyPrice: 450,
-    weeklyXmr: '~0.12',
-    monthlyXmr: '~0.27',
-    yearlyXmr: '~2.67',
-    weeklyAddr: '8BMLcSiK1rm7zZ11MPd2U1G4rMfkjTkZyQ9spnY6GAHEYSJVvWJ9wQQPKnNnZxHAmMazApZ2qJ6wKFAnbbR1LsaT5HAFSCK',
-    monthlyAddr: '84hxPfyebV85yHJi6BuBnnKxBjYRGc1dMURtmv4By4QjNF9Czaho5EPQzeGEeNtVfpCyX1v4dRLac2LWLEnSC4EK7BsKZKc',
-    yearlyAddr: '88eiZUXkbAqDXETpFWV5EiEJA5xPsi7JreNQsMcSaXpGNucsmdt8mwcjKoin7B42PnVeDgscuPjh545L3yo7HfcRTVgQW2o'
+    yearlyPrice: 450
   }
 };
-
-function getAddress(productKey, duration) {
-  var p = PRODUCTS[productKey];
-  if (!p) return null;
-  if (duration === 'weekly') return p.weeklyAddr;
-  if (duration === 'yearly') return p.yearlyAddr;
-  return p.monthlyAddr;
-}
 
 function getPriceUsd(productKey, duration) {
   var p = PRODUCTS[productKey];
@@ -121,14 +129,6 @@ function getPriceUsd(productKey, duration) {
   if (duration === 'weekly') return p.weeklyPrice;
   if (duration === 'yearly') return p.yearlyPrice;
   return p.monthlyPrice;
-}
-
-function getPriceXmr(productKey, duration) {
-  var p = PRODUCTS[productKey];
-  if (!p) return 'TBD';
-  if (duration === 'weekly') return p.weeklyXmr;
-  if (duration === 'yearly') return p.yearlyXmr;
-  return p.monthlyXmr;
 }
 
 function parseField(fields, name) {
@@ -196,19 +196,20 @@ async function addRole(token, guildId, userId, roleId) {
   }
 }
 
-function buildTicketEmbed(ticketRef, customerId, productName, duration, priceUsd, priceXmr, xmrAddress, txHash, orderTime) {
+function buildTicketEmbed(ticketRef, customerId, productName, duration, priceUsd, priceXmr, xmrAddress, orderTime) {
   var addrText = xmrAddress ? '```\n' + xmrAddress + '\n```' : 'Contact staff for payment details.';
   return {
     title: 'Ticket #' + ticketRef,
     color: 0x2563eb,
-    description: 'Welcome <@' + customerId + '>.\n\nA staff member will assist you shortly. Please follow the instructions below to complete your purchase.',
+    description: 'Welcome <@' + customerId + '>.\n\nA staff member will assist you shortly.',
     fields: [
       { name: 'Product', value: '**' + productName + '**', inline: true },
       { name: 'Duration', value: '`' + duration.toUpperCase() + '`', inline: true },
       { name: 'Price', value: '`$' + priceUsd + ' USD ~' + priceXmr + ' XMR`', inline: true },
       { name: '\u200b', value: '\u200b', inline: false },
       { name: 'XMR Payment Address', value: addrText, inline: false },
-      { name: 'TXID / Status', value: '`' + (txHash || 'Pending in ticket') + '`', inline: false },
+      { name: 'Amount', value: '`Send exactly ' + priceXmr + ' XMR to the address above`', inline: false },
+      { name: 'Status', value: '`Awaiting Payment`', inline: false },
       { name: '\u200b', value: '\u200b', inline: false },
       { name: 'Order Placed', value: orderTime || new Date().toISOString(), inline: true }
     ],
@@ -220,20 +221,49 @@ function buildTicketEmbed(ticketRef, customerId, productName, duration, priceUsd
 
 function buildCustomerInstructions() {
   return {
-    title: 'How to Get Verified',
+    title: 'How to Complete Your Purchase',
     color: 0x065f46,
     description: 'Follow these steps to complete your purchase and receive your license key.',
     fields: [
-      { name: 'Step 1', value: 'Send your Discord User ID in this ticket. Right click your profile in Discord and click "Copy User ID".', inline: false },
-      { name: 'Step 2', value: 'Send the correct XMR amount to the payment address shown above. Make sure you send the exact amount.', inline: false },
-      { name: 'Step 3', value: 'Paste your transaction hash (TXID) in this ticket as proof of payment.', inline: false },
-      { name: 'Step 4', value: 'Wait for a staff member to verify your payment on the blockchain. This usually takes a few minutes.', inline: false },
+      { name: 'Step 1', value: 'Send exactly the XMR amount shown above to the payment address.', inline: false },
+      { name: 'Step 2', value: 'Paste your transaction hash (TXID) in this ticket as proof of payment.', inline: false },
+      { name: 'Step 3', value: 'Click "Submit TX Hash" button below, or paste it as a message.', inline: false },
+      { name: 'Step 4', value: 'Wait for staff to verify your payment on the blockchain.', inline: false },
       { name: 'Step 5', value: 'Once verified, you will receive your license key in this ticket.', inline: false },
-      { name: '\u26A0\uFE0F Important', value: 'Do not send XMR to any address other than the one shown in this ticket. Always verify the address matches exactly.', inline: false }
+      { name: '\u26A0\uFE0F Important', value: 'Each ticket gets a unique payment address. Do not reuse addresses from other tickets.', inline: false }
     ],
     footer: { text: 'Ambrosia Payment System', icon_url: 'https://ambrosia.ovh/favicon.ico' },
     timestamp: new Date().toISOString()
   };
+}
+
+async function generateUniqueAddress(userId, productKey, duration) {
+  var productKeyMap = {
+    'ambrosia-ow-lite': 'ow-lite',
+    'ambrosia-ow-pro': 'ow-pro',
+    'ambrosia-fn': 'fn',
+    'ambrosia-cs2-web': 'cs2-web'
+  };
+  var apiKey = productKeyMap[productKey] || productKey;
+
+  var officialUrl = process.env.OFFICIAL_WEBSITE || 'https://ambrosiaovh-sable.vercel.app';
+  var checkoutResp = await fetch(officialUrl + '/api/checkout', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      discordUserId: userId,
+      product: apiKey,
+      duration: duration,
+      sellerName: 'Devil'
+    })
+  });
+
+  if (!checkoutResp.ok) {
+    var errText = await checkoutResp.text();
+    throw new Error('Checkout API returned ' + checkoutResp.status + ': ' + errText);
+  }
+
+  return await checkoutResp.json();
 }
 
 module.exports = async function handler(req, res) {
@@ -334,7 +364,7 @@ module.exports = async function handler(req, res) {
         ? '<@' + customerId + '>' + (STAFF_ROLE_ID ? ' <@&' + STAFF_ROLE_ID + '>' : '')
         : (STAFF_ROLE_ID ? '<@&' + STAFF_ROLE_ID + '>' : '');
 
-      var ticketEmbed = buildTicketEmbed(ticketRef, customerId, product, duration, priceUsd, priceXmr, xmrAddress, txHash, orderTime);
+      var ticketEmbed = buildTicketEmbed(ticketRef, customerId, product, duration, priceUsd, priceXmr, xmrAddress, orderTime);
       var instructionsEmbed = buildCustomerInstructions();
 
       var buttonRow = {
@@ -351,6 +381,10 @@ module.exports = async function handler(req, res) {
         headers: { Authorization: 'Bot ' + BOT_TOKEN, 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: mentionStr, embeds: [ticketEmbed, instructionsEmbed], components: [buttonRow] })
       });
+
+      if (xmrAddress) {
+        trackAddress(xmrAddress, customerId, ticketRef, product, duration, priceUsd, priceXmr, newChannel.id);
+      }
 
       return res.json({ type: 4, data: { content: 'Ticket channel created: <#' + newChannel.id + '>', flags: 64 } });
     }
@@ -440,14 +474,19 @@ module.exports = async function handler(req, res) {
         return res.json({ type: 4, data: { content: 'Unknown product selected.', flags: 64 } });
       }
 
+      var rate = await getXmrRate();
+      var weeklyXmr = '~' + (productInfo.weeklyPrice / rate).toFixed(2);
+      var monthlyXmr = '~' + (productInfo.monthlyPrice / rate).toFixed(2);
+      var yearlyXmr = '~' + (productInfo.yearlyPrice / rate).toFixed(2);
+
       var durationEmbed = {
         title: productInfo.name,
         color: 0x2563eb,
         description: productInfo.game + '\n\n' + productInfo.features,
         fields: [
-          { name: 'Weekly', value: '$' + productInfo.weeklyPrice + ' USD (~' + productInfo.weeklyXmr + ' XMR)', inline: true },
-          { name: 'Monthly', value: '$' + productInfo.monthlyPrice + ' USD (~' + productInfo.monthlyXmr + ' XMR)', inline: true },
-          { name: 'Yearly', value: '$' + productInfo.yearlyPrice + ' USD (~' + productInfo.yearlyXmr + ' XMR)', inline: true }
+          { name: 'Weekly', value: '$' + productInfo.weeklyPrice + ' USD (' + weeklyXmr + ' XMR)', inline: true },
+          { name: 'Monthly', value: '$' + productInfo.monthlyPrice + ' USD (' + monthlyXmr + ' XMR)', inline: true },
+          { name: 'Yearly', value: '$' + productInfo.yearlyPrice + ' USD (' + yearlyXmr + ' XMR)', inline: true }
         ],
         image: { url: 'https://ambrosia.ovh/og-image.png' },
         footer: { text: 'Select a duration below to open your ticket', icon_url: 'https://ambrosia.ovh/favicon.ico' },
@@ -464,9 +503,9 @@ module.exports = async function handler(req, res) {
             min_values: 1,
             max_values: 1,
             options: [
-              { label: 'Weekly', description: '$' + productInfo.weeklyPrice + ' USD (~' + productInfo.weeklyXmr + ' XMR)', value: 'weekly', emoji: { name: '\uD83D\uDCB0' } },
-              { label: 'Monthly', description: '$' + productInfo.monthlyPrice + ' USD (~' + productInfo.monthlyXmr + ' XMR)', value: 'monthly', emoji: { name: '\uD83D\uDCB3' } },
-              { label: 'Yearly', description: '$' + productInfo.yearlyPrice + ' USD (~' + productInfo.yearlyXmr + ' XMR)', value: 'yearly', emoji: { name: '\uD83C\uDF1F' } }
+              { label: 'Weekly', description: '$' + productInfo.weeklyPrice + ' USD (' + weeklyXmr + ' XMR)', value: 'weekly', emoji: { name: '\uD83D\uDCB0' } },
+              { label: 'Monthly', description: '$' + productInfo.monthlyPrice + ' USD (' + monthlyXmr + ' XMR)', value: 'monthly', emoji: { name: '\uD83D\uDCB3' } },
+              { label: 'Yearly', description: '$' + productInfo.yearlyPrice + ' USD (' + yearlyXmr + ' XMR)', value: 'yearly', emoji: { name: '\uD83C\uDF1F' } }
             ]
           }
         ]
@@ -506,43 +545,21 @@ module.exports = async function handler(req, res) {
         return res.json({ type: 4, data: { content: 'Unknown product.', flags: 64 } });
       }
 
-      var productKeyMap = {
-        'ambrosia-ow-lite': 'ow-lite',
-        'ambrosia-ow-pro': 'ow-pro',
-        'ambrosia-fn': 'fn',
-        'ambrosia-cs2-web': 'cs2-web'
-      };
-      var productKey = productKeyMap[selectedProduct2] || selectedProduct2;
-
-      var xmrAddr, priceUsd2, priceXmr2, ticketRef2;
+      var checkoutData;
       try {
-        var officialUrl = process.env.OFFICIAL_WEBSITE || 'https://ambrosiaovh-sable.vercel.app';
-        var checkoutResp = await fetch(officialUrl + '/api/checkout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            discordUserId: userId,
-            product: productKey,
-            duration: selectedDuration,
-            sellerName: 'Devil'
-          })
-        });
-        if (checkoutResp.ok) {
-          var checkoutData = await checkoutResp.json();
-          xmrAddr = checkoutData.address;
-          priceUsd2 = '$' + checkoutData.priceUsd;
-          priceXmr2 = '~' + checkoutData.priceXmr + ' XMR';
-          ticketRef2 = checkoutData.ticketRef;
-        } else {
-          throw new Error('Checkout API failed');
-        }
+        checkoutData = await generateUniqueAddress(userId, selectedProduct2, selectedDuration);
       } catch (e) {
-        console.error('[Ambrosia] Checkout API call failed, using fallback:', e);
-        xmrAddr = getAddress(selectedProduct2, selectedDuration);
-        priceUsd2 = '$' + getPriceUsd(selectedProduct2, selectedDuration);
-        priceXmr2 = getPriceXmr(selectedProduct2, selectedDuration);
-        ticketRef2 = 'AMB-' + Math.floor(1000 + Math.random() * 9000);
+        console.error('[Ambrosia] Failed to generate unique address:', e.message);
+        return res.json({ type: 4, data: {
+          content: 'Failed to generate payment address. Please try again in a moment. If this persists, contact staff.',
+          flags: 64
+        }});
       }
+
+      var xmrAddr = checkoutData.address;
+      var priceUsd2 = '$' + checkoutData.priceUsd;
+      var priceXmr2 = checkoutData.priceXmr + ' XMR';
+      var ticketRef2 = checkoutData.ticketRef;
 
       var cleanUser2 = username.replace(/[^a-zA-Z0-9._-]/g, '').toLowerCase();
       var channelName2 = 'ticket-' + ticketRef2.toLowerCase() + '-' + cleanUser2;
@@ -575,7 +592,7 @@ module.exports = async function handler(req, res) {
       var newChannel3 = await createRes3.json();
       var mentionStr3 = '<@' + userId + '>' + (STAFF_ROLE_ID ? ' <@&' + STAFF_ROLE_ID + '>' : '');
 
-      var ticketEmbed3 = buildTicketEmbed(ticketRef2, userId, productInfo2.name, selectedDuration, priceUsd2, priceXmr2, xmrAddr, 'Pending in ticket', new Date().toISOString());
+      var ticketEmbed3 = buildTicketEmbed(ticketRef2, userId, productInfo2.name, selectedDuration, priceUsd2, priceXmr2, xmrAddr, new Date().toISOString());
       var instructionsEmbed3 = buildCustomerInstructions();
 
       var buttonRow3 = {
@@ -592,6 +609,8 @@ module.exports = async function handler(req, res) {
         headers: { Authorization: 'Bot ' + BOT_TOKEN, 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: mentionStr3, embeds: [ticketEmbed3, instructionsEmbed3], components: [buttonRow3] })
       });
+
+      trackAddress(xmrAddr, userId, ticketRef2, productInfo2.name, selectedDuration, priceUsd2, priceXmr2, newChannel3.id);
 
       return res.json({ type: 4, data: { content: 'Ticket created: <#' + newChannel3.id + '>', flags: 64 } });
     }
@@ -650,7 +669,7 @@ module.exports = async function handler(req, res) {
       }
 
       if (!txResult) {
-        return res.json({ type: 4, data: { content: 'Transaction not found. It may still propagating. Try again in a few minutes.', flags: 64 } });
+        return res.json({ type: 4, data: { content: 'Transaction not found. It may still be propagating. Try again in a few minutes.', flags: 64 } });
       }
 
       if (!verified) {
@@ -750,6 +769,8 @@ module.exports = async function handler(req, res) {
 
       if (!BOT_TOKEN || !channelId) return res.json({ type: 4, data: { content: 'Cannot close ticket.', flags: 64 } });
 
+      closeTicketTracking(channelId);
+
       try {
         await fetch('https://discord.com/api/v10/channels/' + channelId, {
           method: 'DELETE',
@@ -766,3 +787,7 @@ module.exports = async function handler(req, res) {
 
   return res.status(404).json({ error: 'Unknown interaction' });
 };
+
+module.exports.trackedAddresses = trackedAddresses;
+module.exports.getActiveTracking = getActiveTracking;
+module.exports.closeTicketTracking = closeTicketTracking;
