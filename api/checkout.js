@@ -109,6 +109,7 @@ module.exports = async function handler(req, res) {
   var product = body.product;
   var duration = body.duration;
   var sellerName = body.sellerName || 'Devil';
+  var preview = body.preview === true;
 
   if (!discordUserId || !/^\d{17,19}$/.test(discordUserId)) {
     return res.status(400).json({ error: 'Invalid Discord User ID. Must be 17-19 numeric digits.' });
@@ -126,19 +127,21 @@ module.exports = async function handler(req, res) {
   if (!BOT_TOKEN) return res.status(500).json({ error: 'Bot token not configured' });
   if (!GUILD_ID) return res.status(500).json({ error: 'DISCORD_GUILD_ID not set' });
 
-  try {
-    var memberRes = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '/members/' + discordUserId, {
-      headers: { Authorization: 'Bot ' + BOT_TOKEN }
-    });
-    if (!memberRes.ok) {
-      return res.status(403).json({
-        error: 'not_member',
+  if (!preview) {
+    try {
+      var memberRes = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '/members/' + discordUserId, {
+        headers: { Authorization: 'Bot ' + BOT_TOKEN }
+      });
+      if (!memberRes.ok) {
+        return res.status(403).json({
+          error: 'not_member',
         message: 'You must join our Discord server first before purchasing.'
       });
     }
-  } catch (e) {
-    console.error('[Checkout] Membership check failed:', e);
-    return res.status(500).json({ error: 'Failed to verify Discord membership' });
+    } catch (e) {
+      console.error('[Checkout] Membership check failed:', e);
+      return res.status(500).json({ error: 'Failed to verify Discord membership' });
+    }
   }
 
   var productInfo = PRODUCTS[product];

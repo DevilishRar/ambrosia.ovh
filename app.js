@@ -294,6 +294,10 @@ let selectedCheckoutProduct = 'ambrosia-ow-pro';
 let selectedCheckoutCycle = 'monthly';
 let selectedSpecsProduct = 'ambrosia-ow-pro';
 let activePlaygroundProduct = 'ambrosia-ow-pro';
+let generatedAddress = null;
+let generatedTicketRef = null;
+let generatedPriceUsd = null;
+let generatedPriceXmr = null;
 
 function initLucideIcons() {
   if (window.lucide) {
@@ -899,6 +903,10 @@ function initCheckoutModal() {
 
     selectedCheckoutProduct = productId;
     selectedCheckoutCycle = cycle || currentBillingCycle;
+    generatedAddress = null;
+    generatedTicketRef = null;
+    generatedPriceUsd = null;
+    generatedPriceXmr = null;
 
     const selectWrapper = document.getElementById('modal-product-custom-select');
     if (selectWrapper) {
@@ -943,6 +951,19 @@ function initCheckoutModal() {
     });
   });
 
+  const discordIdInput = document.getElementById('modal-discord-id-input');
+  if (discordIdInput) {
+    let debounceTimer;
+    discordIdInput.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        if (discordIdInput.value.trim().length >= 17) {
+          renderCheckoutDetails();
+        }
+      }, 500);
+    });
+  }
+
   if (copyBtn) {
     copyBtn.addEventListener('click', () => {
       const addressText = document.getElementById('modal-xmr-address').textContent.trim();
@@ -963,15 +984,15 @@ function initCheckoutModal() {
 
   if (copyTicketBtn) {
     copyTicketBtn.addEventListener('click', () => {
-      const discordInput = document.getElementById('modal-discord-input');
-      const discordTag = discordInput ? discordInput.value.trim() : 'Anonymous';
+      const discordInput = document.getElementById('modal-discord-id-input');
+      const discordId = discordInput ? discordInput.value.trim() : '';
       const product = PRODUCTS[selectedCheckoutProduct] || PRODUCTS['ambrosia-ow-pro'];
-      const price = getPriceForCycle(product, selectedCheckoutCycle);
-      const address = product.addresses[selectedCheckoutCycle];
-      const xmrAmount = (price / XMR_RATE_USD).toFixed(5);
-      const ticketRef = 'AMB-' + Math.floor(1000 + Math.random() * 9000);
+      const price = generatedPriceUsd || getPriceForCycle(product, selectedCheckoutCycle);
+      const address = generatedAddress || product.addresses[selectedCheckoutCycle];
+      const xmrAmount = generatedPriceXmr || (price / XMR_RATE_USD).toFixed(5);
+      const ticketRef = generatedTicketRef || 'AMB-' + Math.floor(1000 + Math.random() * 9000);
 
-      const ticketText = `Order Ticket #${ticketRef}\nDiscord: ${discordTag}\nProduct: ${product.name}\nDuration: ${selectedCheckoutCycle.toUpperCase()}\nPrice: $${price} USD (~${xmrAmount} XMR)\nAddress: ${address}`;
+      const ticketText = `Order Ticket #${ticketRef}\nDiscord ID: ${discordId}\nProduct: ${product.name}\nDuration: ${selectedCheckoutCycle.toUpperCase()}\nPrice: $${price} USD (~${xmrAmount} XMR)\nAddress: ${address}`;
 
       navigator.clipboard.writeText(ticketText).then(() => {
         showToast('Ticket Info Copied! Paste into your Discord Ticket.', 'success');
@@ -1030,7 +1051,7 @@ function initCheckoutModal() {
   }
 }
 
-function renderCheckoutDetails() {
+async function renderCheckoutDetails() {
   const product = PRODUCTS[selectedCheckoutProduct] || PRODUCTS['ambrosia-ow-pro'];
 
   if (!product.available) {
@@ -1040,7 +1061,7 @@ function renderCheckoutDetails() {
   }
 
   const price = getPriceForCycle(product, selectedCheckoutCycle);
-  const address = product.addresses[selectedCheckoutCycle] || product.addresses['monthly'];
+  const fallbackAddress = product.addresses[selectedCheckoutCycle] || product.addresses['monthly'];
   const xmrAmount = (price / XMR_RATE_USD).toFixed(5);
 
   const titleEl = document.getElementById('modal-title');
@@ -1052,6 +1073,54 @@ function renderCheckoutDetails() {
   if (titleEl) titleEl.textContent = `${product.name} (${selectedCheckoutCycle.toUpperCase()})`;
   if (priceEl) priceEl.textContent = `$${price}.00 USD`;
   if (xmrAmountEl) xmrAmountEl.textContent = `~ ${xmrAmount} XMR`;
+  if (addressEl) addressEl.textContent = 'Generating unique address...';
+
+  const productKeyMap = {
+    'ambrosia-ow-lite': 'ow-lite',
+    'ambrosia-ow-pro': 'ow-pro',
+    'ambrosia-fn': 'fn',
+    'ambrosia-cs2-web': 'cs2-web'
+  };
+  const productKey = productKeyMap[selectedCheckoutProduct] || 'ow-pro';
+
+  let address = fallbackAddress;
+  generatedAddress = null;
+  generatedTicketRef = null;
+  generatedPriceUsd = null;
+  generatedPriceXmr = null;
+
+  const discordIdInput = document.getElementById('modal-discord-id-input');
+  const discordUserId = discordIdInput ? discordIdInput.value.trim() : '';
+
+  if (discordUserId && /^\d{17,19}$/.test(discordUserId)) {
+    try {
+      const checkoutResp = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          discordUserId: discordUserId,
+          product: productKey,
+          duration: selectedCheckoutCycle,
+          preview: true
+        })
+      });
+      if (checkoutResp.ok) {
+        const checkoutData = await checkoutResp.json();
+        if (checkoutData.address) {
+          address = checkoutData.address;
+          generatedAddress = checkoutData.address;
+          generatedTicketRef = checkoutData.ticketRef;
+          generatedPriceUsd = checkoutData.priceUsd;
+          generatedPriceXmr = checkoutData.priceXmr;
+          if (xmrAmountEl) xmrAmountEl.textContent = `~ ${checkoutData.priceXmr} XMR`;
+          if (priceEl) priceEl.textContent = `$${checkoutData.priceUsd}.00 USD`;
+        }
+      }
+    } catch (e) {
+      console.warn('[Checkout] Unique address generation failed, using fallback:', e);
+    }
+  }
+
   if (addressEl) addressEl.textContent = address;
 
   if (qrContainer) {
@@ -1099,49 +1168,57 @@ async function handleOrderSubmission() {
   };
   const productKey = productKeyMap[selectedCheckoutProduct] || 'ow-pro';
 
-  showToast('Generating unique payment address...', 'success');
+  showToast('Verifying and placing order...', 'success');
 
-  let checkoutData;
-  try {
-    const checkoutResp = await fetch('/api/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        discordUserId: discordUserId,
-        product: productKey,
-        duration: selectedCheckoutCycle
-      })
-    });
+  let address, price, xmrAmount, ticketRef;
 
-    const checkoutBody = await checkoutResp.text();
-    let checkoutResult;
-    try { checkoutResult = JSON.parse(checkoutBody); } catch (e) { checkoutResult = {}; }
+  if (generatedAddress) {
+    address = generatedAddress;
+    ticketRef = generatedTicketRef;
+    price = generatedPriceUsd;
+    xmrAmount = generatedPriceXmr;
+    generatedAddress = null;
+  } else {
+    showToast('Generating unique payment address...', 'success');
+    try {
+      const checkoutResp = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          discordUserId: discordUserId,
+          product: productKey,
+          duration: selectedCheckoutCycle
+        })
+      });
 
-    if (!checkoutResp.ok) {
-      console.error('[Ambrosia] Checkout API error ' + checkoutResp.status + ': ' + checkoutBody);
-      if (checkoutResult.error === 'not_member') {
-        showToast('You must join our Discord server first. Redirecting...', 'error');
-        setTimeout(() => {
-          closeCheckoutModal();
-          window.open('https://discord.gg/V5hcFpehb5', '_blank');
-        }, 2000);
-      } else {
-        showToast('Checkout failed: ' + (checkoutResult.error || 'Unknown error'), 'error');
+      const checkoutBody = await checkoutResp.text();
+      let checkoutResult;
+      try { checkoutResult = JSON.parse(checkoutBody); } catch (e) { checkoutResult = {}; }
+
+      if (!checkoutResp.ok) {
+        console.error('[Ambrosia] Checkout API error ' + checkoutResp.status + ': ' + checkoutBody);
+        if (checkoutResult.error === 'not_member') {
+          showToast('You must join our Discord server first. Redirecting...', 'error');
+          setTimeout(() => {
+            closeCheckoutModal();
+            window.open('https://discord.gg/V5hcFpehb5', '_blank');
+          }, 2000);
+        } else {
+          showToast('Checkout failed: ' + (checkoutResult.error || 'Unknown error'), 'error');
+        }
+        return;
       }
+
+      address = checkoutResult.address;
+      price = checkoutResult.priceUsd;
+      xmrAmount = checkoutResult.priceXmr;
+      ticketRef = checkoutResult.ticketRef;
+    } catch (e) {
+      console.error('[Ambrosia] Checkout API fetch failed:', e);
+      showToast('Checkout request failed. Check console.', 'error');
       return;
     }
-
-    checkoutData = checkoutResult;
-  } catch (e) {
-    console.error('[Ambrosia] Checkout API fetch failed:', e);
-    showToast('Checkout request failed. Check console.', 'error');
-    return;
   }
-
-  const address = checkoutData.address;
-  const price = checkoutData.priceUsd;
-  const xmrAmount = checkoutData.priceXmr;
-  const ticketRef = checkoutData.ticketRef;
   const product = PRODUCTS[selectedCheckoutProduct] || PRODUCTS['ambrosia-ow-pro'];
 
   const now = new Date();
