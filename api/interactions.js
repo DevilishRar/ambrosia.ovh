@@ -625,7 +625,7 @@ module.exports = async function handler(req, res) {
       var channelId2 = message ? message.channel_id : null;
 
       try {
-        var isTestTx = txHash === 'test00000000000000000000000000000000000000000000000000000000000000';
+        var isTestTx = txHash === 'aaaa000000000000000000000000000000000000000000000000000000000000';
         var verified = false;
         var txResult = null;
         var totalXmr = 0;
