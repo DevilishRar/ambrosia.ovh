@@ -1091,11 +1091,58 @@ async function handleOrderSubmission() {
     return;
   }
 
+  const productKeyMap = {
+    'ambrosia-ow-lite': 'ow-lite',
+    'ambrosia-ow-pro': 'ow-pro',
+    'ambrosia-fn': 'fn',
+    'ambrosia-cs2-web': 'cs2-web'
+  };
+  const productKey = productKeyMap[selectedCheckoutProduct] || 'ow-pro';
+
+  showToast('Generating unique payment address...', 'success');
+
+  let checkoutData;
+  try {
+    const checkoutResp = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        discordUserId: discordUserId,
+        product: productKey,
+        duration: selectedCheckoutCycle
+      })
+    });
+
+    const checkoutBody = await checkoutResp.text();
+    let checkoutResult;
+    try { checkoutResult = JSON.parse(checkoutBody); } catch (e) { checkoutResult = {}; }
+
+    if (!checkoutResp.ok) {
+      console.error('[Ambrosia] Checkout API error ' + checkoutResp.status + ': ' + checkoutBody);
+      if (checkoutResult.error === 'not_member') {
+        showToast('You must join our Discord server first. Redirecting...', 'error');
+        setTimeout(() => {
+          closeCheckoutModal();
+          window.open('https://discord.gg/V5hcFpehb5', '_blank');
+        }, 2000);
+      } else {
+        showToast('Checkout failed: ' + (checkoutResult.error || 'Unknown error'), 'error');
+      }
+      return;
+    }
+
+    checkoutData = checkoutResult;
+  } catch (e) {
+    console.error('[Ambrosia] Checkout API fetch failed:', e);
+    showToast('Checkout request failed. Check console.', 'error');
+    return;
+  }
+
+  const address = checkoutData.address;
+  const price = checkoutData.priceUsd;
+  const xmrAmount = checkoutData.priceXmr;
+  const ticketRef = checkoutData.ticketRef;
   const product = PRODUCTS[selectedCheckoutProduct] || PRODUCTS['ambrosia-ow-pro'];
-  const price = getPriceForCycle(product, selectedCheckoutCycle);
-  const address = product.addresses[selectedCheckoutCycle];
-  const ticketRef = 'AMB-' + Math.floor(1000 + Math.random() * 9000);
-  const xmrAmount = (price / XMR_RATE_USD).toFixed(5);
 
   const now = new Date();
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -1123,7 +1170,7 @@ async function handleOrderSubmission() {
     localTime: localTime
   };
 
-  console.log('[Ambrosia] Sending order to serverless function:', JSON.stringify(orderPayload, null, 2));
+  console.log('[Ambrosia] Sending order:', JSON.stringify(orderPayload, null, 2));
 
   try {
     const resp = await fetch('/api/order', {
@@ -1137,15 +1184,7 @@ async function handleOrderSubmission() {
       let parsed;
       try { parsed = JSON.parse(errBody); } catch (e) { parsed = {}; }
       console.error('[Ambrosia] Order API error ' + resp.status + ': ' + errBody);
-      if (parsed.error === 'not_member') {
-        showToast('You must join our Discord server first. Redirecting...', 'error');
-        setTimeout(() => {
-          closeCheckoutModal();
-          window.open('https://discord.gg/V5hcFpehb5', '_blank');
-        }, 2000);
-      } else {
-        showToast('Failed to send order (' + resp.status + '). Check console.', 'error');
-      }
+      showToast('Failed to send order (' + resp.status + '). Check console.', 'error');
       return;
     }
 
@@ -1156,7 +1195,7 @@ async function handleOrderSubmission() {
     return;
   }
 
-  showToast(`Ticket #${ticketRef} created! Redirecting to Discord...`, 'success');
+  showToast(`Order placed! Ticket #${ticketRef} — Redirecting to Discord...`, 'success');
 
   setTimeout(() => {
     closeCheckoutModal();
