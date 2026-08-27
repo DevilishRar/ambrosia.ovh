@@ -1,4 +1,4 @@
-var interactions = require('./interactions.js');
+var tracking = require('./tracking-store.js');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -14,7 +14,7 @@ module.exports = async function handler(req, res) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  var active = interactions.getActiveTracking();
+  var active = tracking.getActiveTracking();
   var count = Object.keys(active).length;
 
   var summary = {};
@@ -34,7 +34,7 @@ module.exports = async function handler(req, res) {
 
   return res.status(200).json({
     activeCount: count,
-    totalTracked: Object.keys(interactions.trackedAddresses).length,
+    totalTracked: Object.keys(tracking.trackedAddresses).length,
     activeAddresses: summary
   });
 };
