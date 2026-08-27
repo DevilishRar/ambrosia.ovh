@@ -225,6 +225,7 @@ async function generateUniqueAddress(userId, productKey, duration) {
 }
 
 module.exports = async function handler(req, res) {
+  console.log('[Ambrosia] interactions.js v2 - lib/checkout-logic loaded:', typeof checkoutLogic.generateAddress);
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   var signature = req.headers['x-signature-ed25519'];
@@ -507,7 +508,7 @@ module.exports = async function handler(req, res) {
       try {
         checkoutData = await generateUniqueAddress(userId, selectedProduct2, selectedDuration);
       } catch (e) {
-        console.error('[Ambrosia] Failed to generate unique address:', e.message);
+        console.error('[Ambrosia] Failed to generate unique address:', e.message, e.stack);
         return res.json({ type: 4, data: {
           content: 'Failed to generate payment address. Please try again in a moment. If this persists, contact staff.',
           flags: 64
