@@ -527,7 +527,7 @@ module.exports = async function handler(req, res) {
 
       var xmrAddr = checkoutData.address;
       var priceUsd2 = '$' + checkoutData.priceUsd;
-      var priceXmr2 = checkoutData.priceXmr + ' XMR';
+      var priceXmr2 = checkoutData.priceXmr;
       var ticketRef2 = checkoutData.ticketRef;
 
       var cleanUser2 = username.replace(/[^a-zA-Z0-9._-]/g, '').toLowerCase();
