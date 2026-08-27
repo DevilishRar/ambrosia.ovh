@@ -655,7 +655,7 @@ module.exports = async function handler(req, res) {
           await addRole(BOT_TOKEN, GUILD_ID, targetUserId, CUSTOMER_ROLE_ID);
         }
         if (channelId2) {
-          var testMsg = '\u2705 **TEST TX** verified! `' + testXmrAmount.toFixed(6) + ' XMR` (~$' + testPriceUsd.toFixed(2) + ' USD) for **' + testProduct + '**.';
+          var testMsg = '\u2705 TX verified! `' + testXmrAmount.toFixed(6) + ' XMR` (~$' + testPriceUsd.toFixed(2) + ' USD) for **' + testProduct + '**.';
           if (CUSTOMER_ROLE_ID && targetUserId && targetUserId.length >= 17) {
             testMsg += ' **Verified Customer** role assigned to <@' + targetUserId + '>.';
           }
