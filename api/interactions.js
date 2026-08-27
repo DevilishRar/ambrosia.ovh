@@ -804,25 +804,56 @@ module.exports = async function handler(req, res) {
 
       if (!BOT_TOKEN || !channelId) return res.json({ type: 4, data: { content: 'Cannot close ticket.', flags: 64 } });
 
+      var channelName = 'unknown';
+      var ticketRefFromChannel = '';
+      try {
+        var chInfo = await fetch('https://discord.com/api/v10/channels/' + channelId, {
+          headers: { Authorization: 'Bot ' + BOT_TOKEN }
+        });
+        if (chInfo.ok) {
+          var chData = await chInfo.json();
+          channelName = chData.name || 'unknown';
+          var refMatch = channelName.match(/ticket-([a-z]+-\d+)/);
+          if (refMatch) ticketRefFromChannel = refMatch[1].toUpperCase();
+        }
+      } catch (e) {}
+
       var trackingData = tracking.getTrackingByChannelId(channelId);
       var closedCount = closeTicketTracking(channelId);
 
       if (TICKET_LOG_CHANNEL_ID) {
-        var logMsg = '\uD83D\uDD12 **Ticket Closed** — Channel: <#' + channelId + '>';
+        var logMsg = '\uD83D\uDD12 **Ticket Closed** — `' + channelName + '`';
         if (trackingData) {
           logMsg += ' | Customer: <@' + trackingData.userId + '> | Product: ' + trackingData.product;
+          logMsg += ' | Closed by: <@' + userId + '>';
+        } else {
           logMsg += ' | Closed by: <@' + userId + '>';
         }
         await sendMessage(BOT_TOKEN, TICKET_LOG_CHANNEL_ID, logMsg);
       }
 
-      if (trackingData && trackingData.orderNotificationMessageId && ORDER_NOTIFICATION_CHANNEL_ID) {
+      if (ORDER_NOTIFICATION_CHANNEL_ID && ticketRefFromChannel) {
         try {
-          await fetch('https://discord.com/api/v10/channels/' + ORDER_NOTIFICATION_CHANNEL_ID + '/messages/' + trackingData.orderNotificationMessageId, {
-            method: 'DELETE',
+          var notifResp = await fetch('https://discord.com/api/v10/channels/' + ORDER_NOTIFICATION_CHANNEL_ID + '/messages?limit=50', {
             headers: { Authorization: 'Bot ' + BOT_TOKEN }
           });
-          console.log('[Ambrosia] Deleted order notification message: ' + trackingData.orderNotificationMessageId);
+          if (notifResp.ok) {
+            var notifMsgs = await notifResp.json();
+            for (var ni = 0; ni < notifMsgs.length; ni++) {
+              var nm = notifMsgs[ni];
+              if (nm.embeds && nm.embeds[0] && nm.embeds[0].title) {
+                var titleMatch = nm.embeds[0].title.match(/#([A-Z]+-\d+)/);
+                if (titleMatch && titleMatch[1].toUpperCase() === ticketRefFromChannel) {
+                  await fetch('https://discord.com/api/v10/channels/' + ORDER_NOTIFICATION_CHANNEL_ID + '/messages/' + nm.id, {
+                    method: 'DELETE',
+                    headers: { Authorization: 'Bot ' + BOT_TOKEN }
+                  });
+                  console.log('[Ambrosia] Deleted order notification for ticket ' + ticketRefFromChannel);
+                  break;
+                }
+              }
+            }
+          }
         } catch (e) {
           console.error('[Ambrosia] Failed to delete order notification:', e.message);
         }
