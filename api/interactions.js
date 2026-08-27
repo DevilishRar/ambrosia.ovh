@@ -19,6 +19,29 @@ const ORDER_NOTIFICATION_CHANNEL_ID = process.env.DISCORD_ORDER_NOTIFICATION_CHA
 const TICKET_SERVER_INVITE = 'https://discord.gg/UwYWZZ4Z6c';
 var FALLBACK_RATE = parseFloat(process.env.XMR_RATE_USD || '168.51');
 
+var blockedUsers = {};
+try {
+  var blockedEnv = process.env.BLOCKED_USER_IDS || '';
+  if (blockedEnv) {
+    blockedEnv.split(',').forEach(function(id) {
+      var trimmed = id.trim();
+      if (trimmed) blockedUsers[trimmed] = true;
+    });
+  }
+} catch (e) {}
+
+function isBlocked(userId) {
+  return blockedUsers[userId] === true;
+}
+
+function blockUser(userId) {
+  blockedUsers[userId] = true;
+}
+
+function unblockUser(userId) {
+  delete blockedUsers[userId];
+}
+
 const MONERO_NODES = [
   'https://node.moneroworld.com:18082',
   'https://xmr-node.cakewallet.com:18089',
@@ -314,6 +337,10 @@ module.exports = async function handler(req, res) {
       var cleanUsername = extractUsername(customerRaw).replace(/[^a-zA-Z0-9._-]/g, '').toLowerCase();
       var channelName = 'ticket-' + ticketRef.toLowerCase() + '-' + cleanUsername;
 
+      if (customerId && isBlocked(customerId)) {
+        return res.json({ type: 4, data: { content: '\u274C This user has been blocked from opening tickets. Order cannot be processed.', flags: 64 } });
+      }
+
       if (customerId) {
         var ticketCount = tracking.getActiveTicketCount(customerId);
         if (ticketCount >= tracking.MAX_ACTIVE_TICKETS) {
@@ -360,6 +387,7 @@ module.exports = async function handler(req, res) {
         components: [
           { type: 2, custom_id: 'submit_tx_' + customerId, label: 'Submit TX Hash', style: 2, emoji: { name: '\uD83D\uDCB3' } },
           { type: 2, custom_id: 'verify_purchase_' + customerId, label: 'Verify Purchase', style: 3, emoji: { name: '\u2705' } },
+          { type: 2, custom_id: 'block_user_' + customerId, label: 'Block User', style: 4, emoji: { name: '\uD83D\uDEAB' } },
           { type: 2, custom_id: 'close_ticket_' + customerId, label: 'Close Ticket', style: 4, emoji: { name: '\uD83D\uDD12' } }
         ]
       };
@@ -601,6 +629,7 @@ module.exports = async function handler(req, res) {
         components: [
           { type: 2, custom_id: 'submit_tx_' + userId, label: 'Submit TX Hash', style: 2, emoji: { name: '\uD83D\uDCB3' } },
           { type: 2, custom_id: 'verify_purchase_' + userId, label: 'Verify Purchase', style: 3, emoji: { name: '\u2705' } },
+          { type: 2, custom_id: 'block_user_' + userId, label: 'Block User', style: 4, emoji: { name: '\uD83D\uDEAB' } },
           { type: 2, custom_id: 'close_ticket_' + userId, label: 'Close Ticket', style: 4, emoji: { name: '\uD83D\uDD12' } }
         ]
       };
@@ -868,6 +897,37 @@ module.exports = async function handler(req, res) {
       } catch (error) {
         return res.json({ type: 4, data: { content: 'Failed to close ticket.', flags: 64 } });
       }
+    }
+
+    if (customId.startsWith('block_user_')) {
+      var blockTargetId = customId.replace('block_user_', '');
+
+      var hasPermBlock = await isStaffOrSeller(BOT_TOKEN, GUILD_ID, userId);
+      if (!hasPermBlock) {
+        return res.json({ type: 4, data: { content: 'Only Staff and Seller roles can block users.', flags: 64 } });
+      }
+
+      if (!blockTargetId || blockTargetId.length < 17) {
+        return res.json({ type: 4, data: { content: 'No customer ID found to block.', flags: 64 } });
+      }
+
+      blockUser(blockTargetId);
+
+      if (TICKET_LOG_CHANNEL_ID) {
+        await sendMessage(BOT_TOKEN, TICKET_LOG_CHANNEL_ID, '\uD83D\uDEAB **User Blocked** — <@' + blockTargetId + '> (`' + blockTargetId + '`) blocked by <@' + userId + '>. This user can no longer open tickets.');
+      }
+
+      var blockChannelId2 = message ? message.channel_id : null;
+      if (blockChannelId2) {
+        try {
+          await fetch('https://discord.com/api/v10/channels/' + blockChannelId2, {
+            method: 'DELETE',
+            headers: { Authorization: 'Bot ' + BOT_TOKEN }
+          });
+        } catch (e) {}
+      }
+
+      return res.json({ type: 4, data: { content: '\u274C <@' + blockTargetId + '> has been **blocked** from opening tickets. This ticket has been closed.', flags: 64 } });
     }
 
     return res.status(404).json({ error: 'Unknown interaction' });

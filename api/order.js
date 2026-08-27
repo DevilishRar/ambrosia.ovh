@@ -61,6 +61,19 @@ module.exports = async function handler(req, res) {
     });
   }
 
+  try {
+    var blockedEnv = process.env.BLOCKED_USER_IDS || '';
+    if (blockedEnv) {
+      var blockedIds = blockedEnv.split(',').map(function(s) { return s.trim(); });
+      if (blockedIds.indexOf(discordUserId) !== -1) {
+        return res.status(403).json({
+          error: 'blocked',
+          message: 'Your account has been blocked from placing orders. Contact staff for assistance.'
+        });
+      }
+    }
+  } catch (e) {}
+
   var username = 'unknown';
   try {
     var userRes = await fetch('https://discord.com/api/v10/users/' + discordUserId, {
