@@ -273,7 +273,7 @@ module.exports = async function handler(req, res) {
 
   console.log('[Ambrosia] CATEGORY_ID:', CATEGORY_ID, 'GUILD_ID:', GUILD_ID, 'STAFF_ROLE_ID:', STAFF_ROLE_ID);
 
-  if (interactionType === 3 && data && data.custom_id) {
+  if ((interactionType === 3 || interactionType === 5) && data && data.custom_id) {
     var BOT_TOKEN = getBotToken();
     if (!BOT_TOKEN) return res.json({ type: 4, data: { content: 'Bot not configured.', flags: 64 } });
 
