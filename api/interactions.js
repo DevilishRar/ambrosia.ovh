@@ -4,6 +4,7 @@ const checkoutLogic = require('../lib/checkout-logic.js');
 
 const ENCODED_BOT_TOKEN = 'TVRVek9UY3dNVFF6TlRJek56WTJNamd6TUEuR1pzd1I4LmE0cms4NHJvM2hmSjdFREYwMEltM18tVlh0MWlOVURQSndYdmV3';
 
+const APPLICATION_ID = process.env.DISCORD_APPLICATION_ID || '1539701435237662830';
 const APPLICATION_PUBLIC_KEY = process.env.DISCORD_APPLICATION_PUBLIC_KEY;
 const GUILD_ID = process.env.DISCORD_GUILD_ID;
 const CATEGORY_ID = process.env.DISCORD_TICKETS_CATEGORY_ID;
@@ -176,6 +177,16 @@ async function sendMessage(token, channelId, content) {
   try {
     await fetch('https://discord.com/api/v10/channels/' + channelId + '/messages', {
       method: 'POST',
+      headers: { Authorization: 'Bot ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: content })
+    });
+  } catch (e) {}
+}
+
+async function editResponse(token, interactionToken, content) {
+  try {
+    await fetch('https://discord.com/api/v10/webhooks/' + APPLICATION_ID + '/' + interactionToken + '/messages/@original', {
+      method: 'PATCH',
       headers: { Authorization: 'Bot ' + token, 'Content-Type': 'application/json' },
       body: JSON.stringify({ content: content })
     });
@@ -664,7 +675,9 @@ module.exports = async function handler(req, res) {
         return res.json({ type: 4, data: { content: '\u2705 Test TX verified! Check the channel for details.', flags: 64 } });
       }
 
-      res.json({ type: 4, data: { content: '\u23F3 Verifying transaction `' + txHash.substring(0, 16) + '...` on Monero blockchain...', flags: 64 } });
+      res.json({ type: 5, data: { content: '\u23F3 Verifying transaction `' + txHash.substring(0, 16) + '...` on Monero blockchain...' } });
+
+      var interactionToken = body.token;
 
       try {
         var verified = false;
@@ -675,7 +688,7 @@ module.exports = async function handler(req, res) {
         for (var n = 0; n < MONERO_NODES.length; n++) {
           try {
             var txResp = await fetch(MONERO_NODES[n] + '/get_transaction?tx_hash=' + txHash + '&prune=false', {
-              signal: AbortSignal.timeout(10000)
+              signal: AbortSignal.timeout(8000)
             });
             if (txResp.ok) {
               txResult = await txResp.json();
@@ -688,12 +701,12 @@ module.exports = async function handler(req, res) {
         }
 
         if (!txResult) {
-          if (channelId2) await sendMessage(BOT_TOKEN, channelId2, '\u274C Transaction `' + txHash.substring(0, 16) + '...` not found. It may still be propagating. Try again in a few minutes.');
+          await editResponse(BOT_TOKEN, interactionToken, '\u274C Transaction `' + txHash.substring(0, 16) + '...` not found on any Monero node. It may still be propagating. Try again in a few minutes.');
           return;
         }
 
         if (!verified) {
-          if (channelId2) await sendMessage(BOT_TOKEN, channelId2, '\u23F3 Transaction `' + txHash.substring(0, 16) + '...` not yet confirmed. Confirmations: ' + (txResult.confirmations || 0) + '. Please wait.');
+          await editResponse(BOT_TOKEN, interactionToken, '\u23F3 Transaction `' + txHash.substring(0, 16) + '...` not yet confirmed. Confirmations: ' + (txResult.confirmations || 0) + '. Please wait.');
           return;
         }
 
@@ -711,16 +724,14 @@ module.exports = async function handler(req, res) {
           await addRole(BOT_TOKEN, GUILD_ID, targetUserId, CUSTOMER_ROLE_ID);
         }
 
-        if (channelId2) {
-          var msg = '\u2705 TX verified! `' + txHash.substring(0, 16) + '...` \u2014 `' + totalXmr.toFixed(6) + ' XMR` (~$' + totalUsd.toFixed(2) + ' USD).';
-          if (CUSTOMER_ROLE_ID && targetUserId && targetUserId.length >= 17) {
-            msg += ' **Verified Customer** role assigned to <@' + targetUserId + '>.';
-          }
-          await sendMessage(BOT_TOKEN, channelId2, msg);
+        var msg = '\u2705 TX verified! `' + totalXmr.toFixed(6) + ' XMR` (~$' + totalUsd.toFixed(2) + ' USD).';
+        if (CUSTOMER_ROLE_ID && targetUserId && targetUserId.length >= 17) {
+          msg += ' **Verified Customer** role assigned to <@' + targetUserId + '>.';
         }
+        await editResponse(BOT_TOKEN, interactionToken, msg);
       } catch (e) {
         console.error('[Ambrosia] TX verification error:', e.message);
-        if (channelId2) await sendMessage(BOT_TOKEN, channelId2, '\u274C Error verifying transaction. Please try again or contact staff.');
+        await editResponse(BOT_TOKEN, interactionToken, '\u274C Error verifying transaction. Please try again or contact staff.');
       }
       return;
     }
