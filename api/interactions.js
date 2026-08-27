@@ -172,6 +172,16 @@ async function addRole(token, guildId, userId, roleId) {
   }
 }
 
+async function sendMessage(token, channelId, content) {
+  try {
+    await fetch('https://discord.com/api/v10/channels/' + channelId + '/messages', {
+      method: 'POST',
+      headers: { Authorization: 'Bot ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: content })
+    });
+  } catch (e) {}
+}
+
 function buildTicketEmbed(ticketRef, customerId, productName, duration, priceUsd, priceXmr, xmrAddress, orderTime) {
   var addrText = xmrAddress ? '```\n' + xmrAddress + '\n```' : 'Contact staff for payment details.';
   return {
@@ -610,75 +620,64 @@ module.exports = async function handler(req, res) {
         return res.json({ type: 4, data: { content: 'Only staff or the ticket owner can submit a TX hash.', flags: 64 } });
       }
 
-      var verified = false;
-      var txResult = null;
-      for (var n = 0; n < MONERO_NODES.length; n++) {
-        try {
-          var txResp = await fetch(MONERO_NODES[n] + '/get_transaction?tx_hash=' + txHash + '&prune=false', {
-            signal: AbortSignal.timeout(10000)
-          });
-          if (txResp.ok) {
-            txResult = await txResp.json();
-            if (txResult && txResult.confirmed) verified = true;
-            break;
-          }
-        } catch (e) {
-          continue;
-        }
-      }
-
-      if (!txResult) {
-        return res.json({ type: 4, data: { content: 'Transaction not found. It may still be propagating. Try again in a few minutes.', flags: 64 } });
-      }
-
-      if (!verified) {
-        return res.json({ type: 4, data: { content: 'Transaction not yet confirmed. Current confirmations: ' + (txResult.confirmations || 0) + '. Please wait.', flags: 64 } });
-      }
-
-      var totalPiconero = 0;
-      if (txResult.tx && txResult.tx.vout) {
-        for (var v = 0; v < txResult.tx.vout.length; v++) {
-          totalPiconero += txResult.tx.vout[v].amount || 0;
-        }
-      }
-      var totalXmr = totalPiconero / 1e12;
-      var liveRate = await getXmrRate();
-      var totalUsd = totalXmr * liveRate;
+      res.json({ type: 5, data: { content: '\u23F3 Verifying transaction `' + txHash.substring(0, 16) + '...` on Monero blockchain...', flags: 64 } });
 
       var channelId2 = message ? message.channel_id : null;
-      if (channelId2) {
-        try {
-          await fetch('https://discord.com/api/v10/channels/' + channelId2 + '/messages/' + message.id, {
-            method: 'PATCH',
-            headers: { Authorization: 'Bot ' + BOT_TOKEN, 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              embeds: message.embeds,
-              components: []
-            })
-          });
-        } catch (e) {}
-      }
 
-      if (CUSTOMER_ROLE_ID && targetUserId && targetUserId.length >= 17) {
-        var roleAdded = await addRole(BOT_TOKEN, GUILD_ID, targetUserId, CUSTOMER_ROLE_ID);
-        if (roleAdded) {
-          return res.json({
-            type: 4,
-            data: {
-              content: 'TX verified! `' + txHash.substring(0, 16) + '...` — `' + totalXmr.toFixed(6) + ' XMR` (~$' + totalUsd.toFixed(2) + ' USD). **Verified Customer** role assigned to <@' + targetUserId + '>. \u2705',
-              flags: 0
+      try {
+        var verified = false;
+        var txResult = null;
+        for (var n = 0; n < MONERO_NODES.length; n++) {
+          try {
+            var txResp = await fetch(MONERO_NODES[n] + '/get_transaction?tx_hash=' + txHash + '&prune=false', {
+              signal: AbortSignal.timeout(10000)
+            });
+            if (txResp.ok) {
+              txResult = await txResp.json();
+              if (txResult && txResult.confirmed) verified = true;
+              break;
             }
-          });
+          } catch (e) {
+            continue;
+          }
         }
-      }
 
-      return res.json({
-        type: 4,
-        data: {
-          content: 'TX verified! `' + txHash.substring(0, 16) + '...` — `' + totalXmr.toFixed(6) + ' XMR` (~$' + totalUsd.toFixed(2) + ' USD). \u2705',
-          flags: 0
+        if (!txResult) {
+          if (channelId2) await sendMessage(BOT_TOKEN, channelId2, '\u274C Transaction `' + txHash.substring(0, 16) + '...` not found. It may still be propagating. Try again in a few minutes.');
+          return;
         }
-      });
+
+        if (!verified) {
+          if (channelId2) await sendMessage(BOT_TOKEN, channelId2, '\u23F3 Transaction `' + txHash.substring(0, 16) + '...` not yet confirmed. Confirmations: ' + (txResult.confirmations || 0) + '. Please wait.');
+          return;
+        }
+
+        var totalPiconero = 0;
+        if (txResult.tx && txResult.tx.vout) {
+          for (var v = 0; v < txResult.tx.vout.length; v++) {
+            totalPiconero += txResult.tx.vout[v].amount || 0;
+          }
+        }
+        var totalXmr = totalPiconero / 1e12;
+        var liveRate = await getXmrRate();
+        var totalUsd = totalXmr * liveRate;
+
+        if (CUSTOMER_ROLE_ID && targetUserId && targetUserId.length >= 17) {
+          await addRole(BOT_TOKEN, GUILD_ID, targetUserId, CUSTOMER_ROLE_ID);
+        }
+
+        if (channelId2) {
+          var msg = '\u2705 TX verified! `' + txHash.substring(0, 16) + '...` \u2014 `' + totalXmr.toFixed(6) + ' XMR` (~$' + totalUsd.toFixed(2) + ' USD).';
+          if (CUSTOMER_ROLE_ID && targetUserId && targetUserId.length >= 17) {
+            msg += ' **Verified Customer** role assigned to <@' + targetUserId + '>.';
+          }
+          await sendMessage(BOT_TOKEN, channelId2, msg);
+        }
+      } catch (e) {
+        console.error('[Ambrosia] TX verification error:', e.message);
+        if (channelId2) await sendMessage(BOT_TOKEN, channelId2, '\u274C Error verifying transaction. Please try again or contact staff.');
+      }
+      return;
     }
 
     if (customId.startsWith('verify_purchase_')) {
