@@ -483,11 +483,44 @@ module.exports = async function handler(req, res) {
         return res.json({ type: 4, data: { content: 'Unknown product.', flags: 64 } });
       }
 
-      var xmrAddr = getAddress(selectedProduct2, selectedDuration);
-      var priceUsd2 = getPriceUsd(selectedProduct2, selectedDuration);
-      var priceXmr2 = getPriceXmr(selectedProduct2, selectedDuration);
+      var productKeyMap = {
+        'ambrosia-ow-lite': 'ow-lite',
+        'ambrosia-ow-pro': 'ow-pro',
+        'ambrosia-fn': 'fn',
+        'ambrosia-cs2-web': 'cs2-web'
+      };
+      var productKey = productKeyMap[selectedProduct2] || selectedProduct2;
 
-      var ticketRef2 = 'AMB-' + Math.floor(1000 + Math.random() * 9000);
+      var xmrAddr, priceUsd2, priceXmr2, ticketRef2;
+      try {
+        var officialUrl = process.env.OFFICIAL_WEBSITE || 'https://ambrosiaovh-sable.vercel.app';
+        var checkoutResp = await fetch(officialUrl + '/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            discordUserId: userId,
+            product: productKey,
+            duration: selectedDuration,
+            sellerName: 'Devil'
+          })
+        });
+        if (checkoutResp.ok) {
+          var checkoutData = await checkoutResp.json();
+          xmrAddr = checkoutData.address;
+          priceUsd2 = '$' + checkoutData.priceUsd;
+          priceXmr2 = '~' + checkoutData.priceXmr + ' XMR';
+          ticketRef2 = checkoutData.ticketRef;
+        } else {
+          throw new Error('Checkout API failed');
+        }
+      } catch (e) {
+        console.error('[Ambrosia] Checkout API call failed, using fallback:', e);
+        xmrAddr = getAddress(selectedProduct2, selectedDuration);
+        priceUsd2 = '$' + getPriceUsd(selectedProduct2, selectedDuration);
+        priceXmr2 = getPriceXmr(selectedProduct2, selectedDuration);
+        ticketRef2 = 'AMB-' + Math.floor(1000 + Math.random() * 9000);
+      }
+
       var cleanUser2 = username.replace(/[^a-zA-Z0-9._-]/g, '').toLowerCase();
       var channelName2 = 'ticket-' + ticketRef2.toLowerCase() + '-' + cleanUser2;
 
@@ -519,7 +552,7 @@ module.exports = async function handler(req, res) {
       var newChannel3 = await createRes3.json();
       var mentionStr3 = '<@' + userId + '>' + (STAFF_ROLE_ID ? ' <@&' + STAFF_ROLE_ID + '>' : '');
 
-      var ticketEmbed3 = buildTicketEmbed(ticketRef2, userId, productInfo2.name, selectedDuration, '$' + priceUsd2, priceXmr2, xmrAddr, 'Pending in ticket', new Date().toISOString());
+      var ticketEmbed3 = buildTicketEmbed(ticketRef2, userId, productInfo2.name, selectedDuration, priceUsd2, priceXmr2, xmrAddr, 'Pending in ticket', new Date().toISOString());
       var instructionsEmbed3 = buildCustomerInstructions();
 
       var buttonRow3 = {
