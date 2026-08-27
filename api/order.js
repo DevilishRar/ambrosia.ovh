@@ -100,26 +100,24 @@ module.exports = async function handler(req, res) {
     timestamp: new Date().toISOString()
   };
 
-  var instructionsEmbed = {
-    title: '\uD83D\uDEA8 How to Complete Your Purchase',
-    color: 0xdc2626,
-    description: 'You **MUST** follow these steps in order. Do NOT send payment before a ticket is open.',
+  var staffEmbed = {
+    title: '\uD83D\uDCDD Staff Actions',
+    color: 0x5865f2,
+    description: 'Click **Create Ticket** below to open a private channel with this customer. The ticket will auto-open after 90 seconds if no staff clicks.',
     fields: [
-      { name: '\u2757 Step 1 — Open the Ticket', value: 'Click **Create Ticket** below to open a private channel with staff. If staff does not open it within 90 seconds, it will be opened automatically.', inline: false },
-      { name: '\u2757 Step 2 — Pay Inside Discord', value: 'Send the **exact XMR amount** shown above to the payment address **inside the ticket**. Do NOT pay before the ticket is open.', inline: false },
-      { name: '\u2757 Step 3 — Submit TX Hash (MANDATORY)', value: 'After sending XMR, paste your **Transaction Hash (TXID)** in the ticket. This is the **only way** we can verify your payment. Without it, your order cannot be processed.', inline: false },
-      { name: '\u2757 Step 4 — Wait for Verification', value: 'A staff member or bot will verify your TX on the blockchain. Once confirmed, you will receive your license key.', inline: false },
-      { name: '\u26A0\uFE0F Warning', value: '**Do NOT send XMR before opening a ticket.** Do NOT send XMR to any address other than the one shown in this ticket. Always verify the address matches exactly.', inline: false }
+      { name: '\uD83D\uDCAB Payment Address', value: address ? '```\n' + address + '\n```\nSend **exactly** `' + xmrAmount + ' XMR`' : 'Generated in ticket', inline: false },
+      { name: '\uD83D\uDCCB Order Info', value: '**Customer:** <@' + discordUserId + '>\n**Product:** ' + product + '\n**Duration:** ' + duration + '\n**Price:** $' + price + ' USD (~' + xmrAmount + ' XMR)\n**TX Hash:** `' + (txHash || 'Pending') + '`', inline: false },
+      { name: '\u26A0\uFE0F Reminder', value: 'Customer must submit their TX Hash in the ticket for verification. Do NOT verify payment without a TX Hash.', inline: false }
     ],
-    footer: { text: 'Ambrosia Payment System', icon_url: 'https://ambrosia.ovh/favicon.ico' },
+    footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' },
     timestamp: new Date().toISOString()
   };
 
   var payload = {
     username: 'Ambrosia Order Bot',
     avatar_url: 'https://ambrosia.ovh/favicon.ico',
-    content: mentionText + ' placed a new order. Click **Create Ticket** to begin assisting them.',
-    embeds: [ticketEmbed, instructionsEmbed],
+    content: mentionText + ' placed a new order. Click **Create Ticket** below to open a private channel with them.',
+    embeds: [ticketEmbed, staffEmbed],
     components: [{
       type: 1,
       components: [{

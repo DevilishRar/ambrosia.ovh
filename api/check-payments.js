@@ -5,8 +5,8 @@ var STAFF_ROLE_ID = process.env.DISCORD_STAFF_ROLE_ID;
 var SELLER_ROLE_ID = process.env.DISCORD_SELLER_ROLE_ID;
 var CUSTOMER_ROLE_ID = process.env.DISCORD_CUSTOMER_ROLE_ID;
 var ORDER_CHANNEL_ID = process.env.DISCORD_ORDER_NOTIFICATION_CHANNEL_ID;
+var TICKET_LOG_CHANNEL_ID = process.env.DISCORD_TICKET_LOG_CHANNEL_ID;
 var FALLBACK_RATE = parseFloat(process.env.XMR_RATE_USD || '168.51');
-var pendingOrders = require('../lib/pending-orders.js');
 
 var cachedRate = null;
 var cacheTime = 0;
@@ -308,104 +308,185 @@ module.exports = async function handler(req, res) {
   console.log('[CheckPayments] Scan complete:', JSON.stringify(summary));
 
   var autoOpened = 0;
-  try {
-    var allOrders = pendingOrders.getAll();
-    var now = Date.now();
-    var AUTO_OPEN_DELAY = 90000;
+  if (ORDER_CHANNEL_ID) {
+    try {
+      var notifResp = await fetch('https://discord.com/api/v10/channels/' + ORDER_CHANNEL_ID + '/messages?limit=50', {
+        headers: { Authorization: 'Bot ' + BOT_TOKEN }
+      });
+      if (notifResp.ok) {
+        var notifMessages = await notifResp.json();
+        var now = Date.now();
+        var AUTO_OPEN_DELAY = 90000;
 
-    for (var oi = 0; oi < allOrders.length; oi++) {
-      var order = allOrders[oi];
-      if (order.processed) continue;
-      if (now - order.createdAt < AUTO_OPEN_DELAY) continue;
+        for (var mi = 0; mi < notifMessages.length; mi++) {
+          var msg = notifMessages[mi];
+          if (msg.author && msg.author.bot && msg.components && msg.components.length > 0) {
+            var hasCreateBtn = false;
+            for (var ci = 0; ci < msg.components.length; ci++) {
+              var row = msg.components[ci];
+              if (row.components) {
+                for (var bi = 0; bi < row.components.length; bi++) {
+                  if (row.components[bi].custom_id === 'create_ticket') {
+                    hasCreateBtn = true;
+                    break;
+                  }
+                }
+              }
+              if (hasCreateBtn) break;
+            }
+            if (!hasCreateBtn) continue;
 
-      if (order.discordUserId) {
-        var userTicketCount = require('../lib/tracking-store.js').getActiveTicketCount(order.discordUserId);
-        if (userTicketCount >= 3) {
-          console.log('[CheckPayments] Auto-open skipped for ' + order.discordUserId + ': ' + userTicketCount + ' active tickets');
-          pendingOrders.markProcessed(oi);
-          continue;
+            var msgTime = new Date(msg.timestamp).getTime();
+            if (now - msgTime < AUTO_OPEN_DELAY) continue;
+
+            var embed = msg.embeds && msg.embeds[0] ? msg.embeds[0] : null;
+            if (!embed) continue;
+
+            var fields = embed.fields || [];
+            var ticketRef = '';
+            var titleMatch = embed.title ? embed.title.match(/#([A-Z]+-\d+)/) : null;
+            if (titleMatch) ticketRef = titleMatch[1];
+
+            var customerId = '';
+            var product = '';
+            var duration = 'monthly';
+            var price = '';
+            var xmrAmount = '';
+            var address = '';
+            var txHash = 'Pending in ticket';
+
+            for (var fi = 0; fi < fields.length; fi++) {
+              var f = fields[fi];
+              if (f.name === 'Customer') {
+                var custMatch = f.value.match(/(\d{17,19})/);
+                if (custMatch) customerId = custMatch[1];
+              }
+              if (f.name === 'Product') product = f.value.replace(/\*\*/g, '').trim();
+              if (f.name === 'Duration') duration = f.value.replace(/`/g, '').trim().toLowerCase();
+              if (f.name === 'Price') {
+                var priceMatch = f.value.match(/\$([0-9.]+)/);
+                var xmrMatch = f.value.match(/~?([\d.]+)\s*XMR/);
+                if (priceMatch) price = priceMatch[1];
+                if (xmrMatch) xmrAmount = xmrMatch[1];
+              }
+              if (f.name === 'XMR Payment Address' || f.name === '\uD83D\uDCAB Payment Address') {
+                address = f.value.replace(/`/g, '').replace(/```/g, '').trim();
+              }
+              if (f.name === 'TXID / Status' || f.name === 'Order Info') {
+                var txMatch = f.value.match(/`([^`]+)`/);
+                if (txMatch) txHash = txMatch[1];
+              }
+            }
+
+            if (!customerId || !ticketRef) continue;
+
+            var channelSearch = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '/channels', {
+              headers: { Authorization: 'Bot ' + BOT_TOKEN }
+            });
+            if (!channelSearch.ok) continue;
+            var guildChannels = await channelSearch.json();
+            var ticketExists = false;
+            for (var chi = 0; chi < guildChannels.length; chi++) {
+              if (guildChannels[chi].name && guildChannels[chi].name.indexOf(ticketRef.toLowerCase()) !== -1) {
+                ticketExists = true;
+                break;
+              }
+            }
+            if (ticketExists) continue;
+
+            var guildResp = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '?with_counts=false', {
+              headers: { Authorization: 'Bot ' + BOT_TOKEN }
+            });
+            if (!guildResp.ok) continue;
+            var guildData = await guildResp.json();
+
+            var perms = [{ id: guildData.id, type: 0, allow: '0', deny: '1024' }];
+            if (STAFF_ROLE_ID) perms.push({ id: STAFF_ROLE_ID, type: 0, allow: '23552', deny: '0' });
+            if (SELLER_ROLE_ID) perms.push({ id: SELLER_ROLE_ID, type: 0, allow: '23552', deny: '0' });
+            if (customerId) perms.push({ id: customerId, type: 1, allow: '23552', deny: '0' });
+
+            var chName = 'ticket-' + ticketRef.toLowerCase() + '-auto';
+            var createCh = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '/channels', {
+              method: 'POST',
+              headers: { Authorization: 'Bot ' + BOT_TOKEN, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ name: chName, type: 0, parent_id: CATEGORY_ID || null, permission_overwrites: perms })
+            });
+            if (!createCh.ok) continue;
+            var newChannel = await createCh.json();
+
+            var mention = '<@' + customerId + '>';
+            if (STAFF_ROLE_ID) mention += ' <@&' + STAFF_ROLE_ID + '>';
+
+            var autoTicketEmbed = {
+              title: 'Ticket #' + ticketRef,
+              color: 0x2563eb,
+              description: 'Welcome <@' + customerId + '>.\n\nThis ticket was opened automatically after 90 seconds.',
+              fields: [
+                { name: 'Product', value: '**' + product + '**', inline: true },
+                { name: 'Duration', value: '`' + duration.toUpperCase() + '`', inline: true },
+                { name: 'Price', value: '`$' + price + ' USD ~' + xmrAmount + ' XMR`', inline: true },
+                { name: '\u200b', value: '\u200b', inline: false },
+                { name: 'XMR Payment Address', value: address ? '`' + address + '`' : 'Contact staff', inline: false },
+                { name: 'Amount', value: '`Send exactly ' + xmrAmount + ' XMR to the address above`', inline: false },
+                { name: 'Status', value: '`Awaiting Payment`', inline: false },
+                { name: 'Order Placed', value: new Date(msgTime).toISOString(), inline: true }
+              ],
+              image: { url: 'https://ambrosia.ovh/og-image.png' },
+              footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' },
+              timestamp: new Date().toISOString()
+            };
+
+            var autoInstrEmbed = {
+              title: '\uD83D\uDEA8 Complete Your Purchase',
+              color: 0xdc2626,
+              fields: [
+                { name: 'Step 1', value: 'Send exactly the XMR amount shown above to the payment address.', inline: false },
+                { name: 'Step 2', value: 'Click **Submit TX Hash** and paste your transaction hash. **TX Hash is MANDATORY.**', inline: false },
+                { name: 'Step 3', value: 'Wait for staff to verify your payment on the blockchain.', inline: false }
+              ],
+              footer: { text: 'Ambrosia Payment System', icon_url: 'https://ambrosia.ovh/favicon.ico' },
+              timestamp: new Date().toISOString()
+            };
+
+            var autoBtnRow = {
+              type: 1,
+              components: [
+                { type: 2, custom_id: 'submit_tx_' + customerId, label: 'Submit TX Hash', style: 2, emoji: { name: '\uD83D\uDCB3' } },
+                { type: 2, custom_id: 'verify_purchase_' + customerId, label: 'Verify Purchase', style: 3, emoji: { name: '\u2705' } },
+                { type: 2, custom_id: 'close_ticket_' + customerId, label: 'Close Ticket', style: 4, emoji: { name: '\uD83D\uDD12' } }
+              ]
+            };
+
+            await fetch('https://discord.com/api/v10/channels/' + newChannel.id + '/messages', {
+              method: 'POST',
+              headers: { Authorization: 'Bot ' + BOT_TOKEN, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ content: mention, embeds: [autoTicketEmbed, autoInstrEmbed], components: [autoBtnRow] })
+            });
+
+            if (address && customerId) {
+              var trackStore = require('../lib/tracking-store.js');
+              trackStore.trackAddress(address, customerId, ticketRef, product, duration, price, xmrAmount, newChannel.id, msg.id);
+            }
+
+            try {
+              await fetch('https://discord.com/api/v10/channels/' + ORDER_CHANNEL_ID + '/messages/' + msg.id, {
+                method: 'DELETE',
+                headers: { Authorization: 'Bot ' + BOT_TOKEN }
+              });
+            } catch (delErr) {}
+
+            if (TICKET_LOG_CHANNEL_ID) {
+              await sendMessage(TICKET_LOG_CHANNEL_ID, '\uD83D\uDD00 **Auto-Opened Ticket** — #' + ticketRef + ' | <@' + customerId + '> | ' + product + ' (' + duration.toUpperCase() + ') | Staff did not respond in 90s');
+            }
+
+            autoOpened++;
+            console.log('[CheckPayments] Auto-opened ticket: ' + ticketRef + ' for user ' + customerId);
+          }
         }
       }
-
-      try {
-        var guildRes2 = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '?with_counts=false', {
-          headers: { Authorization: 'Bot ' + BOT_TOKEN }
-        });
-        if (!guildRes2.ok) continue;
-        var guild2 = await guildRes2.json();
-
-        var channelName2 = 'ticket-' + order.ticketRef.toLowerCase() + '-auto';
-        var perms2 = [{ id: guild2.id, type: 0, allow: '0', deny: '1024' }];
-        if (STAFF_ROLE_ID) perms2.push({ id: STAFF_ROLE_ID, type: 0, allow: '23552', deny: '0' });
-        if (SELLER_ROLE_ID) perms2.push({ id: SELLER_ROLE_ID, type: 0, allow: '23552', deny: '0' });
-        if (order.discordUserId) perms2.push({ id: order.discordUserId, type: 1, allow: '23552', deny: '0' });
-
-        var createRes2 = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '/channels', {
-          method: 'POST',
-          headers: { Authorization: 'Bot ' + BOT_TOKEN, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: channelName2, type: 0, parent_id: CATEGORY_ID || null, permission_overwrites: perms2 })
-        });
-        if (!createRes2.ok) continue;
-        var newCh = await createRes2.json();
-
-        var mention2 = '<@' + order.discordUserId + '>';
-        if (STAFF_ROLE_ID) mention2 += ' <@&' + STAFF_ROLE_ID + '>';
-
-        var ticketEmbed2 = {
-          title: 'Ticket #' + order.ticketRef,
-          color: 0x2563eb,
-          description: 'Welcome <@' + order.discordUserId + '>.\n\nThis ticket was opened automatically after 90 seconds.',
-          fields: [
-            { name: 'Product', value: '**' + order.product + '**', inline: true },
-            { name: 'Duration', value: '`' + order.duration.toUpperCase() + '`', inline: true },
-            { name: 'Price', value: '`$' + order.price + ' USD ~' + order.xmrAmount + ' XMR`', inline: true },
-            { name: '\u200b', value: '\u200b', inline: false },
-            { name: 'XMR Payment Address', value: order.address ? '`' + order.address + '`' : 'Contact staff', inline: false },
-            { name: 'Amount', value: '`Send exactly ' + order.xmrAmount + ' XMR to the address above`', inline: false },
-            { name: 'Status', value: '`Awaiting Payment`', inline: false },
-            { name: 'Order Placed', value: new Date(order.createdAt).toISOString(), inline: true }
-          ],
-          image: { url: 'https://ambrosia.ovh/og-image.png' },
-          footer: { text: 'Ambrosia.ovh', icon_url: 'https://ambrosia.ovh/favicon.ico' },
-          timestamp: new Date().toISOString()
-        };
-
-        var instrEmbed2 = {
-          title: '\uD83D\uDEA8 Complete Your Purchase',
-          color: 0xdc2626,
-          fields: [
-            { name: 'Step 1', value: 'Send exactly the XMR amount shown above to the payment address.', inline: false },
-            { name: 'Step 2', value: 'Click **Submit TX Hash** and paste your transaction hash. **TX Hash is MANDATORY.**', inline: false },
-            { name: 'Step 3', value: 'Wait for staff to verify your payment on the blockchain.', inline: false }
-          ],
-          footer: { text: 'Ambrosia Payment System', icon_url: 'https://ambrosia.ovh/favicon.ico' },
-          timestamp: new Date().toISOString()
-        };
-
-        var btnRow2 = {
-          type: 1,
-          components: [
-            { type: 2, custom_id: 'submit_tx_' + order.discordUserId, label: 'Submit TX Hash', style: 2, emoji: { name: '\uD83D\uDCB3' } },
-            { type: 2, custom_id: 'verify_purchase_' + order.discordUserId, label: 'Verify Purchase', style: 3, emoji: { name: '\u2705' } },
-            { type: 2, custom_id: 'close_ticket_' + order.discordUserId, label: 'Close Ticket', style: 4, emoji: { name: '\uD83D\uDD12' } }
-          ]
-        };
-
-        await fetch('https://discord.com/api/v10/channels/' + newCh.id + '/messages', {
-          method: 'POST',
-          headers: { Authorization: 'Bot ' + BOT_TOKEN, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ content: mention2, embeds: [ticketEmbed2, instrEmbed2], components: [btnRow2] })
-        });
-
-        pendingOrders.markProcessed(oi);
-        autoOpened++;
-      } catch (e2) {
-        console.error('[CheckPayments] Auto-open error:', e2.message);
-      }
+    } catch (e4) {
+      console.error('[CheckPayments] Auto-open scan error:', e4.message);
     }
-    pendingOrders.removeProcessed();
-  } catch (e3) {
-    console.error('[CheckPayments] Auto-open failed:', e3.message);
   }
 
   return res.status(200).json({ success: true, scan: summary, autoOpened: autoOpened });
