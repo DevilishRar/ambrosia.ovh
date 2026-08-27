@@ -197,12 +197,15 @@ async function addRole(token, guildId, userId, roleId) {
   }
 }
 
-async function sendMessage(token, channelId, content) {
+async function sendMessage(token, channelId, content, embeds, components) {
   try {
+    var payload = { content: content };
+    if (embeds && embeds.length) payload.embeds = embeds;
+    if (components && components.length) payload.components = components;
     await fetch('https://discord.com/api/v10/channels/' + channelId + '/messages', {
       method: 'POST',
       headers: { Authorization: 'Bot ' + token, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content: content })
+      body: JSON.stringify(payload)
     });
   } catch (e) {}
 }
@@ -914,7 +917,23 @@ module.exports = async function handler(req, res) {
       blockUser(blockTargetId);
 
       if (TICKET_LOG_CHANNEL_ID) {
-        await sendMessage(BOT_TOKEN, TICKET_LOG_CHANNEL_ID, '\uD83D\uDEAB **User Blocked** — <@' + blockTargetId + '> (`' + blockTargetId + '`) blocked by <@' + userId + '>. This user can no longer open tickets.');
+        var blockEmbed = {
+          title: '\uD83D\uDEAB User Blocked',
+          color: 0xdc2626,
+          fields: [
+            { name: 'Blocked User', value: '<@' + blockTargetId + '> (`' + blockTargetId + '`)', inline: false },
+            { name: 'Blocked By', value: '<@' + userId + '>', inline: false },
+            { name: 'Reason', value: 'This user can no longer open tickets or place orders.', inline: false }
+          ],
+          timestamp: new Date().toISOString()
+        };
+        var unblockBtnRow = {
+          type: 1,
+          components: [
+            { type: 2, custom_id: 'unblock_user_' + blockTargetId, label: 'Unblock User', style: 3, emoji: { name: '\u2705' } }
+          ]
+        };
+        await sendMessage(BOT_TOKEN, TICKET_LOG_CHANNEL_ID, '', [blockEmbed], [unblockBtnRow]);
       }
 
       var blockChannelId2 = message ? message.channel_id : null;
@@ -928,6 +947,50 @@ module.exports = async function handler(req, res) {
       }
 
       return res.json({ type: 4, data: { content: '\u274C <@' + blockTargetId + '> has been **blocked** from opening tickets. This ticket has been closed.', flags: 64 } });
+    }
+
+    if (customId.startsWith('unblock_user_')) {
+      var unblockTargetId = customId.replace('unblock_user_', '');
+
+      var hasPermUnblock = await isStaffOrSeller(BOT_TOKEN, GUILD_ID, userId);
+      if (!hasPermUnblock) {
+        return res.json({ type: 4, data: { content: 'Only Staff and Seller roles can unblock users.', flags: 64 } });
+      }
+
+      if (!unblockTargetId || unblockTargetId.length < 17) {
+        return res.json({ type: 4, data: { content: 'No customer ID found to unblock.', flags: 64 } });
+      }
+
+      unblockUser(unblockTargetId);
+
+      var blockMessageId = message ? message.id : null;
+      if (blockMessageId && TICKET_LOG_CHANNEL_ID) {
+        try {
+          var oldMsg = await fetch('https://discord.com/api/v10/channels/' + TICKET_LOG_CHANNEL_ID + '/messages/' + blockMessageId, {
+            headers: { Authorization: 'Bot ' + BOT_TOKEN }
+          });
+          if (oldMsg.ok) {
+            var oldData = await oldMsg.json();
+            var oldEmbed = oldData.embeds && oldData.embeds[0] ? oldData.embeds[0] : {};
+            oldEmbed.color = 0x22c55e;
+            oldEmbed.title = '\u2705 User Unblocked';
+            oldEmbed.fields = (oldEmbed.fields || []).filter(function(f) { return f.name !== 'Reason'; });
+            oldEmbed.fields.push({ name: 'Unblocked By', value: '<@' + userId + '>', inline: false });
+
+            await fetch('https://discord.com/api/v10/channels/' + TICKET_LOG_CHANNEL_ID + '/messages/' + blockMessageId, {
+              method: 'PATCH',
+              headers: { Authorization: 'Bot ' + BOT_TOKEN, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ embeds: [oldEmbed], components: [] })
+            });
+          }
+        } catch (e) {}
+      }
+
+      if (TICKET_LOG_CHANNEL_ID) {
+        await sendMessage(BOT_TOKEN, TICKET_LOG_CHANNEL_ID, '\u2705 **User Unblocked** — <@' + unblockTargetId + '> (`' + unblockTargetId + `) can now open tickets again.`);
+      }
+
+      return res.json({ type: 4, data: { content: '\u2705 <@' + unblockTargetId + '> has been **unblocked**. They can now open tickets again.', flags: 64 } });
     }
 
     return res.status(404).json({ error: 'Unknown interaction' });
