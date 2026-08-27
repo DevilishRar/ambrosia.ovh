@@ -625,13 +625,37 @@ module.exports = async function handler(req, res) {
       var isTestTx = txHash === 'aaaa000000000000000000000000000000000000000000000000000000000000';
 
       if (isTestTx) {
+        var testPriceUsd = 0;
+        var testPriceXmr = 0;
+        var testProduct = 'Unknown Product';
+        if (message && message.embeds && message.embeds[0]) {
+          var efields = message.embeds[0].fields || [];
+          for (var ef = 0; ef < efields.length; ef++) {
+            if (efields[ef].name === 'Product') {
+              testProduct = efields[ef].value.replace(/\*\*/g, '').replace(/`/g, '').trim();
+            }
+            if (efields[ef].name === 'Price') {
+              var pval = efields[ef].value.replace(/`/g, '').trim();
+              var pm = pval.match(/\$(\d+)/);
+              if (pm) testPriceUsd = parseFloat(pm[1]);
+              var xm = pval.match(/~?([\d.]+)\s*XMR/);
+              if (xm) testPriceXmr = parseFloat(xm[1]);
+            }
+          }
+        }
+        if (testPriceUsd === 0) {
+          testPriceUsd = 45;
+          testPriceXmr = 0.1;
+        }
         var liveRate3 = await getXmrRate();
-        var testUsd = 0.01 * liveRate3;
+        var testXmrAmount = testPriceUsd / liveRate3;
+        if (testPriceXmr > 0) testXmrAmount = testPriceXmr;
+
         if (CUSTOMER_ROLE_ID && targetUserId && targetUserId.length >= 17) {
           await addRole(BOT_TOKEN, GUILD_ID, targetUserId, CUSTOMER_ROLE_ID);
         }
         if (channelId2) {
-          var testMsg = '\u2705 **TEST TX** verified! `0.010000 XMR` (~$' + testUsd.toFixed(2) + ' USD).';
+          var testMsg = '\u2705 **TEST TX** verified! `' + testXmrAmount.toFixed(6) + ' XMR` (~$' + testPriceUsd.toFixed(2) + ' USD) for **' + testProduct + '**.';
           if (CUSTOMER_ROLE_ID && targetUserId && targetUserId.length >= 17) {
             testMsg += ' **Verified Customer** role assigned to <@' + targetUserId + '>.';
           }
