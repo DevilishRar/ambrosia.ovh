@@ -1,5 +1,6 @@
 ﻿const nacl = require('tweetnacl');
 const tracking = require('./tracking-store.js');
+const checkoutLogic = require('./checkout-logic.js');
 
 const ENCODED_BOT_TOKEN = 'TVRVek9UY3dNVFF6TlRJek56WTJNamd6TUEuR1pzd1I4LmE0cms4NHJvM2hmSjdFREYwMEltM18tVlh0MWlOVURQSndYdmV3';
 
@@ -220,25 +221,7 @@ async function generateUniqueAddress(userId, productKey, duration) {
     'ambrosia-cs2-web': 'cs2-web'
   };
   var apiKey = productKeyMap[productKey] || productKey;
-
-  var officialUrl = process.env.OFFICIAL_WEBSITE || 'https://ambrosiaovh-sable.vercel.app';
-  var checkoutResp = await fetch(officialUrl + '/api/checkout', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      discordUserId: userId,
-      product: apiKey,
-      duration: duration,
-      sellerName: 'Devil'
-    })
-  });
-
-  if (!checkoutResp.ok) {
-    var errText = await checkoutResp.text();
-    throw new Error('Checkout API returned ' + checkoutResp.status + ': ' + errText);
-  }
-
-  return await checkoutResp.json();
+  return await checkoutLogic.generateAddress(apiKey, duration);
 }
 
 module.exports = async function handler(req, res) {
