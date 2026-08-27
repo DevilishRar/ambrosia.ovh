@@ -1,6 +1,6 @@
 ﻿const nacl = require('tweetnacl');
-const tracking = require('./tracking-store.js');
-const checkoutLogic = require('./checkout-logic.js');
+const tracking = require('../lib/tracking-store.js');
+const checkoutLogic = require('../lib/checkout-logic.js');
 
 const ENCODED_BOT_TOKEN = 'TVRVek9UY3dNVFF6TlRJek56WTJNamd6TUEuR1pzd1I4LmE0cms4NHJvM2hmSjdFREYwMEltM18tVlh0MWlOVURQSndYdmV3';
 

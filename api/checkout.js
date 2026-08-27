@@ -1,6 +1,6 @@
 var ENCODED_BOT_TOKEN = 'TVRVek9UY3dNVFF6TlRJek56WTJNamd6TUEuR1pzd1I4LmE0cms4NHJvM2hmSjdFREYwMEltM18tVlh0MWlOVURQSndYdmV3';
 var GUILD_ID = process.env.DISCORD_GUILD_ID;
-var logic = require('./checkout-logic.js');
+var logic = require('../lib/checkout-logic.js');
 
 function getBotToken() {
   try { return Buffer.from(ENCODED_BOT_TOKEN, 'base64').toString('utf8'); } catch { return ''; }

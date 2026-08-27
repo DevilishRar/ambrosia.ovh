@@ -1,4 +1,4 @@
-var tracking = require('./tracking-store.js');
+var tracking = require('../lib/tracking-store.js');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
