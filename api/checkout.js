@@ -69,10 +69,10 @@ async function getSubaddress(privateSpendKeyHex, major, minor) {
   hClamped[31] &= 0x7f;
   hClamped[31] |= 0x40;
 
-  var G = ed25519.CURVE.G;
+  var G = ed25519.Point.BASE;
   var BPoint = ed25519.Point.fromHex(B);
 
-  var hScalar = ed25519.utils.normPrivateKeyToScalar(hClamped);
+  var hScalar = ed25519.utils.getExtendedPublicKey(hClamped).scalar;
   var H = G.multiply(hScalar);
   var A = H.add(BPoint);
 
