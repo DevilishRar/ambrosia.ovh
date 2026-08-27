@@ -314,6 +314,13 @@ module.exports = async function handler(req, res) {
       var cleanUsername = extractUsername(customerRaw).replace(/[^a-zA-Z0-9._-]/g, '').toLowerCase();
       var channelName = 'ticket-' + ticketRef.toLowerCase() + '-' + cleanUsername;
 
+      if (customerId) {
+        var ticketCount = tracking.getActiveTicketCount(customerId);
+        if (ticketCount >= tracking.MAX_ACTIVE_TICKETS) {
+          return res.json({ type: 4, data: { content: 'This user already has ' + ticketCount + ' active ticket(s). Maximum is ' + tracking.MAX_ACTIVE_TICKETS + '. Close existing tickets first.', flags: 64 } });
+        }
+      }
+
       var guildRes = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '?with_counts=false', {
         headers: { Authorization: 'Bot ' + BOT_TOKEN }
       });
@@ -363,8 +370,13 @@ module.exports = async function handler(req, res) {
         body: JSON.stringify({ content: mentionStr, embeds: [ticketEmbed, instructionsEmbed], components: [buttonRow] })
       });
 
+      var orderNotificationMsgId = message ? message.id : null;
       if (xmrAddress) {
-        trackAddress(xmrAddress, customerId, ticketRef, product, duration, priceUsd, priceXmr, newChannel.id);
+        trackAddress(xmrAddress, customerId, ticketRef, product, duration, priceUsd, priceXmr, newChannel.id, orderNotificationMsgId);
+      }
+
+      if (TICKET_LOG_CHANNEL_ID) {
+        await sendMessage(BOT_TOKEN, TICKET_LOG_CHANNEL_ID, '\uD83D\uDCDD **Ticket Opened** — #' + ticketRef + ' | <@' + customerId + '> | ' + product + ' (' + duration.toUpperCase() + ') | $' + priceUsd);
       }
 
       var pending = pendingOrders.getPendingOrders();
@@ -792,7 +804,29 @@ module.exports = async function handler(req, res) {
 
       if (!BOT_TOKEN || !channelId) return res.json({ type: 4, data: { content: 'Cannot close ticket.', flags: 64 } });
 
-      closeTicketTracking(channelId);
+      var trackingData = tracking.getTrackingByChannelId(channelId);
+      var closedCount = closeTicketTracking(channelId);
+
+      if (TICKET_LOG_CHANNEL_ID) {
+        var logMsg = '\uD83D\uDD12 **Ticket Closed** — Channel: <#' + channelId + '>';
+        if (trackingData) {
+          logMsg += ' | Customer: <@' + trackingData.userId + '> | Product: ' + trackingData.product;
+          logMsg += ' | Closed by: <@' + userId + '>';
+        }
+        await sendMessage(BOT_TOKEN, TICKET_LOG_CHANNEL_ID, logMsg);
+      }
+
+      if (trackingData && trackingData.orderNotificationMessageId && ORDER_NOTIFICATION_CHANNEL_ID) {
+        try {
+          await fetch('https://discord.com/api/v10/channels/' + ORDER_NOTIFICATION_CHANNEL_ID + '/messages/' + trackingData.orderNotificationMessageId, {
+            method: 'DELETE',
+            headers: { Authorization: 'Bot ' + BOT_TOKEN }
+          });
+          console.log('[Ambrosia] Deleted order notification message: ' + trackingData.orderNotificationMessageId);
+        } catch (e) {
+          console.error('[Ambrosia] Failed to delete order notification:', e.message);
+        }
+      }
 
       try {
         await fetch('https://discord.com/api/v10/channels/' + channelId, {

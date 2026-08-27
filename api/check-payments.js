@@ -318,6 +318,15 @@ module.exports = async function handler(req, res) {
       if (order.processed) continue;
       if (now - order.createdAt < AUTO_OPEN_DELAY) continue;
 
+      if (order.discordUserId) {
+        var userTicketCount = require('../lib/tracking-store.js').getActiveTicketCount(order.discordUserId);
+        if (userTicketCount >= 3) {
+          console.log('[CheckPayments] Auto-open skipped for ' + order.discordUserId + ': ' + userTicketCount + ' active tickets');
+          pendingOrders.markProcessed(oi);
+          continue;
+        }
+      }
+
       try {
         var guildRes2 = await fetch('https://discord.com/api/v10/guilds/' + GUILD_ID + '?with_counts=false', {
           headers: { Authorization: 'Bot ' + BOT_TOKEN }

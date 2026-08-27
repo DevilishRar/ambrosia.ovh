@@ -3,6 +3,7 @@ const NOTIFICATION_CHANNEL_ID = process.env.DISCORD_ORDER_NOTIFICATION_CHANNEL_I
 const GUILD_ID = process.env.DISCORD_GUILD_ID;
 const TICKET_SERVER_INVITE = 'https://discord.gg/UwYWZZ4Z6c';
 var pendingOrders = require('../lib/pending-orders.js');
+var tracking = require('../lib/tracking-store.js');
 
 function getBotToken() {
   try { return Buffer.from(ENCODED_BOT_TOKEN, 'base64').toString('utf8'); } catch { return ''; }
@@ -49,6 +50,14 @@ module.exports = async function handler(req, res) {
     return res.status(403).json({
       error: 'not_member',
       message: 'You must be a member of the Discord server to place an order. Join here: ' + TICKET_SERVER_INVITE
+    });
+  }
+
+  var activeTicketCount = tracking.getActiveTicketCount(discordUserId);
+  if (activeTicketCount >= tracking.MAX_ACTIVE_TICKETS) {
+    return res.status(429).json({
+      error: 'too_many_tickets',
+      message: 'You already have ' + activeTicketCount + ' active ticket(s). Maximum is ' + tracking.MAX_ACTIVE_TICKETS + '. Please close existing tickets before placing a new order.'
     });
   }
 

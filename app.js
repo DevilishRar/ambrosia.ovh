@@ -1203,6 +1203,8 @@ async function handleOrderSubmission() {
             closeCheckoutModal();
             window.open('https://discord.gg/UwYWZZ4Z6c', '_blank');
           }, 2000);
+        } else if (checkoutResult.error === 'too_many_tickets') {
+          showToast('Too many active tickets. Please close existing tickets before ordering.', 'error');
         } else {
           showToast('Checkout failed: ' + (checkoutResult.error || 'Unknown error'), 'error');
         }
