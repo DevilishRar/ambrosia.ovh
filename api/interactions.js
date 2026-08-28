@@ -735,9 +735,9 @@ module.exports = async function handler(req, res) {
         return res.json({ type: 4, data: { content: '\u2705 Test TX verified! Check the channel for details.', flags: 64 } });
       }
 
-      res.json({ type: 5, data: { content: '\u23F3 Verifying transaction `' + txHash.substring(0, 16) + '...` on Monero blockchain...' } });
+      res.json({ type: 4, data: { content: '\u23F3 Verifying transaction `' + txHash.substring(0, 16) + '...` on Monero blockchain. Results will be posted in this channel.', flags: 64 } });
 
-      var interactionToken = req.body.token;
+      var channelId2 = message ? message.channel_id : null;
 
       try {
         var verified = false;
@@ -761,12 +761,12 @@ module.exports = async function handler(req, res) {
         }
 
         if (!txResult) {
-          await editResponse(BOT_TOKEN, interactionToken, '\u274C Transaction `' + txHash.substring(0, 16) + '...` not found on any Monero node. It may still be propagating. Try again in a few minutes.');
+          if (channelId2) await sendMessage(BOT_TOKEN, channelId2, '\u274C <@' + userId + '> Transaction `' + txHash.substring(0, 16) + '...` not found on any Monero node. It may still be propagating. Try again in a few minutes.');
           return;
         }
 
         if (!verified) {
-          await editResponse(BOT_TOKEN, interactionToken, '\u23F3 Transaction `' + txHash.substring(0, 16) + '...` not yet confirmed. Confirmations: ' + (txResult.confirmations || 0) + '. Please wait.');
+          if (channelId2) await sendMessage(BOT_TOKEN, channelId2, '\u23F3 <@' + userId + '> Transaction `' + txHash.substring(0, 16) + '...` not yet confirmed. Confirmations: ' + (txResult.confirmations || 0) + '. Please wait.');
           return;
         }
 
@@ -784,14 +784,14 @@ module.exports = async function handler(req, res) {
           await addRole(BOT_TOKEN, GUILD_ID, targetUserId, CUSTOMER_ROLE_ID);
         }
 
-        var msg = '\u2705 TX verified! `' + totalXmr.toFixed(6) + ' XMR` (~$' + totalUsd.toFixed(2) + ' USD).';
+        var msg = '\u2705 <@' + userId + '> TX verified! `' + totalXmr.toFixed(6) + ' XMR` (~$' + totalUsd.toFixed(2) + ' USD).';
         if (CUSTOMER_ROLE_ID && targetUserId && targetUserId.length >= 17) {
           msg += ' **Verified Customer** role assigned to <@' + targetUserId + '>.';
         }
-        await editResponse(BOT_TOKEN, interactionToken, msg);
+        if (channelId2) await sendMessage(BOT_TOKEN, channelId2, msg);
       } catch (e) {
         console.error('[Ambrosia] TX verification error:', e.message);
-        await editResponse(BOT_TOKEN, interactionToken, '\u274C Error verifying transaction. Please try again or contact staff.');
+        if (channelId2) await sendMessage(BOT_TOKEN, channelId2, '\u274C <@' + userId + '> Error verifying transaction. Please try again or contact staff.');
       }
       return;
     }
