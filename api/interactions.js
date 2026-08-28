@@ -212,12 +212,19 @@ async function sendMessage(token, channelId, content, embeds, components) {
 
 async function editResponse(token, interactionToken, content) {
   try {
-    await fetch('https://discord.com/api/v10/webhooks/' + APPLICATION_ID + '/' + interactionToken + '/messages/@original', {
+    var url = 'https://discord.com/api/v10/webhooks/' + APPLICATION_ID + '/' + interactionToken + '/messages/@original';
+    var resp = await fetch(url, {
       method: 'PATCH',
       headers: { Authorization: 'Bot ' + token, 'Content-Type': 'application/json' },
       body: JSON.stringify({ content: content })
     });
-  } catch (e) {}
+    if (!resp.ok) {
+      var errBody = await resp.text().catch(function() { return ''; });
+      console.error('[Ambrosia] editResponse failed:', resp.status, errBody.substring(0, 200));
+    }
+  } catch (e) {
+    console.error('[Ambrosia] editResponse error:', e.message);
+  }
 }
 
 function buildTicketEmbed(ticketRef, customerId, productName, duration, priceUsd, priceXmr, xmrAddress, orderTime) {
@@ -738,10 +745,10 @@ module.exports = async function handler(req, res) {
         var totalXmr = 0;
         var totalUsd = 0;
 
-        for (var n = 0; n < MONERO_NODES.length; n++) {
+        for (var n = 0; n < Math.min(MONERO_NODES.length, 2) && !txResult; n++) {
           try {
             var txResp = await fetch(MONERO_NODES[n] + '/get_transaction?tx_hash=' + txHash + '&prune=false', {
-              signal: AbortSignal.timeout(8000)
+              signal: AbortSignal.timeout(4000)
             });
             if (txResp.ok) {
               txResult = await txResp.json();
