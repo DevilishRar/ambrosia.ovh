@@ -302,15 +302,16 @@ async function runAutoOpen(BOT_TOKEN, req, res) {
         var autoTicketEmbed = {
           title: 'Ticket #' + ticketRef,
           color: 0x2563eb,
-          description: 'Welcome <@' + customerId + '>.\n\nThis ticket was opened automatically after 90 seconds.',
+          description: 'Welcome <@' + customerId + '>.\n\nA staff member will assist you shortly.',
           fields: [
             { name: 'Product', value: '**' + product + '**', inline: true },
             { name: 'Duration', value: '`' + duration.toUpperCase() + '`', inline: true },
             { name: 'Price', value: '`$' + price + ' USD ~' + xmrAmount + ' XMR`', inline: true },
             { name: '\u200b', value: '\u200b', inline: false },
-            { name: 'XMR Payment Address', value: address ? '`' + address + '`' : 'Contact staff', inline: false },
+            { name: 'XMR Payment Address', value: address ? '```\n' + address + '\n```' : 'Contact staff for payment details.', inline: false },
             { name: 'Amount', value: '`Send exactly ' + xmrAmount + ' XMR to the address above`', inline: false },
             { name: 'Status', value: '`Awaiting Payment`', inline: false },
+            { name: '\u200b', value: '\u200b', inline: false },
             { name: 'Order Placed', value: new Date(msgTime).toISOString(), inline: true }
           ],
           image: { url: 'https://ambrosia.ovh/og-image.png' },
@@ -319,12 +320,16 @@ async function runAutoOpen(BOT_TOKEN, req, res) {
         };
 
         var autoInstrEmbed = {
-          title: '\uD83D\uDEA8 Complete Your Purchase',
-          color: 0xdc2626,
+          title: 'How to Complete Your Purchase',
+          color: 0x065f46,
+          description: 'Follow these steps to complete your purchase and receive your license key.',
           fields: [
             { name: 'Step 1', value: 'Send exactly the XMR amount shown above to the payment address.', inline: false },
-            { name: 'Step 2', value: 'Click **Submit TX Hash** and paste your transaction hash. **TX Hash is MANDATORY.**', inline: false },
-            { name: 'Step 3', value: 'Wait for staff to verify your payment on the blockchain.', inline: false }
+            { name: 'Step 2', value: 'Paste your transaction hash (TXID) in this ticket as proof of payment.', inline: false },
+            { name: 'Step 3', value: 'Click "Submit TX Hash" button below, or paste it as a message.', inline: false },
+            { name: 'Step 4', value: 'Wait for staff to verify your payment on the blockchain.', inline: false },
+            { name: 'Step 5', value: 'Once verified, you will receive your license key in this ticket.', inline: false },
+            { name: '\u26A0\uFE0F Important', value: 'Each ticket gets a unique payment address. Do not reuse addresses from other tickets.', inline: false }
           ],
           footer: { text: 'Ambrosia Payment System', icon_url: 'https://ambrosia.ovh/favicon.ico' },
           timestamp: new Date().toISOString()
