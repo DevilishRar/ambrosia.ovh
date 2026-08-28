@@ -693,7 +693,7 @@ module.exports = async function handler(req, res) {
 
       var channelId2 = message ? message.channel_id : null;
 
-      var isTestTx = txHash === 'aaaa000000000000000000000000000000000000000000000000000000000000';
+      var isTestTx = txHash.indexOf('aaaa') === 0;
 
       if (isTestTx) {
         var testPriceUsd = 0;
